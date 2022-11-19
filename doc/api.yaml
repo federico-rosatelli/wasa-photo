@@ -50,6 +50,8 @@ paths:
       summary: Post a new photo
       description: |
         Post a new photo
+      security:
+        - LegacyAuth: []
       requestBody:
         description: |
           The user must provides the username, id and
@@ -77,6 +79,7 @@ paths:
                 myFile:
                   type: string
                   format: binary
+        required: true
       responses:
         "200":
           description: Photo uploaded successful
@@ -87,10 +90,9 @@ paths:
                 items:
                   $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
         
-
-
   /:
     get:
       parameters:
@@ -101,6 +103,8 @@ paths:
       description: |-
         Get the stream of the user identified by id and username.
         The stream is an array of object
+      security:
+        - LegacyAuth: []
       operationId: getStream
       responses:
         "200":
@@ -125,6 +129,8 @@ paths:
       description: |-
         /profile provides all info about the user's profile
         and options to edit it
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Profile Sended successful
@@ -141,6 +147,8 @@ paths:
       description: |
         Based on body request the name, surname and
         username will be changed
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -175,6 +183,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
   /profile/{id}:
@@ -196,6 +205,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     post:
       tags: ["UserProfile"]
@@ -226,6 +236,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
       tags: ["UserProfile"]
@@ -256,6 +268,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/ban:
@@ -267,6 +281,8 @@ paths:
       summary: Ban user by id
       description: |
         Ban user by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -290,6 +306,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
       tags: ["BanProfile"]
@@ -297,6 +315,8 @@ paths:
       summary: unBan user by id
       description: |
         unBan user by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -320,6 +340,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/{imageId}:
@@ -342,6 +364,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/{imageId}/like:
@@ -354,6 +377,8 @@ paths:
       summary: Add Like
       description: |
         Add like on image by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -377,6 +402,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
       tags: ["profileImageLike"]
@@ -384,6 +411,8 @@ paths:
       summary: Delete Like
       description: |
         Delete like on image by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -410,6 +439,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/{imageId}/comment:
@@ -422,6 +453,8 @@ paths:
       summary: Add Comment
       description: |
         Add comment on image by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -450,6 +483,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
       tags: ["profileImageComment"]
@@ -457,6 +492,8 @@ paths:
       summary: Delete Comment
       description: |
         Delete comment on image by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -483,6 +520,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
 #  /profile/{id}/ultra:
@@ -508,6 +547,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ultraBasicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
   /profile/{id}/followings:
@@ -531,6 +571,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ultraBasicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /search:
@@ -697,13 +738,29 @@ components:
           minLength: 1
           maxLength: 256
 
+  securitySchemes:
+    LegacyAuth:
+      type: apiKey
+      in: header
+      name: X-App-Token
+      description: |-
+        App session token value. This value is sent by the server in the login
+        and session refresh APIs.
+
   responses:
     Unauthorized:
       description: The access token is missing or it isn't matchin with username
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
     BadRequest:
       description: Missing fields
+
     InternalServerError:
       description: The server encountered an internal error. Further info in server logs
+    NotFound:
+      description: Page Not Found
 
   parameters:
     IdQuery:
