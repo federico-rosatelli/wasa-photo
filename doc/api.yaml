@@ -1,0 +1,770 @@
+openapi: 3.0.3
+servers:
+  - url: http://127.0.0.1:8080/
+info:
+  title: WasaPhoto
+  description: |-
+    This is the project for Wasa (web and software
+    architecture)
+  version: "b-1.1.0"
+paths:
+  /signin:
+    post:
+      tags: ["signin"]
+      summary: Logs in the user
+      description: |-
+        If the user does not exist, it will be created,
+        and an identifier is returned.
+        If the user exists, the user identifier is returned.
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Maria
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+        required: true
+      responses:
+        '200':
+          description: User log-in action successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+                    example: "abcdef0123456789"
+
+  /addphoto:
+    post:
+      tags: ["addPhoto"]
+      operationId: addPhoto
+      summary: Post a new photo
+      description: |
+        Post a new photo
+      requestBody:
+        description: |
+          The user must provides the username, id and
+          the photo data
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  example: Maria
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+                Text:
+                  type: string
+                  example: Test
+                  pattern: 'ˆ.*?$'
+                  minLength: 1
+                  maxLength: 256
+                myFile:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Photo uploaded successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+        
+
+
+  /:
+    get:
+      parameters:
+        - $ref: "#components/parameters/IdQueryReq"
+        - $ref: "#components/parameters/UsernameQueryReq"
+      tags: ["getstream"]
+      summary: Stream of the user
+      description: |-
+        Get the stream of the user identified by id and username.
+        The stream is an array of object
+      operationId: getStream
+      responses:
+        "200":
+          description: Stream Sended successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/streamContent"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /profile:
+    get:
+      parameters:
+        - $ref: "#components/parameters/IdQueryReq"
+        - $ref: "#components/parameters/UsernameQueryReq"
+      tags: ["myProfile"]
+      operationId: myProfile
+      summary: Get my Profile
+      description: |-
+        /profile provides all info about the user's profile
+        and options to edit it
+      responses:
+        "200":
+          description: Profile Sended successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    post:
+      tags: ["myProfile"]
+      operationId: setMyUsername
+      summary: Set my Name Surname and Username
+      description: |
+        Based on body request the name, surname and
+        username will be changed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+                NewUsername:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Name:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                Surname:
+                  type: string
+                  pattern: 'ˆ.*?$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+  
+  /profile/{id}:
+    parameters:
+      - $ref: "#components/parameters/IdQuery"
+      - $ref: "#components/parameters/UsernameQuery"
+      - $ref: "#components/parameters/IdParam"
+    get:
+      tags: ["UserProfile"]
+      operationId: userProfile
+      summary: Get user profile by id
+      description: | 
+        Get basic info on user profile by his id
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    post:
+      tags: ["UserProfile"]
+      operationId: followUser
+      summary: Follow user by id
+      description: |
+        Follow user by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      tags: ["UserProfile"]
+      operationId: unFollow
+      summary: Unfollow user by id
+      description: |
+        Unfollow user by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /profile/{id}/ban:
+    parameters:
+      - $ref: "#components/parameters/IdParam"
+    post:
+      tags: ["BanProfile"]
+      operationId: banUser
+      summary: Ban user by id
+      description: |
+        Ban user by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      tags: ["BanProfile"]
+      operationId: unBan
+      summary: unBan user by id
+      description: |
+        unBan user by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /profile/{id}/{imageId}:
+    parameters:
+      - $ref: "#components/parameters/IdQuery"
+      - $ref: "#components/parameters/UsernameQuery"
+      - $ref: "#components/parameters/IdParam"
+      - $ref: "#components/parameters/ImageIdParam"
+    get:
+      tags: ["profileImage"]
+      operationId: imageProfile
+      summary: Get user image by id
+      description: | 
+        Get image info by imageId and userId
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/completeImage"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /profile/{id}/{imageId}/like:
+    parameters:
+      - $ref: "#components/parameters/IdParam"
+      - $ref: "#components/parameters/ImageIdParam"
+    post:
+      tags: ["profileImageLike"]
+      operationId: addLike
+      summary: Add Like
+      description: |
+        Add like on image by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/completeImage"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      tags: ["profileImageLike"]
+      operationId: deleteLike
+      summary: Delete Like
+      description: |
+        Delete like on image by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+                Index:
+                  type: integer
+                  minimum: 0
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/completeImage"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /profile/{id}/{imageId}/comment:
+    parameters:
+      - $ref: "#components/parameters/IdParam"
+      - $ref: "#components/parameters/ImageIdParam"
+    post:
+      tags: ["profileImageComment"]
+      operationId: addComment
+      summary: Add Comment
+      description: |
+        Add comment on image by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+                Comments:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/completeImage"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      tags: ["profileImageComment"]
+      operationId: deleteComment
+      summary: Delete Comment
+      description: |
+        Delete comment on image by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+                Index:
+                  type: integer
+                  minimum: 0
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/completeImage"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+#  /profile/{id}/ultra:
+
+  /profile/{id}/followers:
+    parameters:
+      - $ref: "#components/parameters/IdQuery"
+      - $ref: "#components/parameters/UsernameQuery"
+      - $ref: "#components/parameters/IdParam"
+    get:
+      tags: ["UserProfile"]
+      operationId: followersProfile
+      summary: Get user followers by id
+      description: | 
+        Get all followers of a user profile by his id
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ultraBasicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+  
+  /profile/{id}/followings:
+    parameters:
+      - $ref: "#components/parameters/IdQuery"
+      - $ref: "#components/parameters/UsernameQuery"
+      - $ref: "#components/parameters/IdParam"
+    get:
+      tags: ["UserProfile"]
+      operationId: followingsProfile
+      summary: Get user followings by id
+      description: | 
+        Get all followings of a user profile by his id
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ultraBasicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /search:
+    parameters:
+      - $ref: "#components/parameters/IdQuery"
+      - $ref: "#components/parameters/UsernameQuery"
+      - $ref: "#components/parameters/Search"
+    get:
+      tags: ["searchProfile"]
+      operationId: searchProfile
+      summary: Search fo User
+      description: |-
+        Search by query a user.
+        It'll always return a list of ultra-basic
+        information of the user.
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ultraBasicProfile"
+
+components:
+  schemas:
+    basicProfile:
+      title: Get Basic Profile Info
+      type: object
+      properties:
+        Username:
+          type: string
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+        Id:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        ProfilePictureLocation:
+          type: string
+          pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+        Name:
+          type: string
+          maxLength: 20
+        Surname:
+          type: string
+          maxLength: 20
+        Followers:
+          type: integer
+          minLength: 0
+        Followings:
+          type: integer
+          minimum: 0
+        Images:
+          type: array
+          items:
+            $ref: "#/components/schemas/basicImage"
+    basicImage:
+      title: Get Basic Image Info
+      type: object
+      properties:
+        idImage:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        Location:
+          type: string
+          pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+        Time:
+          type: string
+        Likes:
+          type: integer
+          minimum: 0
+        Comments:
+          type: integer
+          minimum: 0
+        Text:
+          type: string
+          minLength: 1
+          maxLength: 256
+    completeImage:
+      title: Get Image Info
+      type: object
+      properties:
+        idImage:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        Location:
+          type: string
+          pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+        Time:
+          type: string
+        Likes:
+          type: array
+          items:
+            $ref: "#/components/schemas/likes"
+        Comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/comments"
+        Text:
+          type: string
+          minLength: 1
+          maxLength: 256
+    likes:
+      title: Get Likes
+      type: object
+      properties:
+        UserIdLike:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        Time:
+          type: string
+    comments:
+      title: Get Comments
+      type: object
+      properties:
+        UserIdComment:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        Time:
+          type: string
+        Content:
+          type: string
+          minLength: 0
+          maxLength: 256
+    ultraBasicProfile:
+      title: Get Ultra Basic Profile Info
+      type: object
+      properties:
+        Username:
+          type: string
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+        Id:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        ProfilePictureLocation:
+          type: string
+          pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+    streamContent:
+      title: The content of the stream object
+      type: object
+      properties:
+        ImageId:
+          type: string
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        ImageLocation:
+          type: string
+          pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+        Time:
+          type: string
+        Comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/comments"
+        Likes:
+          type: array
+          items:
+            $ref: "#/components/schemas/likes"
+        Text:
+          type: string
+          minLength: 1
+          maxLength: 256
+
+  responses:
+    Unauthorized:
+      description: The access token is missing or it isn't matchin with username
+    BadRequest:
+      description: Missing fields
+    InternalServerError:
+      description: The server encountered an internal error. Further info in server logs
+
+  parameters:
+    IdQuery:
+      schema:
+        type: string
+        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+      name: Id
+      required: false
+      in: query
+      description: Id of the user
+    UsernameQuery:
+      schema:
+        type: string
+        pattern: 'ˆ.*?$'
+        minLength: 3
+        maxLength: 16
+      name: Username
+      required: false
+      in: query
+      description: Username of the user
+    IdQueryReq:
+      schema:
+        type: string
+        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+      name: Id
+      required: true
+      in: query
+      description: Id of the user
+    UsernameQueryReq:
+      schema:
+        type: string
+        pattern: 'ˆ.*?$'
+        minLength: 3
+        maxLength: 16
+      name: Username
+      required: true
+      in: query
+      description: Username of the user
+    Search:
+      schema:
+        type: string
+        pattern: 'ˆ.*?$'
+        minLength: 3
+        maxLength: 16
+      name: search
+      required: true
+      in: query
+      description: Search for user by username
+    IdParam:
+      schema:
+        type: string
+        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+      name: Id
+      required: true
+      in: path
+      description: Id of the user
+    ImageIdParam:
+      schema:
+        type: string
+        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+      name: ImageId
+      required: true
+      in: path
+      description: Id of the image
