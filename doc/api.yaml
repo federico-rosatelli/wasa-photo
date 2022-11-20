@@ -372,6 +372,47 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      tags: ["profileImage"]
+      operationId: deleteImage
+      summary: Delete image
+      description: |
+        Delete image of the user. If the user id
+        match with the securityAuth id it'll return the basic
+        profile of the user. If the image isn't found it'll return
+        a 404NotFound response. If the user id doesn't match with 
+        the user id of the image it'll return a 401Unauthorized response.
+      security:
+        - LegacyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Username:
+                  type: string
+                  example: Maria
+                  pattern: 'ˆ.*?$'
+                  minLength: 3
+                  maxLength: 16
+                Id:
+                  type: string
+                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
+                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        required: true
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
 
   /profile/{Id}/{ImageId}/like:
     parameters:
