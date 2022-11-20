@@ -185,7 +185,7 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
-  /profile/{Id}:
+  /profile/{id}:
     parameters:
       - $ref: "#components/parameters/IdParam"
     get:
@@ -277,7 +277,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{Id}/ban:
+  /profile/{id}/ban:
     parameters:
       - $ref: "#components/parameters/IdParam"
     post:
@@ -353,7 +353,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{Id}/{ImageId}:
+  /profile/{id}/{imageId}:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -415,7 +415,7 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
 
-  /profile/{Id}/{ImageId}/like:
+  /profile/{id}/{imageId}/like:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -495,7 +495,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{Id}/{ImageId}/comment:
+  /profile/{id}/{imageId}/comment:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -583,7 +583,7 @@ paths:
 
 #  /profile/{id}/ultra:
 
-  /profile/{Id}/followers:
+  /profile/{id}/followers:
     parameters:
       - $ref: "#components/parameters/IdParam"
     get:
@@ -605,7 +605,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
-  /profile/{Id}/followings:
+  /profile/{id}/followings:
     parameters:
       - $ref: "#components/parameters/IdParam"
     get:
@@ -841,7 +841,7 @@ components:
         pattern: '^.*?$'
         minLength: 3
         maxLength: 16
-      name: Search
+      name: search
       required: true
       in: query
       description: Search for user by username
@@ -851,7 +851,7 @@ components:
         type: string
         example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
         pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-      name: Id
+      name: id
       required: true
       allowEmptyValue: false
       in: path
@@ -861,7 +861,7 @@ components:
         type: string
         example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
         pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-      name: ImageId
+      name: imageId
       required: true
       allowEmptyValue: false
       in: path
