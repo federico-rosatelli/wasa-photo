@@ -186,9 +186,9 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
   
   /profile/{id}:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
     get:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
       operationId: userProfile
       summary: Get user profile by id
@@ -205,6 +205,8 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     post:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
       operationId: followUser
       summary: Follow user by id
@@ -241,6 +243,8 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
       operationId: unFollow
       summary: Unfollow user by id
@@ -278,9 +282,9 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/ban:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
     post:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["BanProfile"]
       operationId: banUser
       summary: Ban user by id
@@ -317,6 +321,8 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["BanProfile"]
       operationId: unBan
       summary: unBan user by id
@@ -354,10 +360,10 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/{imageId}:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
-      - $ref: "#components/parameters/ImageIdParam"
     get:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
+        - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImage"]
       operationId: imageProfile
       summary: Get user image by id
@@ -374,6 +380,9 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
+        - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImage"]
       operationId: deleteImage
       summary: Delete image
@@ -416,10 +425,10 @@ paths:
 
 
   /profile/{id}/{imageId}/like:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
-      - $ref: "#components/parameters/ImageIdParam"
     post:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
+        - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageLike"]
       operationId: addLike
       summary: Add Like
@@ -456,6 +465,9 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
+        - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageLike"]
       operationId: deleteLike
       summary: Delete Like
@@ -496,10 +508,10 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/{imageId}/comment:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
-      - $ref: "#components/parameters/ImageIdParam"
     post:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
+        - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageComment"]
       operationId: addComment
       summary: Add Comment
@@ -542,6 +554,9 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
+        - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageComment"]
       operationId: deleteComment
       summary: Delete Comment
@@ -584,9 +599,9 @@ paths:
 #  /profile/{id}/ultra:
 
   /profile/{id}/followers:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
     get:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
       operationId: followersProfile
       summary: Get user followers by id
@@ -606,9 +621,9 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
   
   /profile/{id}/followings:
-    parameters:
-      - $ref: "#components/parameters/IdParam"
     get:
+      parameters:
+        - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
       operationId: followingsProfile
       summary: Get user followings by id
@@ -628,9 +643,9 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /search:
-    parameters:
-      - $ref: "#components/parameters/Search"
     get:
+      parameters:
+        - $ref: "#components/parameters/Search"
       tags: ["searchProfile"]
       operationId: searchProfile
       summary: Search fo User
