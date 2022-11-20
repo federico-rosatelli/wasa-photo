@@ -1,6 +1,6 @@
 openapi: 3.0.3
-servers:
-  - url: http://127.0.0.1:8080/
+# servers:
+#   - url: http://127.0.0.1:8080/
 info:
   title: WasaPhoto
   description: |-
@@ -132,6 +132,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     post:
       tags: ["myProfile"]
@@ -812,7 +813,7 @@ components:
     LegacyAuth:
       type: apiKey
       in: header
-      name: X-App-Token
+      name: Token
       description: |-
         App session token value. This value is sent by the server in the login
         and session refresh APIs.
