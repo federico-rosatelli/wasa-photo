@@ -93,9 +93,6 @@ paths:
         
   /:
     get:
-      parameters:
-        - $ref: "#components/parameters/IdQueryReq"
-        - $ref: "#components/parameters/UsernameQueryReq"
       tags: ["getstream"]
       summary: Stream of the user
       description: |-
@@ -118,9 +115,6 @@ paths:
 
   /profile:
     get:
-      parameters:
-        - $ref: "#components/parameters/IdQueryReq"
-        - $ref: "#components/parameters/UsernameQueryReq"
       tags: ["myProfile"]
       operationId: myProfile
       summary: Get my Profile
@@ -184,10 +178,8 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
-  /profile/{id}:
+  /profile/{Id}:
     parameters:
-      - $ref: "#components/parameters/IdQuery"
-      - $ref: "#components/parameters/UsernameQuery"
       - $ref: "#components/parameters/IdParam"
     get:
       tags: ["UserProfile"]
@@ -211,6 +203,8 @@ paths:
       summary: Follow user by id
       description: |
         Follow user by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -243,6 +237,8 @@ paths:
       summary: Unfollow user by id
       description: |
         Unfollow user by id
+      security:
+        - LegacyAuth: []
       requestBody:
         content:
           application/json:
@@ -270,7 +266,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/ban:
+  /profile/{Id}/ban:
     parameters:
       - $ref: "#components/parameters/IdParam"
     post:
@@ -342,11 +338,9 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/{imageId}:
+  /profile/{Id}/{imageId}:
     parameters:
       - $ref: "#components/parameters/IdQuery"
-      - $ref: "#components/parameters/UsernameQuery"
-      - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
     get:
       tags: ["profileImage"]
@@ -365,7 +359,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/{imageId}/like:
+  /profile/{Id}/{imageId}/like:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -441,7 +435,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/{imageId}/comment:
+  /profile/{Id}/{imageId}/comment:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -524,10 +518,8 @@ paths:
 
 #  /profile/{id}/ultra:
 
-  /profile/{id}/followers:
+  /profile/{Id}/followers:
     parameters:
-      - $ref: "#components/parameters/IdQuery"
-      - $ref: "#components/parameters/UsernameQuery"
       - $ref: "#components/parameters/IdParam"
     get:
       tags: ["UserProfile"]
@@ -548,10 +540,8 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
-  /profile/{id}/followings:
+  /profile/{Id}/followings:
     parameters:
-      - $ref: "#components/parameters/IdQuery"
-      - $ref: "#components/parameters/UsernameQuery"
       - $ref: "#components/parameters/IdParam"
     get:
       tags: ["UserProfile"]
@@ -574,8 +564,6 @@ paths:
 
   /search:
     parameters:
-      - $ref: "#components/parameters/IdQuery"
-      - $ref: "#components/parameters/UsernameQuery"
       - $ref: "#components/parameters/Search"
     get:
       tags: ["searchProfile"]
@@ -761,42 +749,6 @@ components:
       description: Page Not Found
 
   parameters:
-    IdQuery:
-      schema:
-        type: string
-        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-      name: Id
-      required: false
-      in: query
-      description: Id of the user
-    UsernameQuery:
-      schema:
-        type: string
-        pattern: 'ˆ.*?$'
-        minLength: 3
-        maxLength: 16
-      name: Username
-      required: false
-      in: query
-      description: Username of the user
-    IdQueryReq:
-      schema:
-        type: string
-        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-      name: Id
-      required: true
-      in: query
-      description: Id of the user
-    UsernameQueryReq:
-      schema:
-        type: string
-        pattern: 'ˆ.*?$'
-        minLength: 3
-        maxLength: 16
-      name: Username
-      required: true
-      in: query
-      description: Username of the user
     Search:
       schema:
         type: string
