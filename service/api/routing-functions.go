@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"os"
 
+	customError "wasa-photo/service/api/errors"
+	"wasa-photo/service/api/functionalities"
+
 	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 )
@@ -670,9 +673,9 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 	userData.updateInfo(r, "/")
 	entry.Data = userData
 	users[id] = entry
-	filter := bson.D{{Key: "id", Value: id}}
-	update := bson.D{{Key: "$set", Value: bson.D{{Key: "data", Value: entry.Data}}}}
-	go mongodb.CollectionUsers.UpdateOne(mongodb.Ctx, filter, update)
+	// filter := bson.D{{Key: "id", Value: id}}
+	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "data", Value: entry.Data}}}}
+	//go mongodb.CollectionUsers.UpdateOne(mongodb.Ctx, filter, update)
 	// w.Header().Set("Content-type", "application/json")
 	profile := functionalities.GetProfile(id)
 	streamList := profile.GetNewStream()

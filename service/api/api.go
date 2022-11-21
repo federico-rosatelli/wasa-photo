@@ -40,7 +40,8 @@ import (
 	"errors"
 	"net/http"
 
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+	"wasa-photo/service/database"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
 )
@@ -51,7 +52,7 @@ type Config struct {
 	Logger logrus.FieldLogger
 
 	// Database is the instance of database.AppDatabase where data are saved
-	Database database.AppDatabase
+	Database database.AppDatabaseMongo
 }
 
 // Router is the package API interface representing an API handler builder
@@ -93,5 +94,5 @@ type _router struct {
 	// Use context logger if available (e.g., in requests) instead of this logger.
 	baseLogger logrus.FieldLogger
 
-	db database.AppDatabase
+	db database.AppDatabaseMongo
 }

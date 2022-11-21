@@ -3,7 +3,7 @@
 package api
 
 import (
-	"web/errors"
+	"wasa-photo/service/api/errors"
 
 	"github.com/google/uuid"
 )

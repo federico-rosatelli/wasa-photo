@@ -3,9 +3,6 @@ package functionalities
 import (
 	"math/rand"
 	"time"
-	"web/mongodb"
-
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type StreamContent struct {
@@ -48,7 +45,7 @@ func (p *Profile) GetNewStream() []StreamContent {
 
 func (p *Profile) AddAlreadySeen(imageId string) {
 	p.AlreadySeen[imageId] = time.Now().String()
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update := bson.D{{Key: "$set", Value: bson.D{{Key: "alreadyseen", Value: p.AlreadySeen}}}}
-	go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)
+	// filter := bson.D{{Key: "id", Value: p.Id}}
+	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "alreadyseen", Value: p.AlreadySeen}}}}
+	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)
 }

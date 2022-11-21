@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"regexp"
 	"time"
-	"web/errors"
-	"web/functionalities"
-	"web/mongodb"
+	"wasa-photo/service/api/errors"
+	"wasa-photo/service/api/functionalities"
 
 	"github.com/google/uuid"
 )
@@ -114,14 +113,14 @@ func (cred Credentials) returnID() string {
 }
 
 func newUserDB(user User) error {
-	_, err := mongodb.CollectionUsers.InsertOne(mongodb.Ctx, user)
-	return err
+	//_, err := mongodb.CollectionUsers.InsertOne(mongodb.Ctx, user)
+	return nil
 }
 
 // Insert the new session in the database
 func newSessionDB(session Session) error {
-	_, err := mongodb.CollectionSessions.InsertOne(mongodb.Ctx, session)
-	return err
+	//_, err := mongodb.CollectionSessions.InsertOne(mongodb.Ctx, session)
+	return nil
 }
 
 // Return a string and a boolean. It'll return the id of the user and true if exist a username
