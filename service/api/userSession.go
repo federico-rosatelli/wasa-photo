@@ -31,7 +31,7 @@ func updateIDSession(oldID string) string {
 	newID := uuid.NewString()
 	newSession := Session{
 		Username: sessions[oldID].Username,
-		Id:       newID,
+		Id:       oldID,
 	}
 	sessions[newID] = newSession
 	delete(sessions, oldID)
@@ -42,7 +42,6 @@ func updateIDSession(oldID string) string {
 // of the client in the map sessions, identified by id
 func (s *Session) updateUsernameSession(newUsername string) {
 	s.Username = newUsername
-	sessions[s.Id] = *s
 }
 
 // validateUserByUsernameID is used as a verification for a logged
@@ -63,4 +62,15 @@ func validateUserByUsernameID(username string, id string) error {
 	// }
 	sessions[id] = session
 	return nil
+}
+
+func returnSessionFromId(id string) (Session, error) {
+	session, err := sessions[id]
+	if id == "" {
+		return Session{}, errors.NewErrStatus("Token Error: " + id)
+	}
+	if !err {
+		return Session{}, errors.NewErrStatus("StatusUnauthorized")
+	}
+	return session, nil
 }

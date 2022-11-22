@@ -35,6 +35,7 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 	profile := functionalities.GetProfile(id)
 	image, err := profile.GetImageInfo(imageId)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if errJson := json.NewEncoder(w).Encode(image); errJson != nil {
@@ -360,7 +361,8 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 	id := params["id"]
 	imageId := params["imageId"]
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -380,9 +382,9 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 		}
 		return
 	}
-
+	idSession := session.Id
 	profile := functionalities.GetProfile(id)
-	profile.AddPhotoLike(prof.Id, imageId)
+	profile.AddPhotoLike(idSession, imageId)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -398,7 +400,8 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	params := mux.Vars(r)
 	id := params["id"]
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -418,8 +421,8 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 		}
 		return
 	}
-
-	profile := functionalities.GetProfile(prof.Id)
+	idSession := session.Id
+	profile := functionalities.GetProfile(idSession)
 	profile.AddFollowings(id)
 	// w.Header().Set("Content-type", "application/json")
 
@@ -436,7 +439,8 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 	params := mux.Vars(r)
 	id := params["id"]
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -456,8 +460,8 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 		}
 		return
 	}
-
-	profile := functionalities.GetProfile(prof.Id)
+	idSession := session.Id
+	profile := functionalities.GetProfile(idSession)
 	profile.DeleteFollower(id)
 	// w.Header().Set("Content-type", "application/json")
 
@@ -474,7 +478,8 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	params := mux.Vars(r)
 	id := params["id"]
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -494,8 +499,8 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 		}
 		return
 	}
-
-	profile := functionalities.GetProfile(prof.Id)
+	idSession := session.Id
+	profile := functionalities.GetProfile(idSession)
 	profile.AddBans(id)
 	// w.Header().Set("Content-type", "application/json")
 
@@ -512,7 +517,8 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 	params := mux.Vars(r)
 	id := params["id"]
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -532,8 +538,8 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 		}
 		return
 	}
-
-	profile := functionalities.GetProfile(prof.Id)
+	idSession := session.Id
+	profile := functionalities.GetProfile(idSession)
 	profile.UnBans(id)
 	// w.Header().Set("Content-type", "application/json")
 
@@ -546,9 +552,8 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	name := r.URL.Query().Get("name")
-	id := r.URL.Query().Get("id")
-	err := validateUserByUsernameID(name, id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -568,7 +573,7 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 		}
 		return
 	}
-
+	id := session.Id
 	profile := functionalities.GetProfile(id)
 	// w.Header().Set("Content-type", "application/json")
 
@@ -621,7 +626,8 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 	w.Header().Set("content-type", "application/json")
 	var prof functionalities.PhotoAdd
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -636,7 +642,8 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
 		}
 	}
-	profile := functionalities.GetProfile(prof.Id)
+	id := session.Id
+	profile := functionalities.GetProfile(id)
 	profile.AddAlreadySeen(prof.IdImage)
 	if errJson := json.NewEncoder(w).Encode("OK!"); errJson != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -646,9 +653,8 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 
 func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	name := r.URL.Query().Get("name")
-	id := r.URL.Query().Get("id")
-	err := validateUserByUsernameID(name, id)
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -667,7 +673,7 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 			return
 		}
 	}
-
+	id := session.Id
 	entry := users[id]
 	userData := users[id].Data
 	userData.updateInfo(r, "/")

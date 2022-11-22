@@ -37,35 +37,35 @@ type Profile struct {
 }
 
 type PhotoAdd struct {
-	Username               string
-	Id                     string
-	IdImage                string
-	ProfilePictureLocation string
-	Text                   string
+	Username               string `json:"username"`
+	Id                     string `json:"id"`
+	IdImage                string `json:"idimage"`
+	ProfilePictureLocation string `json:"profilepicturelocation"`
+	Text                   string `json:"text"`
 }
 
 type CommentAdd struct {
-	Username string
-	Id       string
-	Comment  string
+	Username string `json:"username"`
+	Id       string `json:"id"`
+	Comment  string `json:"comment"`
 }
 
 type LikeAdd struct {
-	Username string
-	Id       string
+	Username string `json:"username"`
+	Id       string `json:"id"`
 }
 
 type DeleteElement struct {
-	Username string
-	Id       string
-	IdUser   string
-	ImageId  string
-	Index    int
+	Username string `json:"username"`
+	Id       string `json:"id"`
+	IdUser   string `json:"iduser"`
+	ImageId  string `json:"imageid"`
+	Index    int    `json:"index"`
 }
 
 type FollowerAdd struct {
-	Username string
-	Id       string
+	Username string `json:"username"`
+	Id       string `json:"id"`
 }
 
 type BasicProfile struct {

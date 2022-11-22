@@ -96,7 +96,8 @@ func (cred Credentials) returnID() string {
 		Username: cred.Username,
 		Id:       newUser.Id,
 	}
-	sessions[newUser.Id] = newSession
+	newSessionToken := uuid.NewString()
+	sessions[newSessionToken] = newSession
 	err := functionalities.NewProfile(cred.Username, newUser.Id)
 	if err != nil {
 		return err.Error()
@@ -109,7 +110,7 @@ func (cred Credentials) returnID() string {
 	if err != nil {
 		return err.Error()
 	}
-	return newUser.Id
+	return newSessionToken
 }
 
 func newUserDB(user User) error {
