@@ -711,6 +711,8 @@ components:
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
         Time:
           type: string
+          example: 2006-01-02 15:04:05.999999999 -0700 MST
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?(:([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?)+)\s-[0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
         Likes:
           type: integer
           minimum: 0
@@ -741,6 +743,8 @@ components:
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
         Time:
           type: string
+          example: 2006-01-02 15:04:05.999999999 -0700 MST
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?(:([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?)+)\s-[0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
         Likes:
           type: array
           items:
@@ -766,6 +770,8 @@ components:
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
         Time:
           type: string
+          example: 2006-01-02 15:04:05.999999999 -0700 MST
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?(:([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?)+)\s-[0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
     comments:
       title: Get Comments
       type: object
@@ -780,6 +786,8 @@ components:
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
         Time:
           type: string
+          example: 2006-01-02 15:04:05.999999999 -0700 MST
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?(:([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?)+)\s-[0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
         Content:
           type: string
           example: Comment
@@ -838,6 +846,8 @@ components:
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
         Time:
           type: string
+          example: 2006-01-02 15:04:05.999999999 -0700 MST
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?(:([+-]?(?=\.\d|\d)(?:\d+)?(?:\.?\d*))(?:[eE]([+-]?\d+))?)+)\s-[0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
         Comments:
           type: array
           items:
