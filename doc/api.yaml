@@ -667,6 +667,10 @@ components:
   schemas:
     basicProfile:
       title: Get Basic Profile Info
+      description: |
+        The basic profile return an object with the information
+        of the user such as username, id, profile picture, name, surname,
+        the number of the followers and followings and the basic image object.
       type: object
       properties:
         Username:
@@ -706,6 +710,11 @@ components:
     basicImage:
       title: Get Basic Image Info
       type: object
+      description: |
+        The basic image return an object with the image information
+        such as the id of the image, the location, time creation,
+        the number of the likes and comments of the photo and the text
+        chosen by the user.
       properties:
         idImage:
           type: string
@@ -731,6 +740,11 @@ components:
     completeImage:
       title: Get Image Info
       type: object
+      description: |
+        The image info return an object with all image information
+        such as the id of the image, the location, time creation,
+        the text chosen by the user and two object arrays, one for the likes
+        and the other for the comments.
       properties:
         idImage:
           type: string
@@ -757,6 +771,9 @@ components:
     likes:
       title: Get Likes
       type: object
+      description: | 
+        The like return an object with all like information
+        such as the user id who liked the photo and the time of the like
       properties:
         UserIdLike:
           type: string
@@ -767,6 +784,10 @@ components:
     comments:
       title: Get Comments
       type: object
+      description: |
+        The comment return an object with all comment information
+        such as the user id who comment the photo, the time of the comment and
+        the content of the comment
       properties:
         UserIdComment:
           type: string
@@ -782,6 +803,10 @@ components:
     ultraBasicProfile:
       title: Get Ultra Basic Profile Info
       type: object
+      description: |
+        The ultra basic profile is used to get the very basic information of a user.
+        It'll return an object with user information such as the username, the id and the
+        profile picture.
       properties:
         Username:
           type: string
@@ -799,7 +824,21 @@ components:
     streamContent:
       title: The content of the stream object
       type: object
+      description: |
+        The stream content return an object with image information for the homepage of a user.
+        That object is compose by the username of the user of the image, his id, the image id, 
+        the image location, the time of creation of the image, the text of the image and two object arrays, 
+        one for the likes of the image and the other for the comments
       properties:
+        Username:
+          type: string
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+        Id:
+          type: string
+          example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
+          pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
         ImageId:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
