@@ -46,7 +46,7 @@ paths:
   /addphoto:
     post:
       tags: ["addPhoto"]
-      operationId: addPhoto
+      operationId: uploadPhoto
       summary: Post a new photo
       description: |
         Post a new photo
@@ -101,7 +101,7 @@ paths:
         The stream is an array of object
       security:
         - LegacyAuth: []
-      operationId: getStream
+      operationId: getMyStream
       responses:
         "200":
           description: Stream Sended successful
@@ -136,7 +136,7 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }
     post:
       tags: ["myProfile"]
-      operationId: setMyUsername
+      operationId: setMyUserName
       summary: Set my Name Surname and Username
       description: |
         Based on body request the name, surname and
@@ -190,7 +190,7 @@ paths:
       parameters:
         - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
-      operationId: userProfile
+      operationId: getUserProfile
       summary: Get user profile by id
       description: | 
         Get basic info on user profile by his id
@@ -246,7 +246,7 @@ paths:
       parameters:
         - $ref: "#components/parameters/IdParam"
       tags: ["UserProfile"]
-      operationId: unFollow
+      operationId: unfollowUser
       summary: Unfollow user by id
       description: |
         Unfollow user by id
@@ -324,7 +324,7 @@ paths:
       parameters:
         - $ref: "#components/parameters/IdParam"
       tags: ["BanProfile"]
-      operationId: unBan
+      operationId: unbanUser
       summary: unBan user by id
       description: |
         unBan user by id
@@ -384,7 +384,7 @@ paths:
         - $ref: "#components/parameters/IdParam"
         - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImage"]
-      operationId: deleteImage
+      operationId: deletePhoto
       summary: Delete image
       description: |
         Delete image of the user. If the user id
@@ -430,7 +430,7 @@ paths:
         - $ref: "#components/parameters/IdParam"
         - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageLike"]
-      operationId: addLike
+      operationId: likePhoto
       summary: Add Like
       description: |
         Add like on image by id
@@ -469,7 +469,7 @@ paths:
         - $ref: "#components/parameters/IdParam"
         - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageLike"]
-      operationId: deleteLike
+      operationId: unlikePhoto
       summary: Delete Like
       description: |
         Delete like on image by id
@@ -513,7 +513,7 @@ paths:
         - $ref: "#components/parameters/IdParam"
         - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageComment"]
-      operationId: addComment
+      operationId: commentPhoto
       summary: Add Comment
       description: |
         Add comment on image by id
@@ -558,7 +558,7 @@ paths:
         - $ref: "#components/parameters/IdParam"
         - $ref: "#components/parameters/ImageIdParam"
       tags: ["profileImageComment"]
-      operationId: deleteComment
+      operationId: uncommentPhoto
       summary: Delete Comment
       description: |
         Delete comment on image by id
