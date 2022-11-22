@@ -115,6 +115,10 @@ func run() error {
 
 	db, err := database.MakeInit(client)
 
+	if err != nil {
+		logger.WithError(err).Error("error creating mongo DB")
+		return fmt.Errorf("opening mongoDb: %w", err)
+	}
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)

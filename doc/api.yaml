@@ -91,6 +91,28 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      parameters:
+        - $ref: "#/components/paramaters/ImageId"
+      tags: ["profileImage"]
+      operationId: deletePhoto
+      summary: Delete image
+      description: |
+        Delete image of the user.
+      security:
+        - LegacyAuth: []
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/basicProfile"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
         
   /:
     get:
@@ -248,23 +270,6 @@ paths:
         Unfollow user by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-        required: true
       responses:
         "200":
           description: Status Ok
@@ -324,23 +329,6 @@ paths:
         unBan user by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-        required: true
       responses:
         "200":
           description: Status Ok
@@ -353,7 +341,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/{imageId}:
+  /profile/{id}/image/{imageId}:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -373,49 +361,8 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
-    delete:
-      tags: ["profileImage"]
-      operationId: deletePhoto
-      summary: Delete image
-      description: |
-        Delete image of the user. If the user id
-        match with the securityAuth id it'll return the basic
-        profile of the user. If the image isn't found it'll return
-        a 404NotFound response. If the user id doesn't match with 
-        the user id of the image it'll return a 401Unauthorized response.
-      security:
-        - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-        required: true
-      responses:
-        "200":
-          description: Status Ok
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
 
-
-  /profile/{id}/{imageId}/like:
+  /profile/{id}/image/{imageId}/like:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -463,26 +410,6 @@ paths:
         Delete like on image by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-                Index:
-                  type: integer
-                  minimum: 0
-        required: true
       responses:
         "200":
           description: Status Ok
@@ -495,7 +422,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/{imageId}/comment:
+  /profile/{id}/image/{imageId}/comment:
     parameters:
       - $ref: "#components/parameters/IdParam"
       - $ref: "#components/parameters/ImageIdParam"
@@ -542,6 +469,8 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
+      parameters:
+        - $ref: "#/components/paramaters/Index"
       tags: ["profileImageComment"]
       operationId: uncommentPhoto
       summary: Delete Comment
@@ -549,26 +478,6 @@ paths:
         Delete comment on image by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-                index:
-                  type: integer
-                  minimum: 0
-        required: true
       responses:
         "200":
           description: Status Ok
@@ -919,3 +828,22 @@ components:
       allowEmptyValue: false
       in: path
       description: Id of the image
+    Index:
+      schema:
+        type: integer
+        minimum: 0
+      name: index
+      required: true
+      allowEmptyValue: false
+      in: query
+      description: The index of the comment to delete
+    ImageId:
+      schema:
+        type: string
+        example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
+        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+      name: imageid
+      required: true
+      allowEmptyValue: false
+      in: query
+      description: The id of the image to delete.

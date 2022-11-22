@@ -294,9 +294,39 @@ func (p Profile) FindFollowingUser(id string) bool {
 
 // Unfollow a user by his id
 func (p *Profile) UnFollowers(id string) {
-	p.DeleteFollower(id)
+	p.UnfollowingUser(id)
 	user := profiles[id]
-	user.DeleteFollower(p.Id)
+	user.UnFollowerUser(p.Id)
+	profiles[p.Id] = *p
+}
+
+func (p *Profile) UnfollowingUser(id string) {
+	var followListN []UserFollow
+	for _, x := range p.Followings {
+		if x.IdUser != id {
+			follow := UserFollow{
+				IdUser: x.IdUser,
+				Time:   x.Time,
+			}
+			followListN = append(followListN, follow)
+		}
+	}
+	p.Followings = followListN
+	profiles[p.Id] = *p
+}
+
+func (p *Profile) UnFollowerUser(id string) {
+	var followList []UserFollow
+	for _, x := range p.Followings {
+		if x.IdUser != id {
+			follow := UserFollow{
+				IdUser: x.IdUser,
+				Time:   x.Time,
+			}
+			followList = append(followList, follow)
+		}
+	}
+	p.Followers = followList
 	profiles[p.Id] = *p
 }
 

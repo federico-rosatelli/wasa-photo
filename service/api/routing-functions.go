@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	customError "wasa-photo/service/api/errors"
 	"wasa-photo/service/api/functionalities"
@@ -26,9 +27,9 @@ func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps http
 
 func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	params := mux.Vars(r)
-	id := params["id"]
-	imageId := params["imageId"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
+	imageId := ps.ByName("imageid")
 	if !userExists(id) {
 		return
 	}
@@ -46,8 +47,8 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 
 func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	params := mux.Vars(r)
-	id := params["id"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
 	if !userExists(id) {
 		return
 	}
@@ -61,8 +62,8 @@ func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, p
 
 func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	params := mux.Vars(r)
-	id := params["id"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
 	if !userExists(id) {
 		return
 	}
@@ -76,8 +77,8 @@ func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, 
 
 func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	params := mux.Vars(r)
-	id := params["id"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
 	if !userExists(id) {
 		return
 	}
@@ -90,8 +91,8 @@ func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps ht
 
 func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	params := mux.Vars(r)
-	id := params["id"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
 	if !userExists(id) {
 		return
 	}
@@ -106,7 +107,8 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 	w.Header().Set("content-type", "application/json")
 	var prof functionalities.ProfileUpdate
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -143,12 +145,13 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 
 	//json.NewDecoder(r.Body).Decode(&prof)
 	prof := functionalities.PhotoAdd{
-		Username: r.PostFormValue("Username"),
-		Id:       r.PostFormValue("Id"),
-		Text:     r.PostFormValue("Text"),
+		Username: r.PostFormValue("username"),
+		Id:       r.PostFormValue("id"),
+		Text:     r.PostFormValue("text"),
 	}
 
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -203,9 +206,11 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.PhotoAdd
-	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	// var prof functionalities.PhotoAdd
+	// json.NewDecoder(r.Body).Decode(&prof)
+	prof := r.URL.Query().Get("imageid")
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -225,9 +230,9 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 		}
 		return
 	}
-
-	profile := functionalities.GetProfile(prof.Id)
-	profile.DeletePhoto(prof.IdImage)
+	id := session.Id
+	profile := functionalities.GetProfile(id)
+	profile.DeletePhoto(prof)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -240,11 +245,12 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 	w.Header().Set("content-type", "application/json")
 
 	var prof functionalities.CommentAdd
-	params := mux.Vars(r)
-	id := params["id"]
-	imageId := params["imageId"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
+	imageId := ps.ByName("imageid")
 	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -278,12 +284,19 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.DeleteElement
-	params := mux.Vars(r)
-	id := params["id"]
-	imageId := params["imageId"]
-	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	//var prof functionalities.DeleteElement
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
+	imageId := ps.ByName("imageid")
+	//json.NewDecoder(r.Body).Decode(&prof)
+	prof := r.URL.Query().Get("index")
+	index, err := strconv.Atoi(prof)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -294,7 +307,7 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			} else {
-				http.Error(w, err.Error(), http.StatusUnauthorized)
+				http.Error(w, err.Error(), http.StatusBadRequest)
 
 			}
 		default:
@@ -304,8 +317,9 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+	sessionId := session.Id
 	profile := functionalities.GetProfile(id)
-	profile.DeletePhotoComment(prof.Id, imageId, prof.Index)
+	profile.DeletePhotoComment(sessionId, imageId, index)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -317,12 +331,12 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.DeleteElement
-	params := mux.Vars(r)
-	id := params["id"]
-	imageId := params["imageId"]
-	json.NewDecoder(r.Body).Decode(&prof)
-	err := validateUserByUsernameID(prof.Username, prof.Id)
+	//var prof functionalities.DeleteElement
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
+	imageId := ps.ByName("imageid")
+	ua := r.Header.Get("Token")
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -342,9 +356,9 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 		}
 		return
 	}
-
+	sessionId := session.Id
 	profile := functionalities.GetProfile(id)
-	profile.DeletePhotoLike(prof.Id, imageId)
+	profile.DeletePhotoLike(sessionId, imageId)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -357,9 +371,9 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 	w.Header().Set("content-type", "application/json")
 
 	var prof functionalities.LikeAdd
-	params := mux.Vars(r)
-	id := params["id"]
-	imageId := params["imageId"]
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
+	imageId := ps.ByName("imageid")
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
@@ -397,8 +411,7 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	w.Header().Set("content-type", "application/json")
 
 	var prof functionalities.FollowerAdd
-	params := mux.Vars(r)
-	id := params["id"]
+	id := ps.ByName("id")
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
@@ -435,10 +448,10 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.FollowerAdd
-	params := mux.Vars(r)
-	id := params["id"]
-	json.NewDecoder(r.Body).Decode(&prof)
+	//var prof functionalities.FollowerAdd
+	//params := mux.Vars(r)
+	id := ps.ByName("id")
+	//json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {
@@ -462,8 +475,7 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 	}
 	idSession := session.Id
 	profile := functionalities.GetProfile(idSession)
-	profile.DeleteFollower(id)
-	// w.Header().Set("Content-type", "application/json")
+	profile.UnFollowers(id)
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
@@ -608,6 +620,7 @@ func (rt *_router) AddPhotoProfileGet(w http.ResponseWriter, r *http.Request, ps
 func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	var creds Credentials
+	log.Printf(creds.Username)
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
 		log.Println(err)
