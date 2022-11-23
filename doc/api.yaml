@@ -182,7 +182,7 @@ paths:
   
   /profile/{id}:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
     get:
       tags: ["UserProfile"]
       operationId: getUserProfile
@@ -237,7 +237,7 @@ paths:
 
   /profile/{id}/ban:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
     put:
       tags: ["BanProfile"]
       operationId: banUser
@@ -277,8 +277,8 @@ paths:
 
   /profile/{id}/image/{imageId}:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
-      - {$ref: "#components/parameters/ImageIdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/ImageIdParam"}
     get:
       tags: ["profileImage"]
       operationId: imageProfile
@@ -316,8 +316,8 @@ paths:
 
   /profile/{id}/image/{imageId}/like:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
-      - {$ref: "#components/parameters/ImageIdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/ImageIdParam"}
     put:
       tags: ["profileImageLike"]
       operationId: likePhoto
@@ -358,8 +358,8 @@ paths:
 
   /profile/{id}/image/{imageId}/comment:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
-      - {$ref: "#components/parameters/ImageIdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/ImageIdParam"}
     post:
       tags: ["profileImageComment"]
       operationId: commentPhoto
@@ -426,7 +426,7 @@ paths:
 
   /profile/{id}/followers:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
     get:
       tags: ["UserProfile"]
       operationId: followersProfile
@@ -448,7 +448,7 @@ paths:
   /profile/{id}/followings:
     get:
       parameters:
-        - {$ref: "#components/parameters/IdParam"}
+        - {$ref: "#/components/parameters/IdParam"}
       tags: ["UserProfile"]
       operationId: followingsProfile
       summary: Get user followings by id
@@ -468,7 +468,7 @@ paths:
 
   /search:
     parameters:
-      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/IdParam"}
     get:
       tags: ["searchProfile"]
       operationId: searchProfile
