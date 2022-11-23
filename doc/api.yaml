@@ -86,34 +86,11 @@ paths:
           description: Photo uploaded successful
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-    delete:
-      parameters:
-        - $ref: "#/components/paramaters/ImageId"
-      tags: ["profileImage"]
-      operationId: deletePhoto
-      summary: Delete image
-      description: |
-        Delete image of the user.
-      security:
-        - LegacyAuth: []
-      responses:
-        "200":
-          description: Status Ok
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-        
   /:
     get:
       tags: ["getstream"]
@@ -131,8 +108,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/streamContent"
+                items: {$ref: "#/components/schemas/streamContent"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
@@ -201,15 +177,14 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   
   /profile/{id}:
     parameters:
-      - $ref: "#components/parameters/IdParam"
+      - {$ref: "#components/parameters/IdParam"}
     get:
       tags: ["UserProfile"]
       operationId: getUserProfile
@@ -221,12 +196,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
-    post:
+    put:
       tags: ["UserProfile"]
       operationId: followUser
       summary: Follow user by id
@@ -234,30 +208,12 @@ paths:
         Follow user by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-        required: true
       responses:
         "200":
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -275,8 +231,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -284,8 +239,8 @@ paths:
 
   /profile/{id}/ban:
     parameters:
-      - $ref: "#components/parameters/IdParam"
-    post:
+      - {$ref: "#components/parameters/IdParam"}
+    put:
       tags: ["BanProfile"]
       operationId: banUser
       summary: Ban user by id
@@ -293,30 +248,12 @@ paths:
         Ban user by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-        required: true
       responses:
         "200":
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -334,8 +271,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -343,8 +279,8 @@ paths:
 
   /profile/{id}/image/{imageId}:
     parameters:
-      - $ref: "#components/parameters/IdParam"
-      - $ref: "#components/parameters/ImageIdParam"
+      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#components/parameters/ImageIdParam"}
     get:
       tags: ["profileImage"]
       operationId: imageProfile
@@ -361,12 +297,30 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
+    delete:
+      tags: ["profileImage"]
+      operationId: deletePhoto
+      summary: Delete image
+      description: |
+        Delete image of the user.
+      security:
+        - LegacyAuth: []
+      responses:
+        "200":
+          description: Status Ok
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/basicProfile"}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profile/{id}/image/{imageId}/like:
     parameters:
-      - $ref: "#components/parameters/IdParam"
-      - $ref: "#components/parameters/ImageIdParam"
-    post:
+      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#components/parameters/ImageIdParam"}
+    put:
       tags: ["profileImageLike"]
       operationId: likePhoto
       summary: Add Like
@@ -374,23 +328,6 @@ paths:
         Add like on image by id
       security:
         - LegacyAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-        required: true
       responses:
         "200":
           description: Status Ok
@@ -415,8 +352,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -424,8 +360,8 @@ paths:
 
   /profile/{id}/image/{imageId}/comment:
     parameters:
-      - $ref: "#components/parameters/IdParam"
-      - $ref: "#components/parameters/ImageIdParam"
+      - {$ref: "#components/parameters/IdParam"}
+      - {$ref: "#components/parameters/ImageIdParam"}
     post:
       tags: ["profileImageComment"]
       operationId: commentPhoto
@@ -462,15 +398,14 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
     delete:
       parameters:
-        - $ref: "#/components/paramaters/Index"
+        - { $ref: "#/components/parameters/Index" }
       tags: ["profileImageComment"]
       operationId: uncommentPhoto
       summary: Delete Comment
@@ -483,8 +418,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/completeImage"
+              schema: { $ref: "#/components/schemas/completeImage" }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -494,7 +428,7 @@ paths:
 
   /profile/{id}/followers:
     parameters:
-      - $ref: "#components/parameters/IdParam"
+      - {$ref: "#components/parameters/IdParam"}
     get:
       tags: ["UserProfile"]
       operationId: followersProfile
@@ -508,8 +442,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/ultraBasicProfile"
+                items: {$ref: "#/components/schemas/ultraBasicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -517,7 +450,7 @@ paths:
   /profile/{id}/followings:
     get:
       parameters:
-        - $ref: "#components/parameters/IdParam"
+        - {$ref: "#components/parameters/IdParam"}
       tags: ["UserProfile"]
       operationId: followingsProfile
       summary: Get user followings by id
@@ -530,15 +463,14 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/ultraBasicProfile"
+                items: {$ref: "#/components/schemas/ultraBasicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
   /search:
     parameters:
-      - $ref: "#components/parameters/IdParam"
+      - {$ref: "#components/parameters/IdParam"}
     get:
       tags: ["searchProfile"]
       operationId: searchProfile
@@ -554,8 +486,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/ultraBasicProfile"
+                items: {$ref: "#/components/schemas/ultraBasicProfile"}
 
 components:
   schemas:
