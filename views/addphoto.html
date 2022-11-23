@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    
+      <input type="file" name="myFile" id="image"/>
+      <input type="text" id="username">
+      <input type="text" id="id">
+      <input type="text" id="text">
+      <button onclick="send()">Send</button>
+
+  </body>
+  <script>
+    async function send() {
+        var username = document.getElementById("username").value;
+        var id = document.getElementById("id").value;
+        var text = document.getElementById("text").value;
+        var image = document.getElementById("image").files[0];
+        var dataObj = new FormData()
+        dataObj.append('username',username)
+        dataObj.append('id',id)
+        dataObj.append('text',text)
+        dataObj.append('myFile',image)
+        
+
+        await fetch("/addphoto", {
+            method: "POST",
+            body: dataObj
+        })
+        .then((response) => response.json())
+        .then((data)=>{
+            //console.log(data)
+            location.href = `/profile?name=${data.Username}&id=${data.Id}`;
+        })
+    }
+</script>
+</html>
