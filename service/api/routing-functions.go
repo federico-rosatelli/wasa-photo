@@ -11,7 +11,6 @@ import (
 	customError "wasa-photo/service/api/errors"
 	"wasa-photo/service/api/functionalities"
 
-	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -144,6 +143,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 	//var prof functionalities.PhotoAdd
 
 	//json.NewDecoder(r.Body).Decode(&prof)
+	// TODO
 	prof := functionalities.PhotoAdd{
 		Username: r.PostFormValue("username"),
 		Id:       r.PostFormValue("id"),
@@ -370,11 +370,11 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.LikeAdd
+	//var prof functionalities.LikeAdd
 	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	imageId := ps.ByName("imageid")
-	json.NewDecoder(r.Body).Decode(&prof)
+	//json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {
@@ -410,9 +410,9 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.FollowerAdd
+	//var prof functionalities.FollowerAdd
 	id := ps.ByName("id")
-	json.NewDecoder(r.Body).Decode(&prof)
+	//json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {
@@ -486,10 +486,10 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.FollowerAdd
-	params := mux.Vars(r)
-	id := params["id"]
-	json.NewDecoder(r.Body).Decode(&prof)
+	// var prof functionalities.FollowerAdd
+	// params := mux.Vars(r)
+	id := ps.ByName("id")
+	//json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {
@@ -525,10 +525,10 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.FollowerAdd
-	params := mux.Vars(r)
-	id := params["id"]
-	json.NewDecoder(r.Body).Decode(&prof)
+	// var prof functionalities.FollowerAdd
+	// params := mux.Vars(r)
+	id := ps.ByName("id")
+	//json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {

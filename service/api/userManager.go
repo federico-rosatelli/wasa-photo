@@ -81,7 +81,7 @@ type userData struct {
 // if the user doesn't exist the function creates
 // the user structure and pushes it into the database
 func (cred Credentials) returnID() string {
-	for key, value := range users {
+	for key, value := range sessions {
 		if value.Username == cred.Username {
 			return key
 		}

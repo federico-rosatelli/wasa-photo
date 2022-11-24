@@ -10,7 +10,7 @@ Content-Type: application/json
 ### GetProfile fede
 
 GET http://127.0.0.1:3000/profile
-Token: b6938db1-7d21-42b9-9ffe-524233bac8ed
+Token: a5af73e2-33bd-49e7-85ad-b645b04743e3
 
 ### doLogin fede2
 
