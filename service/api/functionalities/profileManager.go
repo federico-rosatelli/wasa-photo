@@ -446,7 +446,7 @@ func GetProfileBasicInfo(id string) BasicProfile {
 // Add a photo in the profile.
 // It'll create a new id and set the position
 // of the image
-func (p *Profile) AddPhoto(text string) {
+func (p *Profile) AddPhoto(text string) string {
 	newID := uuid.NewString()
 	image := Image{
 		IdImage:  newID,
@@ -461,6 +461,7 @@ func (p *Profile) AddPhoto(text string) {
 	// filter := bson.D{{Key: "id", Value: p.Id}}
 	// push := bson.M{"$push": bson.M{"images": image}}
 	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, push)
+	return image.IdImage
 }
 
 // Delete a photo from Profile.Images

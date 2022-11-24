@@ -144,14 +144,9 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 
 	//json.NewDecoder(r.Body).Decode(&prof)
 	// TODO
-	prof := functionalities.PhotoAdd{
-		Username: r.PostFormValue("username"),
-		Id:       r.PostFormValue("id"),
-		Text:     r.PostFormValue("text"),
-	}
 
 	ua := r.Header.Get("Token")
-	_, err := returnSessionFromId(ua)
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -162,7 +157,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			} else {
-				http.Error(w, err.Error(), http.StatusUnauthorized)
+				http.Error(w, err.Error(), http.StatusBadRequest)
 
 			}
 		default:
@@ -171,19 +166,31 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		}
 		return
 	}
-	profile := functionalities.GetProfile(prof.Id)
+	id := session.Id
+	prof := functionalities.PhotoAdd{
+		Username:               users[id].Username,
+		Id:                     users[id].Id,
+		Text:                   r.PostFormValue("text"),
+		ProfilePictureLocation: r.PostFormValue("profilePicture"),
+	}
+	profile := functionalities.GetProfile(id)
 	if prof.ProfilePictureLocation != "" {
 		profile.UpdateProfilePicture(prof.ProfilePictureLocation)
-	} else {
-
-		profile.AddPhoto(prof.Text)
+		if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
+			http.Error(w, errJson.Error(), http.StatusBadRequest)
+			return
+		}
+		return
 	}
 
-	lastImageId := profile.Images[0].IdImage
+	idImage := profile.AddPhoto(prof.Text)
+
+	lastImageId := idImage
 	r.ParseMultipartForm(10 << 20)
 	file, _, err := r.FormFile("myFile")
 
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -191,6 +198,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 	f, err := os.OpenFile("./public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		f.Close()
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer f.Close()

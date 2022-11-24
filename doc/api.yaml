@@ -25,7 +25,7 @@ paths:
                 name:
                   type: string
                   example: Maria
-                  pattern: 'ˆ.*?$'
+                  pattern: '^[a-zA-Z]*'
                   minLength: 3
                   maxLength: 16
         required: true
@@ -52,27 +52,16 @@ paths:
         - LegacyAuth: []
       requestBody:
         description: |
-          The user must provides the username, id and
-          the photo data
+          The user must provides the photo data and the text.
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
                 text:
                   type: string
                   example: Test
-                  pattern: 'ˆ.*?$'
+                  pattern: '^.*'
                   minLength: 1
                   maxLength: 256
                 myFile:
@@ -80,7 +69,7 @@ paths:
                   format: binary
         required: true
       responses:
-        "200":
+        "201":
           description: Photo uploaded successful
           content:
             application/json:
@@ -140,38 +129,36 @@ paths:
       security:
         - LegacyAuth: []
       requestBody:
+        description: |
+          The user must provides a new username, name and surname.
+          The propertie could be empty.
         content:
           application/json:
             schema:
               type: object
+              description: The schema of the profile
               properties:
-                Username:
-                  type: string
-                  pattern: 'ˆ.*?$'
-                  example: Maria
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
                 newUsername:
                   type: string
-                  pattern: 'ˆ.*?$'
+                  pattern: '^[a-zA-Z]*'
                   example: Maria
                   minLength: 3
                   maxLength: 16
                 name:
                   type: string
                   example: Mario
-                  pattern: 'ˆ.*?$'
+                  pattern: '^[a-zA-Z]*'
+                  minLength: 1
+                  maxLength: 30
                 surname:
                   type: string
                   example: Rossi
-                  pattern: 'ˆ.*?$'
-        required: true
+                  pattern: '^[a-zA-Z]*'
+                  minLength: 1
+                  maxLength: 30
+        required: false
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -189,6 +176,8 @@ paths:
       summary: Get user profile by id
       description: | 
         Get basic info on user profile by his id
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Status Ok
@@ -207,7 +196,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -225,7 +214,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -247,7 +236,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -265,7 +254,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -285,6 +274,8 @@ paths:
       summary: Get user image by id
       description: | 
         Get image info by imageId and userId
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Status Ok
@@ -304,7 +295,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -314,7 +305,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/image/{imageId}/like:
+  /profile/{id}/image/like/{imageId}:
     parameters:
       - {$ref: "#/components/parameters/IdParam"}
       - {$ref: "#/components/parameters/ImageIdParam"}
@@ -327,7 +318,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -346,7 +337,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -356,7 +347,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/image/{imageId}/comment:
+  /profile/{id}/image/comment/{imageId}:
     parameters:
       - {$ref: "#/components/parameters/IdParam"}
       - {$ref: "#/components/parameters/ImageIdParam"}
@@ -369,30 +360,23 @@ paths:
       security:
         - LegacyAuth: []
       requestBody:
+        description: |
+          The properties of the post schema is defined by the content
+          of the comment. The username and id of the user is passed by the security token.
         content:
           application/json:
             schema:
               type: object
               properties:
-                username:
-                  type: string
-                  example: Maria
-                  pattern: 'ˆ.*?$'
-                  minLength: 3
-                  maxLength: 16
-                id:
-                  type: string
-                  example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-                  pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
                 content:
                   type: string
-                  pattern: 'ˆ.*?$'
+                  pattern: '^.*'
                   example: Comment
                   minLength: 3
                   maxLength: 16
         required: true
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -412,7 +396,7 @@ paths:
       security:
         - LegacyAuth: []
       responses:
-        "200":
+        "201":
           description: Status Ok
           content:
             application/json:
@@ -431,6 +415,8 @@ paths:
       summary: Get user ultra basic profile by id
       description: | 
         Get ultra basic profile of a user profile by his id
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Status Ok
@@ -450,6 +436,8 @@ paths:
       summary: Get user followers by id
       description: | 
         Get all followers of a user profile by his id
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Status Ok
@@ -471,6 +459,8 @@ paths:
       summary: Get user followings by id
       description: | 
         Get all followings of a user profile by his id
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Status Ok
@@ -485,15 +475,18 @@ paths:
 
   /search:
     parameters:
-      - {$ref: "#/components/parameters/IdParam"}
+      - {$ref: "#/components/parameters/Search"}
     get:
       tags: ["searchProfile"]
       operationId: searchProfile
       summary: Search fo User
+      
       description: |-
         Search by query a user.
         It'll always return a list of ultra-basic
         information of the user.
+      security:
+        - LegacyAuth: []
       responses:
         "200":
           description: Status Ok
@@ -502,6 +495,8 @@ paths:
               schema:
                 type: array
                 items: {$ref: "#/components/schemas/ultraBasicProfile"}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
 
 components:
   schemas:
@@ -516,25 +511,31 @@ components:
         Username:
           type: string
           example: Maria
-          pattern: 'ˆ.*?$'
+          pattern: '^[a-zA-Z]*'
           minLength: 3
           maxLength: 16
         Id:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         ProfilePictureLocation:
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+          minLength: 48
+          maxLength: 48
         Name:
           type: string
           example: Mario
+          pattern: '^[a-zA-Z]*'
           maxLength: 20
           minLength: 0
         Surname:
           type: string
           example: Rossi
+          pattern: '^[a-zA-Z]*'
           maxLength: 20
           minLength: 0
         Followers:
@@ -560,14 +561,20 @@ components:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         Location:
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+          minLength: 48
+          maxLength: 48
         Time:
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
+          minLength: 0
+          maxLength: 100
         Likes:
           type: integer
           minimum: 0
@@ -577,6 +584,7 @@ components:
         Text:
           type: string
           example: Text Image
+          pattern: '^.*'
           minLength: 1
           maxLength: 256
     completeImage:
@@ -592,14 +600,20 @@ components:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         Location:
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+          minLength: 48
+          maxLength: 48
         Time:
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
+          minLength: 0
+          maxLength: 100
         Likes:
           type: array
           items:
@@ -610,6 +624,7 @@ components:
             $ref: "#/components/schemas/comments"
         Text:
           type: string
+          pattern: '^.*'
           minLength: 1
           maxLength: 256
     likes:
@@ -623,10 +638,14 @@ components:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         Time:
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
+          minLength: 0
+          maxLength: 100
     comments:
       title: Get Comments
       type: object
@@ -639,13 +658,18 @@ components:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         Time:
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
+          minLength: 0
+          maxLength: 100
         Content:
           type: string
           example: Comment
+          pattern: '^.*'
           minLength: 0
           maxLength: 256
     ultraBasicProfile:
@@ -658,17 +682,21 @@ components:
       properties:
         Username:
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^[a-zA-Z]*'
           minLength: 3
           maxLength: 16
         Id:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         ProfilePictureLocation:
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+          minLength: 48
+          maxLength: 48
     streamContent:
       title: The content of the stream object
       type: object
@@ -680,29 +708,39 @@ components:
       properties:
         Username:
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^[a-zA-Z]*'
           minLength: 3
           maxLength: 16
         Id:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         ProfilePictureLocation:
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+          minLength: 48
+          maxLength: 48
         ImageId:
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+          minLength: 36
+          maxLength: 36
         ImageLocation:
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
+          minLength: 48
+          maxLength: 48
         Time:
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
+          minLength: 0
+          maxLength: 100
         Comments:
           type: array
           items:
@@ -716,6 +754,7 @@ components:
           example: Text Image
           minLength: 1
           maxLength: 256
+          pattern: '^.*'
 
   securitySchemes:
     LegacyAuth:
@@ -759,6 +798,8 @@ components:
         type: string
         example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
         pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        minLength: 36
+        maxLength: 36
       name: id
       required: true
       allowEmptyValue: false
@@ -769,6 +810,8 @@ components:
         type: string
         example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
         pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+        minLength: 36
+        maxLength: 36      
       name: imageId
       required: true
       allowEmptyValue: false
@@ -783,13 +826,3 @@ components:
       allowEmptyValue: false
       in: query
       description: The index of the comment to delete
-    ImageId:
-      schema:
-        type: string
-        example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
-        pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
-      name: imageid
-      required: true
-      allowEmptyValue: false
-      in: query
-      description: The id of the image to delete.
