@@ -16,11 +16,9 @@ type UserFollow struct {
 }
 
 type ProfileUpdate struct {
-	Username    string
-	Id          string
-	NewUsername string
-	Name        string
-	Surname     string
+	NewUsername string `json:"username"`
+	Name        string `json:"name"`
+	Surname     string `json:"surname"`
 }
 
 type Profile struct {
@@ -37,35 +35,13 @@ type Profile struct {
 }
 
 type PhotoAdd struct {
-	Username               string `json:"username"`
-	Id                     string `json:"id"`
 	IdImage                string `json:"idimage"`
 	ProfilePictureLocation string `json:"profilepicturelocation"`
 	Text                   string `json:"text"`
 }
 
 type CommentAdd struct {
-	Username string `json:"username"`
-	Id       string `json:"id"`
-	Comment  string `json:"comment"`
-}
-
-type LikeAdd struct {
-	Username string `json:"username"`
-	Id       string `json:"id"`
-}
-
-type DeleteElement struct {
-	Username string `json:"username"`
-	Id       string `json:"id"`
-	IdUser   string `json:"iduser"`
-	ImageId  string `json:"imageid"`
-	Index    int    `json:"index"`
-}
-
-type FollowerAdd struct {
-	Username string `json:"username"`
-	Id       string `json:"id"`
+	Comment string `json:"comment"`
 }
 
 type BasicProfile struct {
@@ -197,7 +173,6 @@ func GetPictureLocationById(id string) string {
 // Set the new username of the profile
 func (p *Profile) SetMyUsername(newUsername string) {
 	p.Username = newUsername
-	p.ProfilePicture.updateUsername(newUsername)
 	profiles[p.Id] = *p
 	// filter := bson.D{{Key: "id", Value: p.Id}}
 	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "username", Value: newUsername}}}}

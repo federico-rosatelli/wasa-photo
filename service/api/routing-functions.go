@@ -107,7 +107,7 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 	var prof functionalities.ProfileUpdate
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
-	_, err := returnSessionFromId(ua)
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -123,9 +123,10 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 		}
 		return
 	}
-	profile := functionalities.GetProfile(prof.Id)
+	idSession := session.Id
+	profile := functionalities.GetProfile(idSession)
 	if prof.NewUsername != "" {
-		user := users[prof.Id]
+		user := users[idSession]
 		user.updateUsername(prof.NewUsername)
 	} else {
 		profile.UpdateProfileInfo(prof)
@@ -168,8 +169,6 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 	}
 	id := session.Id
 	prof := functionalities.PhotoAdd{
-		Username:               users[id].Username,
-		Id:                     users[id].Id,
 		Text:                   r.PostFormValue("text"),
 		ProfilePictureLocation: r.PostFormValue("profilePicture"),
 	}
@@ -258,7 +257,7 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 	imageId := ps.ByName("imageid")
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
-	_, err := returnSessionFromId(ua)
+	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
 		case *customError.ErrStatus:
@@ -278,9 +277,9 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 		}
 		return
 	}
-
+	idSession := session.Id
 	profile := functionalities.GetProfile(id)
-	profile.AddPhotoComment(prof.Id, imageId, prof.Comment)
+	profile.AddPhotoComment(idSession, imageId, prof.Comment)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -628,8 +627,8 @@ func (rt *_router) AddPhotoProfileGet(w http.ResponseWriter, r *http.Request, ps
 func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	var creds Credentials
-	log.Printf(creds.Username)
 	err := json.NewDecoder(r.Body).Decode(&creds)
+	log.Printf(creds.Username)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)

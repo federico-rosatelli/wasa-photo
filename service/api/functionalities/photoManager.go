@@ -3,8 +3,6 @@ package functionalities
 import (
 	"log"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Like struct {
@@ -27,8 +25,6 @@ type Image struct {
 }
 
 type ProfilePicture struct {
-	Username string
-	Id       string
 	Location string
 	Time     string
 }
@@ -122,15 +118,10 @@ func (i *Image) addComment(id string, content string) {
 func (pp *ProfilePicture) updatePicture(newLocation string) {
 	pp.Location = newLocation
 	pp.Time = time.Now().String()
-	pp.Id = uuid.NewString()
 }
 
 func (pp *ProfilePicture) getPictureLocation() string {
 	return pp.Location
-}
-
-func (pp *ProfilePicture) updateUsername(newUsername string) {
-	pp.Username = newUsername
 }
 
 func (i *Image) getBasicImage() BasicImage {
