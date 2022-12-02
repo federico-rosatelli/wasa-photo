@@ -12,6 +12,10 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 				'@': fileURLToPath(new URL('./src', import.meta.url))
 			}
 		},
+		devServer: {
+			proxy: 'http://localhost/',
+			port:3000,
+		},
 	};
 	if (command === 'serve') {
 		ret.define = {
@@ -21,11 +25,6 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 		ret.define = {
 			"__API_URL__": JSON.stringify("/"),
 		};
-	}
-	module.exports = {
-		devServer: {
-		proxy: 'http://127.0.0.1',
-		}
 	}
 	return ret;
 })

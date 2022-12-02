@@ -9,6 +9,7 @@ func (rt *_router) Handler() http.Handler {
 	// Register routes
 	rt.router.GET("/", rt.Welcome)
 	rt.router.POST("/", rt.AddSeen)
+	rt.router.GET("/images/:id", rt.ServeImage)
 	rt.router.POST("/signin", rt.SignIn)
 	rt.router.POST("/addphoto", rt.AddPhotoProfile)
 	rt.router.GET("/profile", rt.ProfileInfo)

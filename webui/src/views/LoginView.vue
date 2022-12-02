@@ -4,7 +4,7 @@ export default {
 		return {
 			errormsg: null,
 			loading: false,
-			token_data: null,
+			token_data: "",
 			myUsername: ""
 		}
 	},
@@ -12,23 +12,51 @@ export default {
 		async refresh() {
 			this.loading = true;
 			this.errormsg = null;
-			this.myUsername = "";
-			try {
-                //let username = myUsername
-                let dataPost = {
-                    username:this.myUsername
-                }
-				let response = await this.$axios.post("/signin",dataPost);
-				this.token_data = response.data;
-			} catch (e) {
-				this.errormsg = "prova "+e.toString();
+			//this.myUsername = "";
+			let dataPost = {
+				username:this.myUsername
 			}
+			const headers = {
+				'Content-Type': 'application/json'
+			};
+			// this.$axios.post("/signin",{
+			// 	username:this.myUsername
+			// 	})
+			// 	.then((response)=>{
+			// 		console.log(response);
+			// 		this.token_data = response.data;
+			// 	})
+			// 	.catch((e)=>{
+			// 		this.errormsg = e.toString();
+			// 	})
+			let response = await this.$axios.post("/signin",dataPost)
+			this.token_data = response.data
+			// fetch("http://127.0.0.1:3000/signin",{
+			// 	method:'POST',
+			// 	headers:{
+			// 		'Content-Type':'application/json'
+			// 	},
+			// 	body: JSON.stringify(dataPost)
+			// 	})
+			// 	.then((response) => response.text())
+  			// 	.then((data) => console.log(data));
+				// .catch((error)=>{
+				// 	this.errormsg = error.toString();
+				// })
+			// try {
+            //     //let username = myUsername
+			// 	let response = await this.$axios.post("/signin",dataPost);
+			// 	//let response = await this.$axios.get("/")
+			// 	this.token_data = response.data;
+			// } catch (e) {
+			// 	this.errormsg = "prova "+e.toString();
+			// }
 			this.loading = false;
 		},
 	},
-	mounted() {
-		this.refresh()
-	}
+	// mounted() {
+	// 	this.refresh()
+	// }
 }
 </script>
 

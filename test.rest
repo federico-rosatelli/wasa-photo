@@ -10,7 +10,7 @@ Content-Type: application/json
 ### GetProfile fede
 
 GET http://127.0.0.1:3000/profile
-Token: a5af73e2-33bd-49e7-85ad-b645b04743e3
+Token: 50bf482a-8d31-4673-813b-2b728a8798d7
 
 ### doLogin fede2
 
@@ -29,14 +29,9 @@ Token: 05c3d041-259d-46fd-94cd-d6bb85a869d6
 
 ### fede follow fede2
 
-POST http://127.0.0.1:3000/profile/7b4e82aa-6460-4712-870e-1d6c9189486c
-Token: 8c3e9d78-2a0f-4468-b1b2-30b4f7197e05
-Content-Type: application/json
+PUT http://127.0.0.1:3000/profile/199cd7ff-c6a1-437f-b50b-02df894ffbc5
+Token: 82cfccd2-ec7d-4ece-a8b2-09d176c401f4
 
-{
-    "username": "fede",
-    "id": "e71bff8c-4ed0-448f-94c2-cf99c80e68f0"
-}
 
 ### Delete follow
 DELETE http://127.0.0.1:3000/profile/7b4e82aa-6460-4712-870e-1d6c9189486c
@@ -47,5 +42,8 @@ Token: 8c3e9d78-2a0f-4468-b1b2-30b4f7197e05
 GET http://127.0.0.1:3000/profile/561e8019-d8a1-4eb3-8118-957ddf9c7ea7
 
 ### Get fede2 profile
+PUT http://127.0.0.1:3000/profile/199cd7ff-c6a1-437f-b50b-02df894ffbc5/like/593cc9a2-bb8b-464e-845c-e5c9ff836dbe
+Token: 82cfccd2-ec7d-4ece-a8b2-09d176c401f4
+###
 
 GET http://127.0.0.1:3000/profile/

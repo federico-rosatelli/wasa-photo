@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -625,21 +626,41 @@ func (rt *_router) AddPhotoProfileGet(w http.ResponseWriter, r *http.Request, ps
 }
 
 func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("content-type", "application/json")
+	// w.Header().Set("Access-Control-Allow-Origin", "*")
+	// w.Header().Set("Access-Control-Allow-Methods", "POST")
+	// //w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	// w.Header().Set("content-type", "application/json")
+	// w.WriteHeader(200)
+	log.Println("E QUA ENTRA PERO")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Endcoding, Content-Type, Content-Length, Authorization, X-CSRF-token")
+	//setupCorsResponse(&w, r)
 	var creds Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
-	log.Printf(creds.Username)
+	//log.Printf(creds.Username)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	userID := creds.returnID()
+	log.Println(userID)
+	r.Header.Add("Token", userID)
+	type returnId struct{ id string }
 	if errJson := json.NewEncoder(w).Encode(userID); errJson != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+
+func setupCorsResponse(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization")
 }
 
 func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -673,7 +694,9 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 
 func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	ua := r.Header.Get("Token")
+	log.Println(ua)
 	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
@@ -683,6 +706,7 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 			} else if err.Error() == "StatusInternalServerError" {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			} else {
+				r.Header.Add("Token", "Ciao")
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 		default:
@@ -713,4 +737,17 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+}
+
+func (s *_router) ServeImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id := ps.ByName("id")
+	buf, err := ioutil.ReadFile("./public/images/" + id)
+	if err != nil {
+		http.Error(w, "File Not Found", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "image/png")
+	//w.Header().Set("Content-Disposition", `attachment;filename="${id}"`)
+	w.Write(buf)
+	return
 }
