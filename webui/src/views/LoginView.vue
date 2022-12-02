@@ -4,22 +4,24 @@ export default {
 		return {
 			errormsg: null,
 			loading: false,
-			some_data: null,
+			token_data: null,
+			myUsername: ""
 		}
 	},
 	methods: {
 		async refresh() {
 			this.loading = true;
 			this.errormsg = null;
+			this.myUsername = "";
 			try {
-                let username = myUsername
+                //let username = myUsername
                 let dataPost = {
-                    username:username
+                    username:this.myUsername
                 }
 				let response = await this.$axios.post("/signin",dataPost);
-				this.some_data = response.data;
+				this.token_data = response.data;
 			} catch (e) {
-				this.errormsg = e.toString();
+				this.errormsg = "prova "+e.toString();
 			}
 			this.loading = false;
 		},
@@ -39,6 +41,7 @@ export default {
 			<div style="padding:15px">
 		</div>
     </div>
+	<h1>{{this.token_data}}</h1>
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	</div>
