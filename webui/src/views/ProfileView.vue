@@ -5,6 +5,9 @@ export default {
 			errormsg: null,
 			loading: false,
 			some_data: null,
+			token: null,
+			myName: null,
+			mySurname:null,
 		}
 	},
 	methods: {
@@ -12,9 +15,27 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/profile/199cd7ff-c6a1-437f-b50b-02df894ffbc5");
+				this.token = localStorage.getItem("Token")
+				
+				let response = await this.$axios.get("/profile",{headers:{"Token":this.token}});
 				this.some_data = response.data;
-				console.log(this.some_data);
+			} catch (e) {
+				this.errormsg = e.toString();
+			}
+			this.loading = false;
+		},
+		async change(){
+			this.loading = true;
+			this.errormsg = null;
+			try {
+				this.token = localStorage.getItem("Token")
+				let postData = {
+					name:this.myName,
+					surname:this.mySurname,
+				}
+
+				let response = await this.$axios.post("/profile",postData,{headers:{"Token":this.token}});
+				this.some_data = response.data;
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
@@ -52,12 +73,25 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">
+			<h2>Username</h2>
+			<h2>Id</h2>
+		</div>
+		<div v-if="this.some_data" style="display: flex; gap: 40px;">
 			<h2>{{this.some_data.Username}}</h2>
 			<h2>{{this.some_data.Id}}</h2>
 		</div>
+		<div v-if="this.some_data" style="display: flex; gap: 40px;">
+			<h2>Name</h2>
+			<h2>Surname</h2>
+		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 20%;">
-			<h2>{{this.some_data.Followers}}</h2>
-			<h2>{{this.some_data.Followings}}</h2>
+			<h2>{{this.some_data.Name}}</h2>
+			<h2>{{this.some_data.Surname}}</h2>
+		</div>
+		<div v-if="this.some_data" style="display: flex; gap: 20%;">
+			<input type="text" placeholder="Name" v-model="myName" >
+			<input type="text" placeholder="Surname" v-model="mySurname" >
+			<input type="submit" value="Change" @click="change">
 		</div>
 		<div v-if="this.some_data" class="grid-container">
 			<div v-for="item in this.some_data.Images" >

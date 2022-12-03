@@ -594,10 +594,11 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 	id := session.Id
-	profile := functionalities.GetProfile(id)
+	//profile := functionalities.GetProfile(id)
+	basic := functionalities.GetProfileBasicInfo(id)
 	// w.Header().Set("Content-type", "application/json")
 
-	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
+	if errJson := json.NewEncoder(w).Encode(basic); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
 	}
@@ -626,18 +627,7 @@ func (rt *_router) AddPhotoProfileGet(w http.ResponseWriter, r *http.Request, ps
 }
 
 func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// w.Header().Set("Access-Control-Allow-Origin", "*")
-	// w.Header().Set("Access-Control-Allow-Methods", "POST")
-	// //w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	// w.Header().Set("content-type", "application/json")
-	// w.WriteHeader(200)
-	log.Println("E QUA ENTRA PERO")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Endcoding, Content-Type, Content-Length, Authorization, X-CSRF-token")
-	//setupCorsResponse(&w, r)
+	w.Header().Set("content-type", "application/json")
 	var creds Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	//log.Printf(creds.Username)
@@ -649,18 +639,11 @@ func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 	userID := creds.returnID()
 	log.Println(userID)
-	r.Header.Add("Token", userID)
 	type returnId struct{ id string }
 	if errJson := json.NewEncoder(w).Encode(userID); errJson != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-}
-
-func setupCorsResponse(w *http.ResponseWriter, req *http.Request) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization")
 }
 
 func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

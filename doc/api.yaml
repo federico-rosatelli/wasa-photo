@@ -95,6 +95,7 @@ paths:
             application/json:
               schema:
                 type: array
+                maxItems: 99999999999
                 items: {$ref: "#/components/schemas/streamContent"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -224,7 +225,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/ban:
+  /ban/{id}:
     parameters:
       - {$ref: "#/components/parameters/IdParam"}
     put:
@@ -305,7 +306,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/image/like/{imageId}:
+  /profile/{id}/like/{imageId}:
     parameters:
       - {$ref: "#/components/parameters/IdParam"}
       - {$ref: "#/components/parameters/ImageIdParam"}
@@ -347,7 +348,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
 
-  /profile/{id}/image/comment/{imageId}:
+  /profile/{id}/comment/{imageId}:
     parameters:
       - {$ref: "#/components/parameters/IdParam"}
       - {$ref: "#/components/parameters/ImageIdParam"}
@@ -540,12 +541,15 @@ components:
           minLength: 0
         Followers:
           type: integer
-          minLength: 0
+          minimum: 0
+          maximum: 99999999999
         Followings:
           type: integer
           minimum: 0
+          maximum: 99999999999
         Images:
           type: array
+          maxItems: 99999999999
           items:
             $ref: "#/components/schemas/basicImage"
     basicImage:
@@ -578,9 +582,11 @@ components:
         Likes:
           type: integer
           minimum: 0
+          maximum: 99999999999
         Comments:
           type: integer
           minimum: 0
+          maximum: 99999999999
         Text:
           type: string
           example: Text Image
@@ -616,10 +622,12 @@ components:
           maxLength: 100
         Likes:
           type: array
+          maxItems: 99999999999
           items:
             $ref: "#/components/schemas/likes"
         Comments:
           type: array
+          maxItems: 99999999999
           items:
             $ref: "#/components/schemas/comments"
         Text:
@@ -743,10 +751,12 @@ components:
           maxLength: 100
         Comments:
           type: array
+          maxItems: 99999999999
           items:
             $ref: "#/components/schemas/comments"
         Likes:
           type: array
+          maxItems: 99999999999
           items:
             $ref: "#/components/schemas/likes"
         Text:
@@ -821,6 +831,7 @@ components:
       schema:
         type: integer
         minimum: 0
+        maximum: 99999999999
       name: index
       required: true
       allowEmptyValue: false

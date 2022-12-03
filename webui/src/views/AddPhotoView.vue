@@ -21,6 +21,20 @@ export default {
 			}
 			this.loading = false;
 		},
+		async sendPhoto(){
+			var formData = new FormData();
+			formData.append('text',document.getElementById("text").value)
+			formData.append('myFile',document.getElementById("myFile").files[0])
+			try {
+				this.token = localStorage.getItem("Token")
+				let response = await this.$axios.post("/addphoto",formData,{headers:{"Token":this.token}});
+				this.some_data = response.data;
+			} catch (e) {
+				this.errormsg = e.toString();
+			}
+			this.loading = false;
+			this.$router.push("profile")
+		},
 	},
 	mounted() {
 		this.refresh()
@@ -48,6 +62,12 @@ export default {
 					</button>
 				</div>
 			</div>
+		</div>
+
+		<div>
+			<input type="file" id="myFile">
+			<input type="text" placeholder="Text" id="text">
+			<button type="button" class="btn btn-sm btn-outline-primary" @click="sendPhoto">Send</button>
 		</div>
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
