@@ -13,7 +13,7 @@ const router = createRouter({
 		{path: '/login', component: LoginView},
 		{path: '/add', component: AddPhotoView},
 		{path: '/search', component: SearchView},
-		{path: '/:username/:imageid', component: HomeView},
+		{path: '/profile/:username', component: ProfileView},
 		{path: '/some/:id/link', component: HomeView},
 	]
 })

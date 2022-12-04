@@ -68,7 +68,10 @@ export default {
         </div>
         <div v-for="item in this.some_data">
             <h1>{{item.Id}}</h1>
-            <h1>{{item.Username}}</h1>
+            <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
+								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#spike"/></svg>
+								{{item.Username}}
+							</RouterLink>
         </div>
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>

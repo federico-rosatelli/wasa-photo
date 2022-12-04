@@ -18,8 +18,19 @@ import (
 func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	query := r.URL.Query().Get("query")
-	users := searchUsername(query)
-	if errJson := json.NewEncoder(w).Encode(users); errJson != nil {
+	precise := r.URL.Query().Get("precise")
+	var userQuery []functionalities.UltraBasicProfile
+	if precise == "1" {
+		dataId, v := findIdByUsername(query)
+		if v {
+			json.NewEncoder(w).Encode(userQuery)
+		}
+		dataUserQuery := functionalities.GetUltraBasicProfile(dataId)
+		userQuery = append(userQuery, dataUserQuery)
+	} else {
+		userQuery = searchUsername(query)
+	}
+	if errJson := json.NewEncoder(w).Encode(userQuery); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
 	}

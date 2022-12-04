@@ -29,8 +29,8 @@ Token: 05c3d041-259d-46fd-94cd-d6bb85a869d6
 
 ### fede follow fede2
 
-PUT http://127.0.0.1:3000/profile/199cd7ff-c6a1-437f-b50b-02df894ffbc5
-Token: 82cfccd2-ec7d-4ece-a8b2-09d176c401f4
+PUT http://127.0.0.1:3000/profile/c3897c33-43a0-4492-992e-d4d9e08a65e1
+Token: 20025eb7-8fe8-4c9f-a217-8936183b0764
 
 
 ### Delete follow

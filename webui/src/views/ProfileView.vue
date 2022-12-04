@@ -8,18 +8,30 @@ export default {
 			token: null,
 			myName: null,
 			mySurname:null,
+			myPage:true,
 		}
 	},
 	methods: {
 		async refresh() {
+			let userName = this.$route.params.username
+			let userId = ""
+			
 			this.loading = true;
 			this.errormsg = null;
+			this.token = localStorage.getItem("Token")
 			try {
-				this.token = localStorage.getItem("Token")
-				
-				let response = await this.$axios.get("/profile",{headers:{"Token":this.token}});
+				if (userName != null){
+					let users = await this.$axios.get("/search?query="+userName+"&precise=1",{headers:{"Token":this.token}});
+					// if (users.data == []){
+					// 	this.errormsg = "User not Found"
+					// 	return
+					// }
+					userId = "/"+users.data[0].Id
+					this.myPage = false
+				}
+				let response = await this.$axios.get("/profile"+userId,{headers:{"Token":this.token}});
 				this.some_data = response.data;
-				console.log(this.some_data);
+				
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
@@ -89,7 +101,7 @@ export default {
 			<h2>{{this.some_data.Name}}</h2>
 			<h2>{{this.some_data.Surname}}</h2>
 		</div>
-		<div v-if="this.some_data" style="display: flex; gap: 20%;">
+		<div v-if="(this.some_data && this.myPage)" style="display: flex; gap: 20%;">
 			<input type="text" placeholder="Name" v-model="myName" >
 			<input type="text" placeholder="Surname" v-model="mySurname" >
 			<input type="submit" value="Change" @click="change">
