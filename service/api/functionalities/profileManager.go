@@ -47,6 +47,8 @@ type CommentAdd struct {
 type BasicProfile struct {
 	Username               string
 	Id                     string
+	Name                   string
+	Surname                string
 	ProfilePictureLocation string
 	Followers              int
 	Followings             int
@@ -405,6 +407,8 @@ func GetProfileBasicInfo(id string) BasicProfile {
 	basic := BasicProfile{
 		Username:               profile.Username,
 		Id:                     profile.Id,
+		Name:                   profile.Name,
+		Surname:                profile.Surname,
 		ProfilePictureLocation: profile.ProfilePicture.getPictureLocation(),
 		Followers:              profile.GetLenUserFollowers(),
 		Followings:             profile.GetLenUserFollowings(),

@@ -19,6 +19,7 @@ export default {
 				
 				let response = await this.$axios.get("/profile",{headers:{"Token":this.token}});
 				this.some_data = response.data;
+				console.log(this.some_data);
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
@@ -96,12 +97,7 @@ export default {
 		<div v-if="this.some_data" class="grid-container">
 			<div v-for="item in this.some_data.Images" >
 				<div class="grid-item">
-					<img v-bind:src="'http://localhost:3000'+item.Location">
-					<div style="display: flex;gap: 20%;">
-						<h5>{{item.Text}}</h5>
-						<h4>{{item.Comments}}</h4>
-						<h4>{{item.Likes}}</h4>
-					</div>
+					<ImageComponent v-if="item" :imageComp="item" :idUser="this.some_data.Id" />
 				</div>
 			</div>
 		</div>
@@ -119,10 +115,5 @@ export default {
   font-size: 30px;
   text-align: center;
   border: 1px solid #000000;
-}
-.grid-item img{
-	object-fit: cover;
-	width: 230px;
-  	height: 230px;
 }
 </style>
