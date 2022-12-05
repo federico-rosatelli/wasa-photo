@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	customError "wasa-photo/service/api/errors"
-	"wasa-photo/service/api/functionalities"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -19,13 +18,13 @@ func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps http
 	w.Header().Set("content-type", "application/json")
 	query := r.URL.Query().Get("query")
 	precise := r.URL.Query().Get("precise")
-	var userQuery []functionalities.UltraBasicProfile
+	var userQuery []UltraBasicProfile
 	if precise == "1" {
 		dataId, v := findIdByUsername(query)
-		if v {
+		if !v {
 			json.NewEncoder(w).Encode(userQuery)
 		}
-		dataUserQuery := functionalities.GetUltraBasicProfile(dataId)
+		dataUserQuery := GetUltraBasicProfile(dataId)
 		userQuery = append(userQuery, dataUserQuery)
 	} else {
 		userQuery = searchUsername(query)
@@ -44,7 +43,7 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 	if !userExists(id) {
 		return
 	}
-	profile := functionalities.GetProfile(id)
+	profile := GetProfile(id)
 	image, err := profile.GetImageInfo(imageId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -63,7 +62,7 @@ func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, p
 	if !userExists(id) {
 		return
 	}
-	profile := functionalities.GetProfile(id)
+	profile := GetProfile(id)
 	followers := profile.GetBasicUserFollowers()
 	if errJson := json.NewEncoder(w).Encode(followers); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
@@ -78,7 +77,7 @@ func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, 
 	if !userExists(id) {
 		return
 	}
-	profile := functionalities.GetProfile(id)
+	profile := GetProfile(id)
 	followings := profile.GetBasicUserFollowings()
 	if errJson := json.NewEncoder(w).Encode(followings); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
@@ -93,7 +92,7 @@ func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps ht
 	if !userExists(id) {
 		return
 	}
-	data := functionalities.GetProfileBasicInfo(id)
+	data := GetProfileBasicInfo(id)
 	if errJson := json.NewEncoder(w).Encode(data); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
@@ -107,7 +106,7 @@ func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, 
 	if !userExists(id) {
 		return
 	}
-	data := functionalities.GetUltraBasicProfile(id)
+	data := GetUltraBasicProfile(id)
 	if errJson := json.NewEncoder(w).Encode(data); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
@@ -116,7 +115,7 @@ func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, 
 
 func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	var prof functionalities.ProfileUpdate
+	var prof ProfileUpdate
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
@@ -136,12 +135,12 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(idSession)
+	profile := GetProfile(idSession)
 	if prof.NewUsername != "" {
 		user := users[idSession]
-		user.updateUsername(prof.NewUsername)
+		user.updateUsername(prof.NewUsername, *rt)
 	} else {
-		profile.UpdateProfileInfo(prof)
+		profile.UpdateProfileInfo(prof, *rt)
 	}
 	// w.Header().Set("Content-type", "application/json")
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -180,11 +179,11 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 	id := session.Id
-	prof := functionalities.PhotoAdd{
+	prof := PhotoAdd{
 		Text:                   r.PostFormValue("text"),
 		ProfilePictureLocation: r.PostFormValue("profilePicture"),
 	}
-	profile := functionalities.GetProfile(id)
+	profile := GetProfile(id)
 	if prof.ProfilePictureLocation != "" {
 		profile.UpdateProfilePicture(prof.ProfilePictureLocation)
 		if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -194,7 +193,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 
-	idImage := profile.AddPhoto(prof.Text)
+	idImage := profile.AddPhoto(prof.Text, *rt)
 
 	lastImageId := idImage
 	r.ParseMultipartForm(10 << 20)
@@ -250,8 +249,8 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 	id := session.Id
-	profile := functionalities.GetProfile(id)
-	profile.DeletePhoto(prof)
+	profile := GetProfile(id)
+	profile.DeletePhoto(prof, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -263,7 +262,7 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
-	var prof functionalities.CommentAdd
+	var prof CommentAdd
 	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	imageId := ps.ByName("imageid")
@@ -290,8 +289,8 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(id)
-	profile.AddPhotoComment(idSession, imageId, prof.Comment)
+	profile := GetProfile(id)
+	profile.AddPhotoComment(idSession, imageId, prof.Comment, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -337,8 +336,8 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 	}
 
 	sessionId := session.Id
-	profile := functionalities.GetProfile(id)
-	profile.DeletePhotoComment(sessionId, imageId, index)
+	profile := GetProfile(id)
+	profile.DeletePhotoComment(sessionId, imageId, index, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -376,8 +375,8 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 		return
 	}
 	sessionId := session.Id
-	profile := functionalities.GetProfile(id)
-	profile.DeletePhotoLike(sessionId, imageId)
+	profile := GetProfile(id)
+	profile.DeletePhotoLike(sessionId, imageId, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -416,8 +415,8 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(id)
-	profile.AddPhotoLike(idSession, imageId)
+	profile := GetProfile(id)
+	profile.AddPhotoLike(idSession, imageId, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -454,8 +453,8 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(idSession)
-	profile.AddFollowings(id)
+	profile := GetProfile(idSession)
+	profile.AddFollowings(id, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -493,7 +492,7 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(idSession)
+	profile := GetProfile(idSession)
 	profile.UnFollowers(id)
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -531,8 +530,8 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(idSession)
-	profile.AddBans(id)
+	profile := GetProfile(idSession)
+	profile.AddBans(id, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -570,8 +569,8 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 	idSession := session.Id
-	profile := functionalities.GetProfile(idSession)
-	profile.UnBans(id)
+	profile := GetProfile(idSession)
+	profile.UnBans(id, *rt)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -606,7 +605,7 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	id := session.Id
 	//profile := functionalities.GetProfile(id)
-	basic := functionalities.GetProfileBasicInfo(id)
+	basic := GetProfileBasicInfo(id)
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(basic); errJson != nil {
@@ -648,7 +647,11 @@ func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.
 		return
 	}
 
-	userID := creds.returnID()
+	userID, err := creds.returnID(*rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	log.Println(userID)
 	type returnId struct{ id string }
 	if errJson := json.NewEncoder(w).Encode(userID); errJson != nil {
@@ -659,7 +662,7 @@ func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	var prof functionalities.PhotoAdd
+	var prof PhotoAdd
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
@@ -678,7 +681,7 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 		}
 	}
 	id := session.Id
-	profile := functionalities.GetProfile(id)
+	profile := GetProfile(id)
 	profile.AddAlreadySeen(prof.IdImage)
 	if errJson := json.NewEncoder(w).Encode("OK!"); errJson != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -721,7 +724,7 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "data", Value: entry.Data}}}}
 	//go mongodb.CollectionUsers.UpdateOne(mongodb.Ctx, filter, update)
 	// w.Header().Set("Content-type", "application/json")
-	profile := functionalities.GetProfile(id)
+	profile := GetProfile(id)
 	streamList := profile.GetNewStream()
 	if len(streamList) == 0 {
 		return

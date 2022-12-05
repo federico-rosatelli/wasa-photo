@@ -37,6 +37,7 @@ See the `main.go` file inside the `cmd/webapi` for a full usage example.
 package api
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -80,6 +81,12 @@ func New(cfg Config) (Router, error) {
 	router.RedirectTrailingSlash = false
 	router.RedirectFixedPath = false
 
+	err := backUpServer(cfg.Database)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &_router{
 		router:     router,
 		baseLogger: cfg.Logger,
@@ -95,4 +102,35 @@ type _router struct {
 	baseLogger logrus.FieldLogger
 
 	db database.AppDatabaseMongo
+}
+
+func backUpServer(db database.AppDatabaseMongo) error {
+	dataProfile, err := db.BackUpProfiles()
+	if err != nil {
+		return errors.New("database backup isn't possible")
+	}
+	for dataProfile.Next(context.Background()) {
+		var profile Profile
+		dataProfile.Decode(&profile)
+		profiles[profile.Id] = profile
+	}
+	dataUsers, err := db.BackUpUsers()
+	if err != nil {
+		return errors.New("database backup isn't possible")
+	}
+	for dataUsers.Next(context.Background()) {
+		var user User
+		dataUsers.Decode(&user)
+		users[user.Id] = user
+	}
+	dataSession, err := db.BackUpSessions()
+	if err != nil {
+		return errors.New("database backup isn't possible")
+	}
+	for dataSession.Next(context.Background()) {
+		var session Session
+		dataSession.Decode(&session)
+		sessions[session.IdSession] = session
+	}
+	return nil
 }

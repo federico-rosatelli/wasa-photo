@@ -1,4 +1,4 @@
-package functionalities
+package api
 
 import (
 	"math/rand"

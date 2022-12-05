@@ -10,18 +10,6 @@ export default {
 		}
 	},
 	methods: {
-		async refresh() {
-			this.loading = true;
-			this.errormsg = null;
-			try {
-				this.token = localStorage.getItem("Token")
-				let response = await this.$axios.get("/",{headers:{"Token":this.token}});
-				this.some_data = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
-		},
         async searchUser(){
             this.loading = true;
 			this.errormsg = null;
@@ -35,9 +23,6 @@ export default {
 			this.loading = false;
         },
 	},
-	mounted() {
-		this.refresh()
-	}
 }
 </script>
 
@@ -66,17 +51,63 @@ export default {
             <input type="text" placeholder="Username" v-model="username" >
 			<input type="submit" value="Search" @click="searchUser">
         </div>
-        <div v-for="item in this.some_data">
-            <h1>{{item.Id}}</h1>
-            <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
-								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#spike"/></svg>
-								{{item.Username}}
-							</RouterLink>
-        </div>
+    
+        <table id="table">
+            <tr>
+                <td>Id</td>
+                <td>Username</td>
+                <td>Profile Picture</td>
+            </tr>
+            <tr v-for="item in this.some_data">
+                <td>
+                    {{item.Id}}
+                </td>
+                <td>
+                    <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
+                        <svg class="feather"><use href="/feather-sprite-v4.29.0.svg#user"/></svg>
+                        {{item.Username}}
+                    </RouterLink>
+                </td>
+                <td>
+                    <!-- <img v-bid:src="'http://localhost:3000'+item.ProfilePictureLocation" alt=""> -->
+                </td>
+            </tr>
+        </table>
+        
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	</div>
 </template>
 
 <style>
+.row{
+ display: flex;
+}
+#table {
+ font-family: Arial, Helvetica, sans-serif;
+ border-collapse: collapse;
+ width: 100%;
+}
+#table td, #table th {
+ border: 1px solid #ddd;
+ padding: 20px;
+}
+#table .title{
+  font-size: 25px;
+  background-color: #999999;
+  text-align: center;
+}
+#table tr:nth-child(even){background-color: #f2f2f2;}
+#table tr:hover {background-color: #ddd;}
+#table th {
+ padding-top: 12px;
+ padding-bottom: 12px;
+ text-align: left;
+ background-color: #04AA6D;
+ color: white;
+}
+
+#table a{
+  color: #000;
+}
 </style>

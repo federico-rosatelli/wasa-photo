@@ -10,18 +10,6 @@ export default {
 		}
 	},
 	methods: {
-		async refresh() {
-			this.loading = true;
-			this.errormsg = null;
-			try {
-				this.token = localStorage.getItem("Token")
-				let response = await this.$axios.get("/",{headers:{"Token":this.token}});
-				this.some_data = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
-		},
 		async sendPhoto(){
 			var formData = new FormData();
 			formData.append('text',document.getElementById("text").value)
@@ -43,9 +31,6 @@ export default {
 			this.img_src = URL.createObjectURL(file)
 		},
 	},
-	mounted() {
-		this.refresh()
-	}
 }
 </script>
 

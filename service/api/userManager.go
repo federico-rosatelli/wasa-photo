@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"time"
 	"wasa-photo/service/api/errors"
-	"wasa-photo/service/api/functionalities"
 
 	"github.com/google/uuid"
 )
@@ -80,10 +79,10 @@ type userData struct {
 // If the user exists it returns the id,
 // if the user doesn't exist the function creates
 // the user structure and pushes it into the database
-func (cred Credentials) returnID() string {
+func (cred Credentials) returnID(rt _router) (string, error) {
 	for key, value := range sessions {
 		if value.Username == cred.Username {
-			return key
+			return key, nil
 		}
 	}
 	newUser := User{
@@ -92,36 +91,39 @@ func (cred Credentials) returnID() string {
 	}
 
 	users[newUser.Id] = newUser
+
 	newSession := Session{
 		Username: cred.Username,
 		Id:       newUser.Id,
 	}
 	newSessionToken := uuid.NewString()
 	sessions[newSessionToken] = newSession
-	err := functionalities.NewProfile(cred.Username, newUser.Id)
+
+	err := NewProfile(cred.Username, newUser.Id, rt)
 	if err != nil {
-		return err.Error()
+		return "", err
 	}
-	err = newUserDB(newUser)
+	err = newUser.newUserDB(rt)
 	if err != nil {
-		return err.Error()
+		return "", err
 	}
-	err = newSessionDB(newSession)
+	err = newSession.newSessionDB(newSessionToken, rt)
 	if err != nil {
-		return err.Error()
+		return "", err
 	}
-	return newSessionToken
+	return newSessionToken, nil
 }
 
-func newUserDB(user User) error {
-	//_, err := mongodb.CollectionUsers.InsertOne(mongodb.Ctx, user)
-	return nil
+func (u User) newUserDB(rt _router) error {
+	err := rt.db.InsertOneUsers(u.converUser())
+	return err
 }
 
 // Insert the new session in the database
-func newSessionDB(session Session) error {
+func (s Session) newSessionDB(newSessionToken string, rt _router) error {
 	//_, err := mongodb.CollectionSessions.InsertOne(mongodb.Ctx, session)
-	return nil
+	err := rt.db.InsertOneSession(s.converSession(newSessionToken))
+	return err
 }
 
 // Return a string and a boolean. It'll return the id of the user and true if exist a username
@@ -147,12 +149,12 @@ func matchRegex(query string, username string) bool {
 // Function for finding a user in the search bar.
 // It'll return a list of UltraBasicProfile struct
 // from the functionalities package.
-func searchUsername(query string) []functionalities.UltraBasicProfile {
-	var matching []functionalities.UltraBasicProfile
+func searchUsername(query string) []UltraBasicProfile {
+	var matching []UltraBasicProfile
 	for _, username := range users {
 		if matchRegex(query, username.Username) {
 			if userId, ok := findIdByUsername(username.Username); ok {
-				data := functionalities.GetUltraBasicProfile(userId)
+				data := GetUltraBasicProfile(userId)
 				matching = append(matching, data)
 			}
 		}
@@ -170,12 +172,12 @@ func userExists(id string) bool {
 }
 
 // Update the username of the user
-func (u *User) updateUsername(newUsername string) {
+func (u *User) updateUsername(newUsername string, rt _router) {
 	u.Username = newUsername
 	session := sessions[u.Id]
-	session.updateUsernameSession(newUsername)
-	profile := functionalities.GetProfile(u.Id)
-	profile.SetMyUsername(newUsername)
+	session.updateUsernameSession(newUsername, rt)
+	profile := GetProfile(u.Id)
+	profile.SetMyUsername(newUsername, rt)
 	users[u.Id] = *u
 }
 

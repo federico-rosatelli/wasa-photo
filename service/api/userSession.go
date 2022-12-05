@@ -7,8 +7,9 @@ import (
 )
 
 type Session struct {
-	Username string
-	Id       string
+	Username  string
+	Id        string
+	IdSession string
 }
 
 // sessions represent a set of struct Session
@@ -38,7 +39,7 @@ var sessions = map[string]Session{}
 
 // updateUsernameSession is used for the update of the username
 // of the client in the map sessions, identified by id
-func (s *Session) updateUsernameSession(newUsername string) {
+func (s *Session) updateUsernameSession(newUsername string, rt _router) {
 	s.Username = newUsername
 }
 

@@ -1,4 +1,4 @@
-package functionalities
+package api
 
 import (
 	"log"
@@ -6,6 +6,7 @@ import (
 	"wasa-photo/service/api/errors"
 
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var profiles = map[string]Profile{}
@@ -70,13 +71,13 @@ type UltraBasicProfile struct {
 	ProfilePictureLocation string
 }
 
-func NewProfile(username string, id string) error {
+func NewProfile(username string, id string, rt _router) error {
 	profile := Profile{
 		Id:       id,
 		Username: username,
 	}
 	profiles[id] = profile
-	err := newProfileDB(profile)
+	err := newProfileDB(profile, rt)
 	if err != nil {
 		return err
 	}
@@ -87,16 +88,13 @@ func AddProfile(id string, profile Profile) {
 	profiles[id] = profile
 }
 
-func newProfileDB(profile Profile) error {
+func newProfileDB(profile Profile, rt _router) error {
 	profile.Followers = []UserFollow{}
 	profile.Followings = []UserFollow{}
 	profile.Bans = []UserFollow{}
 	profile.Images = []Image{}
 	profile.AlreadySeen = map[string]string{}
-	// profileCollection := database.AppDatabaseMongo.GetProfilesCollection()
-	// database.AppDatabaseMongo.InsertOne(profileCollection)
-	// _, err := mongodb.CollectionProfiles.InsertOne(mongodb.Ctx, profile)
-	//x.followers = new([]UserFollow)
+	rt.db.InsertOneProfile(profile.converProfile())
 	return nil
 }
 
@@ -173,49 +171,50 @@ func GetPictureLocationById(id string) string {
 }
 
 // Set the new username of the profile
-func (p *Profile) SetMyUsername(newUsername string) {
+func (p *Profile) SetMyUsername(newUsername string, rt _router) {
 	p.Username = newUsername
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "username", Value: newUsername}}}}
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "username", Value: newUsername}}}}
+	rt.db.UpdateOne(0, filter, update)
 	// profileCollection := database.AppDatabaseMongo.GetProfilesCollection()
 }
 
 // Set the name of the profile
-func (p *Profile) SetMyName(name string) {
+func (p *Profile) SetMyName(name string, rt _router) {
 	p.Name = name
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "name", Value: name}}}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "name", Value: name}}}}
+	rt.db.UpdateOne(0, filter, update)
 }
 
 // Set the surname of the profile
-func (p *Profile) SetMySurname(surname string) {
+func (p *Profile) SetMySurname(surname string, rt _router) {
 	p.Surname = surname
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "surname", Value: surname}}}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "surname", Value: surname}}}}
+	rt.db.UpdateOne(0, filter, update)
 }
 
 // Add a follower in Profile.Followers
-func (p *Profile) AddFollowers(id string) {
+func (p *Profile) AddFollowers(id string, rt _router) {
 	newFollow := UserFollow{
 		IdUser: id,
 		Time:   time.Now().String(),
 	}
 	p.Followers = append(p.Followers, newFollow)
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// push := bson.M{"$push": bson.M{"followers": newFollow}}
-	// result, err := mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, push)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	push := bson.M{"$push": bson.M{"followers": newFollow}}
+	err := rt.db.UpdateOnePush(0, filter, push)
+	if err != nil {
+		log.Fatal(err)
+	}
 	// log.Println(result)
 }
 
 // Add a following in Profile.Followings
-func (p *Profile) AddFollowings(id string) {
+func (p *Profile) AddFollowings(id string, rt _router) {
 	user, ok := profiles[id]
 	if !ok {
 		return
@@ -229,11 +228,11 @@ func (p *Profile) AddFollowings(id string) {
 		return
 	}
 	p.Followings = append(p.Followings, newFollow)
-	user.AddFollowers(p.Id)
+	user.AddFollowers(p.Id, rt)
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// push := bson.M{"$push": bson.M{"followings": newFollow}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, push)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	push := bson.M{"$push": bson.M{"followings": newFollow}}
+	rt.db.UpdateOnePush(0, filter, push)
 }
 
 // Find if the user is banned. It'll return a boolean.
@@ -308,7 +307,7 @@ func (p *Profile) UnFollowerUser(id string) {
 }
 
 // Add a banned user in Profile.Bans
-func (p *Profile) AddBans(id string) {
+func (p *Profile) AddBans(id string, rt _router) {
 	user, ok := profiles[id]
 	if !ok {
 		return
@@ -320,18 +319,18 @@ func (p *Profile) AddBans(id string) {
 	if p.FindBanUser(id) {
 		return
 	}
-	p.DeleteFollower(id)
+	p.DeleteFollower(id, rt)
 	p.Bans = append(p.Followings, newBan)
-	user.DeleteFollower(p.Id)
+	user.DeleteFollower(p.Id, rt)
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// push := bson.M{"$push": bson.M{"bans": newBan}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, push)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	update := bson.M{"$push": bson.M{"bans": newBan}}
+	rt.db.UpdateOnePush(0, filter, update)
 }
 
 // Delete a user from Profile.Followers and
 // Profile.Followings
-func (p *Profile) DeleteFollower(id string) {
+func (p *Profile) DeleteFollower(id string, rt _router) {
 	var followList []UserFollow
 	for _, x := range p.Followers {
 		if x.IdUser != id {
@@ -355,15 +354,15 @@ func (p *Profile) DeleteFollower(id string) {
 	}
 	p.Followings = followListN
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followings", Value: followListN}}}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update1)
-	// update2 := bson.D{{Key: "$set", Value: bson.D{{Key: "followers", Value: followList}}}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update2)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followings", Value: followListN}}}}
+	rt.db.UpdateOne(0, filter, update1)
+	update2 := bson.D{{Key: "$set", Value: bson.D{{Key: "followers", Value: followList}}}}
+	rt.db.UpdateOne(0, filter, update2)
 }
 
 // Delete a user from Profile.Bans
-func (p *Profile) UnBans(id string) {
+func (p *Profile) UnBans(id string, rt _router) {
 	var bans []UserFollow
 	for _, x := range p.Bans {
 		if x.IdUser != id {
@@ -376,9 +375,9 @@ func (p *Profile) UnBans(id string) {
 	}
 	p.Bans = bans
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "bans", Value: bans}}}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "bans", Value: bans}}}}
+	rt.db.UpdateOne(0, filter, update)
 }
 
 // Update the profile picture
@@ -390,12 +389,12 @@ func (p *Profile) UpdateProfilePicture(newImgLocation string) {
 }
 
 // Update the profile info, such as name and surname
-func (p *Profile) UpdateProfileInfo(newProfileInfo ProfileUpdate) {
+func (p *Profile) UpdateProfileInfo(newProfileInfo ProfileUpdate, rt _router) {
 	if newProfileInfo.Name != "" {
-		p.SetMyName(newProfileInfo.Name)
+		p.SetMyName(newProfileInfo.Name, rt)
 	}
 	if newProfileInfo.Surname != "" {
-		p.SetMySurname(newProfileInfo.Surname)
+		p.SetMySurname(newProfileInfo.Surname, rt)
 	}
 	profiles[p.Id] = *p
 }
@@ -425,7 +424,7 @@ func GetProfileBasicInfo(id string) BasicProfile {
 // Add a photo in the profile.
 // It'll create a new id and set the position
 // of the image
-func (p *Profile) AddPhoto(text string) string {
+func (p *Profile) AddPhoto(text string, rt _router) string {
 	newID := uuid.NewString()
 	image := Image{
 		IdImage:  newID,
@@ -437,14 +436,14 @@ func (p *Profile) AddPhoto(text string) string {
 	}
 	p.Images = append(p.Images, image)
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// push := bson.M{"$push": bson.M{"images": image}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, push)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	push := bson.M{"$push": bson.M{"images": image}}
+	rt.db.UpdateOnePush(0, filter, push)
 	return image.IdImage
 }
 
 // Delete a photo from Profile.Images
-func (p *Profile) DeletePhoto(imageId string) {
+func (p *Profile) DeletePhoto(imageId string, rt _router) {
 	var images []Image
 	for _, image := range p.Images {
 		if image.IdImage != imageId {
@@ -453,20 +452,20 @@ func (p *Profile) DeletePhoto(imageId string) {
 	}
 	p.Images = images
 	profiles[p.Id] = *p
-	// filter := bson.D{{Key: "id", Value: p.Id}}
-	// push := bson.M{"$set": bson.M{"images": p.Images}}
-	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, push)
+	filter := bson.D{{Key: "id", Value: p.Id}}
+	push := bson.M{"$set": bson.M{"images": p.Images}}
+	rt.db.UpdateOnePush(0, filter, push)
 }
 
 // Add a comment in the image struct Image.Comments
-func (p *Profile) AddPhotoComment(usernameIdComment string, imageId string, content string) {
+func (p *Profile) AddPhotoComment(usernameIdComment string, imageId string, content string, rt _router) {
 	images := p.Images
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			images[i].addComment(usernameIdComment, content)
-			// filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			// push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
-			// go mongodb.CollectionProfiles.FindOneAndUpdate(mongodb.Ctx, filter, push)
+			filter := bson.M{"id": p.Id, "images.idimage": imageId}
+			push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
+			rt.db.UpdateOnePushM(0, filter, push)
 		}
 	}
 	p.Images = images
@@ -474,7 +473,7 @@ func (p *Profile) AddPhotoComment(usernameIdComment string, imageId string, cont
 }
 
 // Delete a comment in the image struct Image.Comments
-func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, index int) {
+func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, index int, rt _router) {
 	images := p.Images
 	log.Println(usernameIdComment, imageId, index)
 	for i := 0; i < len(images); i++ {
@@ -483,9 +482,10 @@ func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, i
 			comments := image.deleteComment(usernameIdComment, index)
 			images[i].Comments = comments
 
-			// filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			// push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
-			// go mongodb.CollectionProfiles.FindOneAndUpdate(mongodb.Ctx, filter, push)
+			filter := bson.M{"id": p.Id, "images.idimage": imageId}
+			push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
+			rt.db.UpdateOnePushM(0, filter, push)
+
 		}
 	}
 	p.Images = images
@@ -493,16 +493,17 @@ func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, i
 }
 
 // Delete a like in the image struct Image.Likes
-func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string) {
+func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string, rt _router) {
 	images := p.Images
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			image := images[i]
 			likes := image.deleteLike(usernameIdLike)
 			images[i].Likes = likes
-			// filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			// push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
-			// go mongodb.CollectionProfiles.FindOneAndUpdate(mongodb.Ctx, filter, push)
+			filter := bson.M{"id": p.Id, "images.idimage": imageId}
+			push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
+			rt.db.UpdateOnePushM(0, filter, push)
+
 		}
 	}
 	p.Images = images
@@ -510,14 +511,15 @@ func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string) {
 }
 
 // Add a like in the image struct Image.Likes
-func (p *Profile) AddPhotoLike(usernameIdLike string, imageId string) {
+func (p *Profile) AddPhotoLike(usernameIdLike string, imageId string, rt _router) {
 	images := p.Images
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			images[i].addLike(usernameIdLike)
-			// filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			// push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
-			// go mongodb.CollectionProfiles.FindOneAndUpdate(mongodb.Ctx, filter, push)
+			filter := bson.M{"id": p.Id, "images.idimage": imageId}
+			push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
+			rt.db.UpdateOnePushM(0, filter, push)
+
 		}
 	}
 	p.Images = images

@@ -22,15 +22,19 @@ export default {
 			try {
 				if (userName != null){
 					let users = await this.$axios.get("/search?query="+userName+"&precise=1",{headers:{"Token":this.token}});
-					// if (users.data == []){
-					// 	this.errormsg = "User not Found"
-					// 	return
-					// }
+					if (users.data == null){
+						this.errormsg = "User not Found"
+						return
+					}
 					userId = "/"+users.data[0].Id
 					this.myPage = false
 				}
+				else{
+					this.myPage = true
+				}
 				let response = await this.$axios.get("/profile"+userId,{headers:{"Token":this.token}});
 				this.some_data = response.data;
+				
 				
 			} catch (e) {
 				this.errormsg = e.toString();

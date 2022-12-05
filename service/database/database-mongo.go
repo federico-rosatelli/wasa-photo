@@ -4,21 +4,24 @@ import (
 	"context"
 	"wasa-photo/service/api/errors"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type AppDatabaseMongo interface {
-	GetName() (string, error)
-	SetName(name string) error
+	// GetName() (string, error)
+	// SetName(name string) error
 
-	UpdateOne(collection mongo.Collection, filter primitive.D, query primitive.D) error
-	UpdateOnePush(collection mongo.Collection, filter primitive.D, query primitive.M) error
-	InsertOne(collection mongo.Collection, query primitive.M) error
-	GetUsersCollection() mongo.Collection
-	GetProfilesCollection() mongo.Collection
-	GetSessionsCollection() mongo.Collection
+	UpdateOne(typeCli int, filter primitive.D, query primitive.D) error
+	UpdateOnePush(typeCli int, filter primitive.D, query primitive.M) error
+	UpdateOnePushM(typeCli int, filter primitive.M, query primitive.M) error
+	InsertOne(typeCli int, query primitive.M) error
+	InsertOneProfile(profileStruct Profile) error
+	InsertOneUsers(usersStruct User) error
+	InsertOneSession(sessionStruct Session) error
+	BackUpProfiles() (mongo.Cursor, error)
+	BackUpUsers() (mongo.Cursor, error)
+	BackUpSessions() (mongo.Cursor, error)
 	// FindOne(collection mongo.Collection, query string) error
 
 	Ping() error
@@ -60,37 +63,3 @@ func MakeInit(client *mongo.Client) (AppDatabaseMongo, error) {
 func (db *appdbmongo) Ping() error {
 	return db.c.Ping(Ctx, nil)
 }
-
-func (db *appdbmongo) GetName() (string, error) {
-	var name struct {
-		Username string
-	}
-	err := db.users.FindOne(Ctx, bson.D{{}}).Decode(&name)
-	return name.Username, err
-}
-
-func (db *appdbmongo) SetName(name string) error {
-	var str struct {
-		Username string
-	}
-	str.Username = name
-	_, err := db.users.InsertOne(Ctx, str)
-	return err
-}
-
-func (db *appdbmongo) GetUsersCollection() mongo.Collection {
-	return *db.users
-}
-
-func (db *appdbmongo) GetProfilesCollection() mongo.Collection {
-	return *db.profiles
-}
-
-func (db *appdbmongo) GetSessionsCollection() mongo.Collection {
-	return *db.sessions
-}
-
-// func NewUser(user User) error {
-// 	_, err := collectionUsers.InsertOne(ctx, user)
-// 	return err
-// }
