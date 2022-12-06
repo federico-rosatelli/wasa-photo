@@ -6,13 +6,14 @@ import (
 )
 
 type StreamContent struct {
-	UserId        string
-	ImageId       string
-	ImageLocation string
-	Time          string
-	Comments      int
-	Likes         int
-	Text          string
+	Username string
+	Id       string
+	IdImage  string
+	Location string
+	Time     string
+	Comments int
+	Likes    int
+	Text     string
 }
 
 func (p *Profile) GetNewStream() []StreamContent {
@@ -23,13 +24,14 @@ func (p *Profile) GetNewStream() []StreamContent {
 			if _, ok := p.AlreadySeen[user.Images[j].IdImage]; !ok {
 				basic := user.Images[j].getBasicImage()
 				stream := StreamContent{
-					UserId:        user.Id,
-					ImageId:       basic.IdImage,
-					ImageLocation: basic.Location,
-					Time:          basic.Time,
-					Comments:      basic.Comments,
-					Likes:         basic.Likes,
-					Text:          basic.Text,
+					Username: user.Username,
+					Id:       user.Id,
+					IdImage:  basic.IdImage,
+					Location: basic.Location,
+					Time:     basic.Time,
+					Comments: basic.Comments,
+					Likes:    basic.Likes,
+					Text:     basic.Text,
 				}
 				newStream = append(newStream, stream)
 			}

@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	customError "wasa-photo/service/api/errors"
+	"wasa-photo/service/api/reqcontext"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -193,7 +194,11 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 
-	idImage := profile.AddPhoto(prof.Text, *rt)
+	idImage, err := profile.AddPhoto(prof.Text, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	lastImageId := idImage
 	r.ParseMultipartForm(10 << 20)
@@ -250,7 +255,11 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 	}
 	id := session.Id
 	profile := GetProfile(id)
-	profile.DeletePhoto(prof, *rt)
+	err = profile.DeletePhoto(prof, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -290,7 +299,11 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 	}
 	idSession := session.Id
 	profile := GetProfile(id)
-	profile.AddPhotoComment(idSession, imageId, prof.Comment, *rt)
+	err = profile.AddPhotoComment(idSession, imageId, prof.Comment, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -337,7 +350,11 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 
 	sessionId := session.Id
 	profile := GetProfile(id)
-	profile.DeletePhotoComment(sessionId, imageId, index, *rt)
+	err = profile.DeletePhotoComment(sessionId, imageId, index, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -376,7 +393,11 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 	}
 	sessionId := session.Id
 	profile := GetProfile(id)
-	profile.DeletePhotoLike(sessionId, imageId, *rt)
+	err = profile.DeletePhotoLike(sessionId, imageId, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -416,7 +437,11 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 	idSession := session.Id
 	profile := GetProfile(id)
-	profile.AddPhotoLike(idSession, imageId, *rt)
+	err = profile.AddPhotoLike(idSession, imageId, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -425,13 +450,14 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 }
 
-func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	w.Header().Set("content-type", "application/json")
 
 	//var prof functionalities.FollowerAdd
 	id := ps.ByName("id")
 	//json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
+	log.Println(ua)
 	session, err := returnSessionFromId(ua)
 	if err != nil {
 		switch err.(type) {
@@ -454,10 +480,15 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
-	profile.AddFollowings(id, *rt)
+	err = profile.AddFollowings(id, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
+	basic := GetProfileBasicInfo(id)
 
-	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
+	if errJson := json.NewEncoder(w).Encode(basic); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
 	}
@@ -495,7 +526,9 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 	profile := GetProfile(idSession)
 	profile.UnFollowers(id)
 
-	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
+	basic := GetProfileBasicInfo(id)
+
+	if errJson := json.NewEncoder(w).Encode(basic); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
 	}
@@ -531,7 +564,11 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
-	profile.AddBans(id, *rt)
+	err = profile.AddBans(id, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -570,7 +607,11 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
-	profile.UnBans(id, *rt)
+	err = profile.UnBans(id, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// w.Header().Set("Content-type", "application/json")
 
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
@@ -653,7 +694,6 @@ func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.
 		return
 	}
 	log.Println(userID)
-	type returnId struct{ id string }
 	if errJson := json.NewEncoder(w).Encode(userID); errJson != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -746,5 +786,4 @@ func (s *_router) ServeImage(w http.ResponseWriter, r *http.Request, ps httprout
 	w.Header().Set("Content-Type", "image/png")
 	//w.Header().Set("Content-Disposition", `attachment;filename="${id}"`)
 	w.Write(buf)
-	return
 }

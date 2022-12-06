@@ -15,7 +15,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/profile", rt.ProfileInfo)
 	rt.router.POST("/profile", rt.UpdateProfileInfo)
 	rt.router.GET("/profile/:id", rt.GetBasicProfile)
-	rt.router.PUT("/profile/:id", rt.AddFollowerProfile)
+	rt.router.PUT("/profile/:id", rt.wrap(rt.AddFollowerProfile))
 	rt.router.DELETE("/profile/:id", rt.UnFollowerProfile)
 	rt.router.POST("/ban/:id", rt.BanFollowerProfile)
 	rt.router.DELETE("/ban/:id", rt.UnBanFollowerProfile)

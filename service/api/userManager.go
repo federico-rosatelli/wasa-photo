@@ -115,15 +115,12 @@ func (cred Credentials) returnID(rt _router) (string, error) {
 }
 
 func (u User) newUserDB(rt _router) error {
-	err := rt.db.InsertOneUsers(u.converUser())
-	return err
+	return rt.db.InsertOneUsers(u.converUser())
 }
 
 // Insert the new session in the database
 func (s Session) newSessionDB(newSessionToken string, rt _router) error {
-	//_, err := mongodb.CollectionSessions.InsertOne(mongodb.Ctx, session)
-	err := rt.db.InsertOneSession(s.converSession(newSessionToken))
-	return err
+	return rt.db.InsertOneSession(s.converSession(newSessionToken))
 }
 
 // Return a string and a boolean. It'll return the id of the user and true if exist a username

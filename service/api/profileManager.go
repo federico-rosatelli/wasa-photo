@@ -94,8 +94,8 @@ func newProfileDB(profile Profile, rt _router) error {
 	profile.Bans = []UserFollow{}
 	profile.Images = []Image{}
 	profile.AlreadySeen = map[string]string{}
-	rt.db.InsertOneProfile(profile.converProfile())
-	return nil
+	err := rt.db.InsertOneProfile(profile.converProfile())
+	return err
 }
 
 func GetProfile(id string) Profile {
@@ -171,33 +171,33 @@ func GetPictureLocationById(id string) string {
 }
 
 // Set the new username of the profile
-func (p *Profile) SetMyUsername(newUsername string, rt _router) {
+func (p *Profile) SetMyUsername(newUsername string, rt _router) error {
 	p.Username = newUsername
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	update := bson.D{{Key: "$set", Value: bson.D{{Key: "username", Value: newUsername}}}}
-	rt.db.UpdateOne(0, filter, update)
+	return rt.db.UpdateOne(0, filter, update)
 	// profileCollection := database.AppDatabaseMongo.GetProfilesCollection()
 }
 
 // Set the name of the profile
-func (p *Profile) SetMyName(name string, rt _router) {
+func (p *Profile) SetMyName(name string, rt _router) error {
 	p.Name = name
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	update := bson.D{{Key: "$set", Value: bson.D{{Key: "name", Value: name}}}}
-	rt.db.UpdateOne(0, filter, update)
+	return rt.db.UpdateOne(0, filter, update)
 }
 
 // Set the surname of the profile
-func (p *Profile) SetMySurname(surname string, rt _router) {
+func (p *Profile) SetMySurname(surname string, rt _router) error {
 	p.Surname = surname
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	update := bson.D{{Key: "$set", Value: bson.D{{Key: "surname", Value: surname}}}}
-	rt.db.UpdateOne(0, filter, update)
+	return rt.db.UpdateOne(0, filter, update)
 }
 
 // Add a follower in Profile.Followers
-func (p *Profile) AddFollowers(id string, rt _router) {
+func (p *Profile) AddFollowers(id string, rt _router) error {
 	newFollow := UserFollow{
 		IdUser: id,
 		Time:   time.Now().String(),
@@ -206,18 +206,14 @@ func (p *Profile) AddFollowers(id string, rt _router) {
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	push := bson.M{"$push": bson.M{"followers": newFollow}}
-	err := rt.db.UpdateOnePush(0, filter, push)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// log.Println(result)
+	return rt.db.UpdateOnePush(0, filter, push)
 }
 
 // Add a following in Profile.Followings
-func (p *Profile) AddFollowings(id string, rt _router) {
+func (p *Profile) AddFollowings(id string, rt _router) error {
 	user, ok := profiles[id]
 	if !ok {
-		return
+		return errors.NewErrStatus("User Not Found")
 	}
 
 	newFollow := UserFollow{
@@ -225,14 +221,14 @@ func (p *Profile) AddFollowings(id string, rt _router) {
 		Time:   time.Now().String(),
 	}
 	if p.FindBanUser(id) || p.FindFollowingUser(id) {
-		return
+		return errors.NewErrStatus("User Not Found")
 	}
 	p.Followings = append(p.Followings, newFollow)
 	user.AddFollowers(p.Id, rt)
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	push := bson.M{"$push": bson.M{"followings": newFollow}}
-	rt.db.UpdateOnePush(0, filter, push)
+	return rt.db.UpdateOnePush(0, filter, push)
 }
 
 // Find if the user is banned. It'll return a boolean.
@@ -307,17 +303,17 @@ func (p *Profile) UnFollowerUser(id string) {
 }
 
 // Add a banned user in Profile.Bans
-func (p *Profile) AddBans(id string, rt _router) {
+func (p *Profile) AddBans(id string, rt _router) error {
 	user, ok := profiles[id]
 	if !ok {
-		return
+		return errors.NewErrStatus("User Not Found")
 	}
 	newBan := UserFollow{
 		IdUser: id,
 		Time:   time.Now().String(),
 	}
 	if p.FindBanUser(id) {
-		return
+		return errors.NewErrStatus("User Not Found")
 	}
 	p.DeleteFollower(id, rt)
 	p.Bans = append(p.Followings, newBan)
@@ -325,12 +321,12 @@ func (p *Profile) AddBans(id string, rt _router) {
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	update := bson.M{"$push": bson.M{"bans": newBan}}
-	rt.db.UpdateOnePush(0, filter, update)
+	return rt.db.UpdateOnePush(0, filter, update)
 }
 
 // Delete a user from Profile.Followers and
 // Profile.Followings
-func (p *Profile) DeleteFollower(id string, rt _router) {
+func (p *Profile) DeleteFollower(id string, rt _router) error {
 	var followList []UserFollow
 	for _, x := range p.Followers {
 		if x.IdUser != id {
@@ -356,13 +352,16 @@ func (p *Profile) DeleteFollower(id string, rt _router) {
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followings", Value: followListN}}}}
-	rt.db.UpdateOne(0, filter, update1)
+	err := rt.db.UpdateOne(0, filter, update1)
+	if err != nil {
+		return err
+	}
 	update2 := bson.D{{Key: "$set", Value: bson.D{{Key: "followers", Value: followList}}}}
-	rt.db.UpdateOne(0, filter, update2)
+	return rt.db.UpdateOne(0, filter, update2)
 }
 
 // Delete a user from Profile.Bans
-func (p *Profile) UnBans(id string, rt _router) {
+func (p *Profile) UnBans(id string, rt _router) error {
 	var bans []UserFollow
 	for _, x := range p.Bans {
 		if x.IdUser != id {
@@ -377,7 +376,7 @@ func (p *Profile) UnBans(id string, rt _router) {
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	update := bson.D{{Key: "$set", Value: bson.D{{Key: "bans", Value: bans}}}}
-	rt.db.UpdateOne(0, filter, update)
+	return rt.db.UpdateOne(0, filter, update)
 }
 
 // Update the profile picture
@@ -424,7 +423,7 @@ func GetProfileBasicInfo(id string) BasicProfile {
 // Add a photo in the profile.
 // It'll create a new id and set the position
 // of the image
-func (p *Profile) AddPhoto(text string, rt _router) string {
+func (p *Profile) AddPhoto(text string, rt _router) (string, error) {
 	newID := uuid.NewString()
 	image := Image{
 		IdImage:  newID,
@@ -438,12 +437,15 @@ func (p *Profile) AddPhoto(text string, rt _router) string {
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	push := bson.M{"$push": bson.M{"images": image}}
-	rt.db.UpdateOnePush(0, filter, push)
-	return image.IdImage
+	err := rt.db.UpdateOnePush(0, filter, push)
+	if err != nil {
+		return "", err
+	}
+	return image.IdImage, nil
 }
 
 // Delete a photo from Profile.Images
-func (p *Profile) DeletePhoto(imageId string, rt _router) {
+func (p *Profile) DeletePhoto(imageId string, rt _router) error {
 	var images []Image
 	for _, image := range p.Images {
 		if image.IdImage != imageId {
@@ -454,26 +456,30 @@ func (p *Profile) DeletePhoto(imageId string, rt _router) {
 	profiles[p.Id] = *p
 	filter := bson.D{{Key: "id", Value: p.Id}}
 	push := bson.M{"$set": bson.M{"images": p.Images}}
-	rt.db.UpdateOnePush(0, filter, push)
+	return rt.db.UpdateOnePush(0, filter, push)
 }
 
 // Add a comment in the image struct Image.Comments
-func (p *Profile) AddPhotoComment(usernameIdComment string, imageId string, content string, rt _router) {
+func (p *Profile) AddPhotoComment(usernameIdComment string, imageId string, content string, rt _router) error {
 	images := p.Images
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			images[i].addComment(usernameIdComment, content)
 			filter := bson.M{"id": p.Id, "images.idimage": imageId}
 			push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
-			rt.db.UpdateOnePushM(0, filter, push)
+			err := rt.db.UpdateOnePushM(0, filter, push)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	p.Images = images
 	profiles[p.Id] = *p
+	return nil
 }
 
 // Delete a comment in the image struct Image.Comments
-func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, index int, rt _router) {
+func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, index int, rt _router) error {
 	images := p.Images
 	log.Println(usernameIdComment, imageId, index)
 	for i := 0; i < len(images); i++ {
@@ -484,16 +490,20 @@ func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, i
 
 			filter := bson.M{"id": p.Id, "images.idimage": imageId}
 			push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
-			rt.db.UpdateOnePushM(0, filter, push)
+			err := rt.db.UpdateOnePushM(0, filter, push)
+			if err != nil {
+				return err
+			}
 
 		}
 	}
 	p.Images = images
 	profiles[p.Id] = *p
+	return nil
 }
 
 // Delete a like in the image struct Image.Likes
-func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string, rt _router) {
+func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string, rt _router) error {
 	images := p.Images
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
@@ -502,28 +512,36 @@ func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string, rt _rou
 			images[i].Likes = likes
 			filter := bson.M{"id": p.Id, "images.idimage": imageId}
 			push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
-			rt.db.UpdateOnePushM(0, filter, push)
+			err := rt.db.UpdateOnePushM(0, filter, push)
+			if err != nil {
+				return err
+			}
 
 		}
 	}
 	p.Images = images
 	profiles[p.Id] = *p
+	return nil
 }
 
 // Add a like in the image struct Image.Likes
-func (p *Profile) AddPhotoLike(usernameIdLike string, imageId string, rt _router) {
+func (p *Profile) AddPhotoLike(usernameIdLike string, imageId string, rt _router) error {
 	images := p.Images
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			images[i].addLike(usernameIdLike)
 			filter := bson.M{"id": p.Id, "images.idimage": imageId}
 			push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
-			rt.db.UpdateOnePushM(0, filter, push)
+			err := rt.db.UpdateOnePushM(0, filter, push)
+			if err != nil {
+				return err
+			}
 
 		}
 	}
 	p.Images = images
 	profiles[p.Id] = *p
+	return nil
 }
 
 // Get image information.
