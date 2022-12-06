@@ -9,12 +9,13 @@ export default {
 			myName: null,
 			mySurname:null,
 			myPage:true,
+			alreadyFollow: false,
+			userId: "",
 		}
 	},
 	methods: {
 		async refresh() {
 			let userName = this.$route.params.username
-			let userId = ""
 			
 			this.loading = true;
 			this.errormsg = null;
@@ -22,18 +23,36 @@ export default {
 			try {
 				if (userName != null){
 					let users = await this.$axios.get("/search?query="+userName+"&precise=1",{headers:{"Token":this.token}});
-					if (users.data == null){
-						this.errormsg = "User not Found"
-						return
+					let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
+					if (myProfile.data.Id === users.data[0].Id){
+						this.myPage = true
+						this.some_data = myProfile.data;
 					}
-					userId = "/"+users.data[0].Id
-					this.myPage = false
+					else{
+						this.myPage = false
+						this.userId = "/"+users.data[0].Id
+						let response = await this.$axios.get("/profile"+this.userId,{headers:{"Token":this.token}});
+						let myFollowers = await this.$axios.get(`/profile/${myProfile.data.Id}/followings`,{headers:{"Token":this.token}});			
+						myFollowers = myFollowers.data;
+						this.alreadyFollow = false
+						if (myFollowers != null){
+							for (let f = 0; f < myFollowers.length; f++){
+								console.log(myFollowers[f].Id);
+								if (myFollowers[f].Id === users.data[0].Id){
+									this.alreadyFollow = true
+								}
+							}
+						}
+						this.some_data = response.data;
+					}
 				}
 				else{
+					let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
 					this.myPage = true
+					this.some_data = myProfile.data;
 				}
-				let response = await this.$axios.get("/profile"+userId,{headers:{"Token":this.token}});
-				this.some_data = response.data;
+				
+
 				
 				
 			} catch (e) {
@@ -45,7 +64,6 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				this.token = localStorage.getItem("Token")
 				let postData = {
 					name:this.myName,
 					surname:this.mySurname,
@@ -58,6 +76,48 @@ export default {
 			}
 			this.loading = false;
 		},
+
+		async follow(){
+			this.loading = true;
+			this.errormsg = null;
+			this.token = localStorage.getItem("Token")
+			console.log(this.token);
+			let postData = {
+					name:"this.myName",
+					surname:"this.mySurname",
+				}
+			try {
+				let response = null
+				if (!this.alreadyFollow){
+					console.log(this.userId);
+					//response = await this.$axios.put("/profile"+this.userId,{headers:{"Token":this.token}});
+					response = await this.$axios({
+						method: "put",
+						url: `/profile${this.userId}`,
+						headers: {
+							"Content-Type": "application/json",
+							"Token": this.token,
+						}
+					});
+					this.alreadyFollow = true
+				}
+				else{
+					response = await this.$axios({
+						method: "delete",
+						url: `/profile${this.userId}`,
+						headers: {
+							"Content-Type": "application/json",
+							"Token": this.token,
+						}
+					});
+					this.alreadyFollow = false
+				}
+				this.some_data = response.data;
+			} catch (e) {
+				this.errormsg = e.toString();
+			}
+			this.loading = false;
+		}
 	},
 	mounted() {
 		this.refresh()
@@ -90,12 +150,19 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">
-			<h2>Username</h2>
-			<h2>Id</h2>
+			<h2>{{this.some_data.Username}}</h2>
+			<div v-if="!myPage">
+				<div v-if="!alreadyFollow">
+					<input type="submit" value="Follow" @click="follow">
+				</div>
+				<div v-else>
+					<input type="submit" value="Unfollow" @click="follow">
+				</div>
+			</div>
 		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">
-			<h2>{{this.some_data.Username}}</h2>
-			<h2>{{this.some_data.Id}}</h2>
+			<h1>{{this.some_data.Followers}}</h1>
+			<h1>{{this.some_data.Followings}}</h1>
 		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">
 			<h2>Name</h2>

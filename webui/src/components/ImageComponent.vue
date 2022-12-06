@@ -76,8 +76,8 @@ img{
 }
 
 .popup-content{
-    height: 800px;
-    width: 800px;
+    height: 80%;
+    width: 80%;
     background: #fff;
     padding: 2px;
     border-radius: 5px;
