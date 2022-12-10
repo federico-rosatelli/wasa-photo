@@ -1,4 +1,5 @@
 <script>
+import $ from 'jquery'
 export default {
 	data: function() {
 		return {
@@ -11,6 +12,8 @@ export default {
 			myPage:true,
 			alreadyFollow: false,
 			userId: "",
+			profiles: [],
+			modal: false,
 		}
 	},
 	methods: {
@@ -24,13 +27,14 @@ export default {
 				if (userName != null){
 					let users = await this.$axios.get("/search?query="+userName+"&precise=1",{headers:{"Token":this.token}});
 					let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
+					this.userId = "/"+users.data[0].Id
 					if (myProfile.data.Id === users.data[0].Id){
 						this.myPage = true
 						this.some_data = myProfile.data;
+						
 					}
 					else{
 						this.myPage = false
-						this.userId = "/"+users.data[0].Id
 						let response = await this.$axios.get("/profile"+this.userId,{headers:{"Token":this.token}});
 						let myFollowers = await this.$axios.get(`/profile/${myProfile.data.Id}/followings`,{headers:{"Token":this.token}});			
 						myFollowers = myFollowers.data;
@@ -50,6 +54,7 @@ export default {
 					let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
 					this.myPage = true
 					this.some_data = myProfile.data;
+					this.userId = "/"+this.some_data.Id
 				}
 				
 
@@ -117,6 +122,32 @@ export default {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
+		},
+		async openModalWR(){
+			try {
+				await this.profilesData("followers")
+				
+				$(".myFollow").show()
+				console.log(this.profiles);
+				this.modal = true
+			} catch (error) {
+				this.errormsg = e.toString();
+			}
+        },
+		async profilesData(followCase){
+			try {
+				console.log(`/profile${this.userId}/${followCase}`);
+				this.token = localStorage.getItem("Token")
+			    var data = await this.$axios.get(`/profile${this.userId}/${followCase}`)
+                this.profiles = data.data
+			} catch (e) {
+				this.errormsg = e.toString();
+			}
+			
+			console.log(this.profiles);
+		},
+		hideModal() {
+        	this.$refs['myFollow'].hide()
 		}
 	},
 	mounted() {
@@ -160,9 +191,29 @@ export default {
 				</div>
 			</div>
 		</div>
-		<div v-if="this.some_data" style="display: flex; gap: 40px;">
-			<h1>{{this.some_data.Followers}}</h1>
-			<h1>{{this.some_data.Followings}}</h1>
+		<div v-if="this.some_data" style="display: flex; gap: 40px;">		
+			<!-- <div>
+				<h1 @click="openModal">{{this.some_data.Followers}}</h1>
+				
+					<FollowComponent v-if="this.modal" :idUser="this.some_data.Id" :followCase="'followers'"></FollowComponent>
+			</div> -->
+			<div>
+				<!-- <h1 @click="openModal">{{this.some_data.Followers}}</h1>
+				<div v-if="this.modal">
+					<b-modal ref="myFollow" hide-footer>
+						<FollowComponent  :idUser="this.some_data.Id" :followCase="'followers'"></FollowComponent>
+					</b-modal>
+				</div> -->
+			</div>
+			<div>
+				<h1 @click="openModalWR">{{this.some_data.Followings}}</h1>
+				<div v-if="this.modal">
+					<b-modal v-if="this.modal" id="myFollow" hide-footer>
+						<FollowComponent v-if="this.modal" :usersFollow="this.profiles"></FollowComponent>
+					</b-modal>
+				</div>
+			</div>
+				
 		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">
 			<h2>Name</h2>

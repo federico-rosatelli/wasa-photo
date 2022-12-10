@@ -10,7 +10,7 @@ export default {
             //     allDrop[i].style.display = "contents"
             // }
             
-            let comp = await this.$axios.get("/profile/"+idUser+"/image/"+idImage);
+            let comp = await this.$axios.get(`/profile/${idUser}/image/${idImage}`);
             comp = comp.data
             let t = document.getElementById("title");
             let h1 = document.createElement('h1');
