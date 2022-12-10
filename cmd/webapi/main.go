@@ -84,7 +84,7 @@ func run() error {
 	logger.Infof("application initializing")
 
 	// Start Database
-	logger.Println("initializing database support")
+
 	// dbconn, err := sql.Open("sqlite3", cfg.DB.Filename)
 	// if err != nil {
 	// 	logger.WithError(err).Error("error opening SQLite DB")
@@ -102,22 +102,28 @@ func run() error {
 
 	// // Start (main) API server
 	// logger.Info("initializing API server")
-	dbconn := options.Client().ApplyURI("mongodb://localhost:27017/")
-	client, err := mongo.Connect(context.TODO(), dbconn)
-	if err != nil {
-		logger.WithError(err).Error("error connetting to mongo DB")
-		return fmt.Errorf("opening mongoDb: %w", err)
-	}
-	defer func() {
-		logger.Debug("database stopping")
-		_ = client.Disconnect(context.TODO())
-	}()
+	var db database.AppDatabaseMongo
+	if cfg.DevRun {
+		logger.Println("initializing database support")
+		dbconn := options.Client().ApplyURI("mongodb://localhost:27017/")
+		client, err := mongo.Connect(context.TODO(), dbconn)
+		if err != nil {
+			logger.WithError(err).Error("error connetting to mongo DB")
+			return fmt.Errorf("opening mongoDb: %w", err)
+		}
+		defer func() {
+			logger.Debug("database stopping")
+			_ = client.Disconnect(context.TODO())
+		}()
 
-	db, err := database.MakeInit(client)
+		db, err = database.MakeInit(client)
 
-	if err != nil {
-		logger.WithError(err).Error("error creating mongo DB")
-		return fmt.Errorf("opening mongoDb: %w", err)
+		if err != nil {
+			logger.WithError(err).Error("error creating mongo DB")
+			return fmt.Errorf("opening mongoDb: %w", err)
+		}
+	} else {
+		db = nil
 	}
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.

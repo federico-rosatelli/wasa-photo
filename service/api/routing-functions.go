@@ -60,6 +60,7 @@ func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, p
 	w.Header().Set("content-type", "application/json")
 	//params := mux.Vars(r)
 	id := ps.ByName("id")
+	log.Println(id)
 	if !userExists(id) {
 		return
 	}

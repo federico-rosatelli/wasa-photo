@@ -103,13 +103,15 @@ func (cred Credentials) returnID(rt _router) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = newUser.newUserDB(rt)
-	if err != nil {
-		return "", err
-	}
-	err = newSession.newSessionDB(newSessionToken, rt)
-	if err != nil {
-		return "", err
+	if rt.db != nil {
+		err = newUser.newUserDB(rt)
+		if err != nil {
+			return "", err
+		}
+		err = newSession.newSessionDB(newSessionToken, rt)
+		if err != nil {
+			return "", err
+		}
 	}
 	return newSessionToken, nil
 }

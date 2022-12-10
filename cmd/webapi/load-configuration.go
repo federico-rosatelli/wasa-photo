@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -28,6 +29,7 @@ type WebAPIConfiguration struct {
 	DB    struct {
 		Filename string `conf:"default:/tmp/decaf.db"`
 	}
+	DevRun bool
 }
 
 // loadConfiguration creates a WebAPIConfiguration starting from flags, environment variables and configuration file.
@@ -66,6 +68,9 @@ func loadConfiguration() (WebAPIConfiguration, error) {
 		}
 		_ = fp.Close()
 	}
+	boolFlag := flag.Bool("dev", false, "Database Usage for dev")
+	flag.Parse()
+	cfg.DevRun = *boolFlag
 
 	return cfg, nil
 }

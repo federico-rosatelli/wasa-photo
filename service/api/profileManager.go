@@ -94,8 +94,11 @@ func newProfileDB(profile Profile, rt _router) error {
 	profile.Bans = []UserFollow{}
 	profile.Images = []Image{}
 	profile.AlreadySeen = map[string]string{}
-	err := rt.db.InsertOneProfile(profile.converProfile())
-	return err
+	if rt.db != nil {
+		err := rt.db.InsertOneProfile(profile.converProfile())
+		return err
+	}
+	return nil
 }
 
 func GetProfile(id string) Profile {
@@ -174,26 +177,35 @@ func GetPictureLocationById(id string) string {
 func (p *Profile) SetMyUsername(newUsername string, rt _router) error {
 	p.Username = newUsername
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update := bson.D{{Key: "$set", Value: bson.D{{Key: "username", Value: newUsername}}}}
-	return rt.db.UpdateOne(0, filter, update)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update := bson.D{{Key: "$set", Value: bson.D{{Key: "username", Value: newUsername}}}}
+		return rt.db.UpdateOne(0, filter, update)
+	}
+	return nil
 	// profileCollection := database.AppDatabaseMongo.GetProfilesCollection()
 }
 
 // Set the name of the profile
 func (p *Profile) SetMyName(name string, rt _router) error {
 	p.Name = name
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update := bson.D{{Key: "$set", Value: bson.D{{Key: "name", Value: name}}}}
-	return rt.db.UpdateOne(0, filter, update)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update := bson.D{{Key: "$set", Value: bson.D{{Key: "name", Value: name}}}}
+		return rt.db.UpdateOne(0, filter, update)
+	}
+	return nil
 }
 
 // Set the surname of the profile
 func (p *Profile) SetMySurname(surname string, rt _router) error {
 	p.Surname = surname
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update := bson.D{{Key: "$set", Value: bson.D{{Key: "surname", Value: surname}}}}
-	return rt.db.UpdateOne(0, filter, update)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update := bson.D{{Key: "$set", Value: bson.D{{Key: "surname", Value: surname}}}}
+		return rt.db.UpdateOne(0, filter, update)
+	}
+	return nil
 }
 
 // Add a follower in Profile.Followers
@@ -204,9 +216,12 @@ func (p *Profile) AddFollowers(id string, rt _router) error {
 	}
 	p.Followers = append(p.Followers, newFollow)
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	push := bson.M{"$push": bson.M{"followers": newFollow}}
-	return rt.db.UpdateOnePush(0, filter, push)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		push := bson.M{"$push": bson.M{"followers": newFollow}}
+		return rt.db.UpdateOnePush(0, filter, push)
+	}
+	return nil
 }
 
 // Add a following in Profile.Followings
@@ -226,9 +241,12 @@ func (p *Profile) AddFollowings(id string, rt _router) error {
 	p.Followings = append(p.Followings, newFollow)
 	user.AddFollowers(p.Id, rt)
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	push := bson.M{"$push": bson.M{"followings": newFollow}}
-	return rt.db.UpdateOnePush(0, filter, push)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		push := bson.M{"$push": bson.M{"followings": newFollow}}
+		return rt.db.UpdateOnePush(0, filter, push)
+	}
+	return nil
 }
 
 // Find if the user is banned. It'll return a boolean.
@@ -319,9 +337,12 @@ func (p *Profile) AddBans(id string, rt _router) error {
 	p.Bans = append(p.Followings, newBan)
 	user.DeleteFollower(p.Id, rt)
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update := bson.M{"$push": bson.M{"bans": newBan}}
-	return rt.db.UpdateOnePush(0, filter, update)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update := bson.M{"$push": bson.M{"bans": newBan}}
+		return rt.db.UpdateOnePush(0, filter, update)
+	}
+	return nil
 }
 
 // Delete a user from Profile.Followers and
@@ -350,14 +371,17 @@ func (p *Profile) DeleteFollower(id string, rt _router) error {
 	}
 	p.Followings = followListN
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followings", Value: followListN}}}}
-	err := rt.db.UpdateOne(0, filter, update1)
-	if err != nil {
-		return err
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followings", Value: followListN}}}}
+		err := rt.db.UpdateOne(0, filter, update1)
+		if err != nil {
+			return err
+		}
+		update2 := bson.D{{Key: "$set", Value: bson.D{{Key: "followers", Value: followList}}}}
+		return rt.db.UpdateOne(0, filter, update2)
 	}
-	update2 := bson.D{{Key: "$set", Value: bson.D{{Key: "followers", Value: followList}}}}
-	return rt.db.UpdateOne(0, filter, update2)
+	return nil
 }
 
 // Delete a user from Profile.Bans
@@ -374,9 +398,12 @@ func (p *Profile) UnBans(id string, rt _router) error {
 	}
 	p.Bans = bans
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	update := bson.D{{Key: "$set", Value: bson.D{{Key: "bans", Value: bans}}}}
-	return rt.db.UpdateOne(0, filter, update)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update := bson.D{{Key: "$set", Value: bson.D{{Key: "bans", Value: bans}}}}
+		return rt.db.UpdateOne(0, filter, update)
+	}
+	return nil
 }
 
 // Update the profile picture
@@ -435,11 +462,13 @@ func (p *Profile) AddPhoto(text string, rt _router) (string, error) {
 	}
 	p.Images = append(p.Images, image)
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	push := bson.M{"$push": bson.M{"images": image}}
-	err := rt.db.UpdateOnePush(0, filter, push)
-	if err != nil {
-		return "", err
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		push := bson.M{"$push": bson.M{"images": image}}
+		err := rt.db.UpdateOnePush(0, filter, push)
+		if err != nil {
+			return "", err
+		}
 	}
 	return image.IdImage, nil
 }
@@ -454,9 +483,12 @@ func (p *Profile) DeletePhoto(imageId string, rt _router) error {
 	}
 	p.Images = images
 	profiles[p.Id] = *p
-	filter := bson.D{{Key: "id", Value: p.Id}}
-	push := bson.M{"$set": bson.M{"images": p.Images}}
-	return rt.db.UpdateOnePush(0, filter, push)
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		push := bson.M{"$set": bson.M{"images": p.Images}}
+		return rt.db.UpdateOnePush(0, filter, push)
+	}
+	return nil
 }
 
 // Add a comment in the image struct Image.Comments
@@ -465,11 +497,13 @@ func (p *Profile) AddPhotoComment(usernameIdComment string, imageId string, cont
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			images[i].addComment(usernameIdComment, content)
-			filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
-			err := rt.db.UpdateOnePushM(0, filter, push)
-			if err != nil {
-				return err
+			if rt.db != nil {
+				filter := bson.M{"id": p.Id, "images.idimage": imageId}
+				push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
+				err := rt.db.UpdateOnePushM(0, filter, push)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -487,12 +521,13 @@ func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, i
 			image := images[i]
 			comments := image.deleteComment(usernameIdComment, index)
 			images[i].Comments = comments
-
-			filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
-			err := rt.db.UpdateOnePushM(0, filter, push)
-			if err != nil {
-				return err
+			if rt.db != nil {
+				filter := bson.M{"id": p.Id, "images.idimage": imageId}
+				push := bson.M{"$set": bson.M{"images.$.comments": images[i].Comments}}
+				err := rt.db.UpdateOnePushM(0, filter, push)
+				if err != nil {
+					return err
+				}
 			}
 
 		}
@@ -510,11 +545,13 @@ func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string, rt _rou
 			image := images[i]
 			likes := image.deleteLike(usernameIdLike)
 			images[i].Likes = likes
-			filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
-			err := rt.db.UpdateOnePushM(0, filter, push)
-			if err != nil {
-				return err
+			if rt.db != nil {
+				filter := bson.M{"id": p.Id, "images.idimage": imageId}
+				push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
+				err := rt.db.UpdateOnePushM(0, filter, push)
+				if err != nil {
+					return err
+				}
 			}
 
 		}
@@ -530,11 +567,13 @@ func (p *Profile) AddPhotoLike(usernameIdLike string, imageId string, rt _router
 	for i := 0; i < len(images); i++ {
 		if images[i].IdImage == imageId {
 			images[i].addLike(usernameIdLike)
-			filter := bson.M{"id": p.Id, "images.idimage": imageId}
-			push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
-			err := rt.db.UpdateOnePushM(0, filter, push)
-			if err != nil {
-				return err
+			if rt.db != nil {
+				filter := bson.M{"id": p.Id, "images.idimage": imageId}
+				push := bson.M{"$set": bson.M{"images.$.likes": images[i].Likes}}
+				err := rt.db.UpdateOnePushM(0, filter, push)
+				if err != nil {
+					return err
+				}
 			}
 
 		}
