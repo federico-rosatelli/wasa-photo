@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const key = "f57816d787b74374881e252127055088"
+// const key = "f57816d787b74374881e252127055088"
 
 // struct from https://api.ipgeolocation.io
 type jsonUserAgent struct {
