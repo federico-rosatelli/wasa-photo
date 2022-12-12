@@ -21,9 +21,7 @@ export default {
         </tr>
         <tr v-for="comment in commentData">
             <td>
-                <RouterLink v-bind:to="'/profile/'+comment.Username" class="nav-link">
-                    <ProfileImageComponent :userNameF="comment.Username" :imageUrl="comment.ProfilePictureLocation == ''? '/images/icon_standard.png': comment.ProfilePictureLocation" ></ProfileImageComponent>
-                </RouterLink>
+                <ProfileImageComponent :userNameF="comment.Username" :imageUrl="comment.ProfilePictureLocation == ''? '/images/icon_standard.png': comment.ProfilePictureLocation" ></ProfileImageComponent>
             </td>
             <td>
                 {{comment.Content}}

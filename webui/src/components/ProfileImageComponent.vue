@@ -12,7 +12,7 @@ export default {
 
 <template>
     <div class="profile" v-if="imageUrl">
-        <a :href="$router.resolve({path:`/profile/${userNameF}`}).href">
+        <a :href="'/profile/'+userNameF">
             <img v-bind:src="'http://localhost:3000'+imageUrl" alt="Profile Picture">
             <h4>{{userNameF}}</h4>
         </a>

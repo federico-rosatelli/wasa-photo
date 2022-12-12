@@ -12,6 +12,7 @@ export default {
             id:null,
             profilePicture:null,
             like: false,
+            myProfileId: null,
         }
     },
 	props: ["imageComp","idUser"],
@@ -25,6 +26,8 @@ export default {
             this.id = profile.Id;
             this.profilePicture = profile.ProfilePictureLocation;
             console.log(this.username,this.ProfilePictureLocation);
+            let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}})
+            this.myProfileId = myProfile.data.Id
         },
         async info(){
             this.token = localStorage.getItem("Token")
@@ -67,13 +70,10 @@ export default {
                     comment.ProfilePictureLocation = comm.ProfilePictureLocation;
                     this.comments.push(comment)
                 }
-                let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
-                myProfile = myProfile.data
-                console.log(myProfile);
                 for (let like in this.imageContent.Likes){
                     like = this.imageContent.Likes[like]
                     console.log(like);
-                    if (like.UserIdLike == myProfile.Id){
+                    if (like.UserIdLike == this.myProfileId){
                         // document.getElementById("color-like").style.color = "red"
                         document.getElementById(`color-like-inner-${this.imageComp.IdImage}`).style.color = "red"
                         this.like = true
@@ -104,6 +104,7 @@ export default {
             this.commentContent = null
             this.info();
             this.loading = false;
+            this.imageComp.Comments += 1
         },
         async likePut(idUser,imageComp){
             this.loading = true;

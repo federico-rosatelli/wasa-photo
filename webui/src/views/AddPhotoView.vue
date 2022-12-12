@@ -61,7 +61,7 @@ export default {
 			<input type="text" placeholder="Description" id="text">
 			<button type="button" class="btn btn-sm btn-outline-primary" @click="sendPhoto">Send</button>
 		</div>
-		<img v-if="img_src" v-bind:src="img_src" alt="Your Image" id="previewImg">
+		<img class="box" v-if="img_src" v-bind:src="img_src" alt="Your Image" id="previewImg">
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	</div>
