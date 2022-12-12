@@ -10,7 +10,16 @@ Content-Type: application/json
 ### GetProfile fede
 
 GET http://127.0.0.1:3000/profile
-Token: 50bf482a-8d31-4673-813b-2b728a8798d7
+Token: a770c5e8-6eba-4fab-bcf2-1751a650fe19
+
+### POST COMMENT
+POST http://127.0.0.1:3000/profile/c56ce1de-995d-45de-93c7-e72c88116981/comment/57262675-bfdd-4875-aff3-0b0754c0b5c1
+Token: a770c5e8-6eba-4fab-bcf2-1751a650fe19
+Content-Type: application/json
+
+{
+    "comment": "Prova Commento1"
+}
 
 ### doLogin fede2
 

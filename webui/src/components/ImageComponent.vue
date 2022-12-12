@@ -1,6 +1,12 @@
 <script>
 import $ from 'jquery'
 export default {
+    data:()=>{
+        return{
+            imageContent: null,
+            comments:[],
+        }
+    },
 	props: ["imageComp","idUser"],
     methods:{
         async info(idUser,idImage){
@@ -9,9 +15,9 @@ export default {
             // for (var i = 0; i < allDrop.length; i++) {
             //     allDrop[i].style.display = "contents"
             // }
-            
             let comp = await this.$axios.get(`/profile/${idUser}/image/${idImage}`);
-            comp = comp.data
+            comp = comp.data;
+            this.imageContent = comp;
             let t = document.getElementById("title");
             let h1 = document.createElement('h1');
             let ti = document.createTextNode(comp.Text);
@@ -21,6 +27,19 @@ export default {
             let img = document.createElement('img');
             img.src = 'http://localhost:3000'+comp.Location;
             d.appendChild(img);
+            
+            for (var comment in comp.Comments){
+                console.log(comment);
+                comment = comp.Comments[comment]
+                let comm = await this.$axios.get(`/profile/${comment.UserIdComment}/ultra`)
+                comm = comm.data;
+                comment.Username = comm.Username
+                console.log(comment);
+                this.comments.push(comment)
+            }
+            console.log(this.comments);
+
+
         },
         close(){
             $(".popup").fadeOut();
@@ -28,6 +47,7 @@ export default {
             let d = document.getElementById("img");
             t.innerHTML = "";
             d.innerHTML = "";
+            this.comments = []
         }
     }
 }
@@ -49,6 +69,10 @@ export default {
             </div>
             <div class="desc" id="img">
             </div>
+            <div>
+                <CommentComponents :commentData="this.comments"></CommentComponents>
+            </div>
+
             <button type="button" id="close" @click="close">Close</button>
         </div>
     </div>
@@ -61,13 +85,12 @@ img{
   	height: 280px;
     border-color: black;
     border: 2px solid;
+    box-shadow: 5px;
 }
 .popup{
     background: rgba(0, 0, 0, 0.6);
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
+    position:absolute;
+    top: 10%;
     left: 20%;
     right: 20%;
     display: none;

@@ -282,7 +282,7 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 
 	var prof CommentAdd
 	id := ps.ByName("id")
-	imageId := ps.ByName("imageid")
+	imageId := ps.ByName("imageId")
 	json.NewDecoder(r.Body).Decode(&prof)
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
@@ -307,6 +307,7 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 	}
 	idSession := session.Id
 	profile := GetProfile(id)
+	log.Println("ID SESSION", idSession, "IMAGE ID", imageId, prof.Comment)
 	err = profile.AddPhotoComment(idSession, imageId, prof.Comment, *rt)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
