@@ -112,7 +112,10 @@ func backUpServer(db database.AppDatabaseMongo) error {
 	}
 	for dataProfile.Next(context.Background()) {
 		var profile Profile
-		dataProfile.Decode(&profile)
+		err := dataProfile.Decode(&profile)
+		if err != nil {
+			return errors.New("can't decode the profile values")
+		}
 		profiles[profile.Id] = profile
 	}
 	dataUsers, err := db.BackUpUsers()
@@ -121,7 +124,10 @@ func backUpServer(db database.AppDatabaseMongo) error {
 	}
 	for dataUsers.Next(context.Background()) {
 		var user User
-		dataUsers.Decode(&user)
+		err = dataUsers.Decode(&user)
+		if err != nil {
+			return errors.New("can't decode the user values")
+		}
 		users[user.Id] = user
 	}
 	dataSession, err := db.BackUpSessions()
@@ -130,7 +136,10 @@ func backUpServer(db database.AppDatabaseMongo) error {
 	}
 	for dataSession.Next(context.Background()) {
 		var session Session
-		dataSession.Decode(&session)
+		err = dataSession.Decode(&session)
+		if err != nil {
+			return errors.New("can't decode the session values")
+		}
 		sessions[session.IdSession] = session
 	}
 	return nil

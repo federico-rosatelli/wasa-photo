@@ -239,7 +239,10 @@ func (p *Profile) AddFollowings(id string, rt _router) error {
 		return errors.NewErrStatus("User Not Found")
 	}
 	p.Followings = append(p.Followings, newFollow)
-	user.AddFollowers(p.Id, rt)
+	err := user.AddFollowers(p.Id, rt)
+	if err != nil {
+		return err
+	}
 	profiles[p.Id] = *p
 	if rt.db != nil {
 		filter := bson.D{{Key: "id", Value: p.Id}}
@@ -333,9 +336,15 @@ func (p *Profile) AddBans(id string, rt _router) error {
 	if p.FindBanUser(id) {
 		return errors.NewErrStatus("User Not Found")
 	}
-	p.DeleteFollower(id, rt)
+	err := p.DeleteFollower(id, rt)
+	if err != nil {
+		return err
+	}
 	p.Bans = append(p.Followings, newBan)
-	user.DeleteFollower(p.Id, rt)
+	err = user.DeleteFollower(p.Id, rt)
+	if err != nil {
+		return err
+	}
 	profiles[p.Id] = *p
 	if rt.db != nil {
 		filter := bson.D{{Key: "id", Value: p.Id}}
@@ -415,14 +424,21 @@ func (p *Profile) UpdateProfilePicture(newImgLocation string) {
 }
 
 // Update the profile info, such as name and surname
-func (p *Profile) UpdateProfileInfo(newProfileInfo ProfileUpdate, rt _router) {
+func (p *Profile) UpdateProfileInfo(newProfileInfo ProfileUpdate, rt _router) error {
 	if newProfileInfo.Name != "" {
-		p.SetMyName(newProfileInfo.Name, rt)
+		err := p.SetMyName(newProfileInfo.Name, rt)
+		if err != nil {
+			return err
+		}
 	}
 	if newProfileInfo.Surname != "" {
-		p.SetMySurname(newProfileInfo.Surname, rt)
+		err := p.SetMySurname(newProfileInfo.Surname, rt)
+		if err != nil {
+			return err
+		}
 	}
 	profiles[p.Id] = *p
+	return nil
 }
 
 // Get the basic profile info of a profile.

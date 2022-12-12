@@ -171,13 +171,14 @@ func userExists(id string) bool {
 }
 
 // Update the username of the user
-func (u *User) updateUsername(newUsername string, rt _router) {
+func (u *User) updateUsername(newUsername string, rt _router) error {
 	u.Username = newUsername
 	session := sessions[u.Id]
 	session.updateUsernameSession(newUsername, rt)
 	profile := GetProfile(u.Id)
-	profile.SetMyUsername(newUsername, rt)
 	users[u.Id] = *u
+	err := profile.SetMyUsername(newUsername, rt)
+	return err
 }
 
 // Extract the user-agent string information
