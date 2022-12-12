@@ -95,6 +95,7 @@ paths:
             application/json:
               schema:
                 type: array
+                minItems: 0
                 maxItems: 99999999999
                 items: {$ref: "#/components/schemas/streamContent"}
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -510,45 +511,62 @@ components:
       type: object
       properties:
         Username:
+          description: |
+            Username of the user
           type: string
           example: Maria
           pattern: '^[a-zA-Z]*'
           minLength: 3
           maxLength: 16
         Id:
+          description: |
+            Id of the user
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         ProfilePictureLocation:
+          description: |
+            Location of the image picture of the user
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
           minLength: 48
           maxLength: 48
         Name:
+          description: |
+            Name of the user
           type: string
           example: Mario
           pattern: '^[a-zA-Z]*'
           maxLength: 20
           minLength: 0
         Surname:
+          description: |
+            Surname of the user
           type: string
           example: Rossi
           pattern: '^[a-zA-Z]*'
           maxLength: 20
           minLength: 0
         Followers:
+          description: |
+            Number of followers of the user
           type: integer
           minimum: 0
           maximum: 99999999999
         Followings:
+          description: |
+            Number of followings of the user
           type: integer
           minimum: 0
           maximum: 99999999999
         Images:
+          description: |
+            Images of the user
           type: array
+          minItems: 0
           maxItems: 99999999999
           items:
             $ref: "#/components/schemas/basicImage"
@@ -562,32 +580,44 @@ components:
         chosen by the user.
       properties:
         idImage:
+          description: |
+            Id of the image
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         Location:
+          description: |
+            Location of the image
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
           minLength: 48
           maxLength: 48
         Time:
+          description: |
+            Time of creation of the image
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
           minLength: 0
           maxLength: 100
         Likes:
+          description: |
+            Number of likes of the image
           type: integer
           minimum: 0
           maximum: 99999999999
         Comments:
+          description: |
+            Number of comments of the image
           type: integer
           minimum: 0
           maximum: 99999999999
         Text:
+          description: |
+            Text of the image
           type: string
           example: Text Image
           pattern: '^.*'
@@ -603,34 +633,48 @@ components:
         and the other for the comments.
       properties:
         idImage:
+          description: |
+            Id of the image
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         Location:
+          description: |
+            Location of the image
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
           minLength: 48
           maxLength: 48
         Time:
+          description: |
+            Time of creation of the image
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
           minLength: 0
           maxLength: 100
         Likes:
+          description: |
+            Likes of the image
           type: array
+          minItems: 0
           maxItems: 99999999999
           items:
             $ref: "#/components/schemas/likes"
         Comments:
+          description: |
+            Comments of the image
           type: array
+          minItems: 0
           maxItems: 99999999999
           items:
             $ref: "#/components/schemas/comments"
         Text:
+          description: |
+            Text of the image
           type: string
           pattern: '^.*'
           minLength: 1
@@ -643,12 +687,16 @@ components:
         such as the user id who liked the photo and the time of the like
       properties:
         UserIdLike:
+          description: |
+            Username of the user
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         Time:
+          description: |
+            Time of the like
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
@@ -663,18 +711,24 @@ components:
         the content of the comment
       properties:
         UserIdComment:
+          description: |
+            Id of the user of the comment
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         Time:
+          description: |
+            Time of the comment
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
           minLength: 0
           maxLength: 100
         Content:
+          description: |
+            Content of the comment
           type: string
           example: Comment
           pattern: '^.*'
@@ -689,17 +743,23 @@ components:
         profile picture.
       properties:
         Username:
+          description: |
+            Username of the user
           type: string
           pattern: '^[a-zA-Z]*'
           minLength: 3
           maxLength: 16
         Id:
+          description: |
+            Id of the user
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         ProfilePictureLocation:
+          description: |
+            Location of the profile picture of the user
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
@@ -715,51 +775,67 @@ components:
         one for the likes of the image and the other for the comments
       properties:
         Username:
+          description: |
+            Username of the Image Content displayed in homepage
           type: string
           pattern: '^[a-zA-Z]*'
           minLength: 3
           maxLength: 16
         Id:
+          description: |
+            Id of the User of the Image Content displayed in homepage
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         ProfilePictureLocation:
+          description: |
+            Location of profile of the user of the Image Content displayed in homepage
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
           minLength: 48
           maxLength: 48
         ImageId:
+          description: |
+            Id of the Image displayed in homepage
           type: string
           example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
           pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
           minLength: 36
           maxLength: 36
         ImageLocation:
+          description: |
+            Location of the Image displayed in homepage
           type: string
           example: /images/a35f6dfa-69dc-11ed-a1eb-0242ac120002.png
           pattern: '^/images/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}.png$'
           minLength: 48
           maxLength: 48
         Time:
+          description: |
+            Time of the Image Content creation displayed in homepage
           type: string
           example: 2006-01-02 15:04:05.999999999 -0700 MST
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
           minLength: 0
           maxLength: 100
         Comments:
-          type: array
-          maxItems: 99999999999
-          items:
-            $ref: "#/components/schemas/comments"
+          description: |
+            Number of comments of the Image displayed in homepage
+          type: integer
+          minimum: 0
+          maximum: 99999999999
         Likes:
-          type: array
-          maxItems: 99999999999
-          items:
-            $ref: "#/components/schemas/likes"
+          description: |
+            Number of likes of the Image displayed in homepage
+          type: integer
+          minimum: 0
+          maximum: 99999999999
         Text:
+          description: |
+            Description of the Image displayed in homepage
           type: string
           example: Text Image
           minLength: 1
@@ -782,6 +858,11 @@ components:
         WWW_Authenticate:
           schema:
             type: string
+            example: Error
+            minLength: 1
+            maxLength: 256
+            pattern: '^.*'
+
     BadRequest:
       description: Missing fields
 
@@ -792,7 +873,9 @@ components:
 
   parameters:
     Search:
-      schema:
+      schema: 
+        description: |
+            The username to search
         type: string
         example: Maria
         pattern: '^.*?$'
@@ -805,6 +888,8 @@ components:
       allowEmptyValue: false
     IdParam:
       schema:
+        description: |
+            The Id of the user
         type: string
         example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
         pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
@@ -817,6 +902,8 @@ components:
       description: Id of the user
     ImageIdParam:
       schema:
+        description: |
+            The id of the image
         type: string
         example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
         pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
@@ -829,6 +916,8 @@ components:
       description: Id of the image
     Index:
       schema:
+        description: |
+            The index of the comment to delete
         type: integer
         minimum: 0
         maximum: 99999999999
