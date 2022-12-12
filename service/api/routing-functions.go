@@ -43,7 +43,6 @@ func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps http
 
 func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	imageId := ps.ByName("imageid")
 	if !userExists(id) {
@@ -63,7 +62,6 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 
 func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	log.Println(id)
 	if !userExists(id) {
@@ -79,7 +77,6 @@ func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, p
 
 func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	if !userExists(id) {
 		return
@@ -94,7 +91,6 @@ func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, 
 
 func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	if !userExists(id) {
 		return
@@ -108,7 +104,6 @@ func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps ht
 
 func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
-	//params := mux.Vars(r)
 	id := ps.ByName("id")
 	if !userExists(id) {
 		return
@@ -123,7 +118,11 @@ func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, 
 func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	var prof ProfileUpdate
-	json.NewDecoder(r.Body).Decode(&prof)
+	err := json.NewDecoder(r.Body).Decode(&prof)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {
@@ -145,7 +144,11 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 	profile := GetProfile(idSession)
 	if prof.NewUsername != "" {
 		user := users[idSession]
-		user.updateUsername(prof.NewUsername, *rt)
+		err := user.updateUsername(prof.NewUsername, *rt)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	} else {
 		err = profile.UpdateProfileInfo(prof, *rt)
 		if err != nil {
@@ -153,7 +156,6 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 			return
 		}
 	}
-	// w.Header().Set("Content-type", "application/json")
 	if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
@@ -283,7 +285,11 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 	var prof CommentAdd
 	id := ps.ByName("id")
 	imageId := ps.ByName("imageId")
-	json.NewDecoder(r.Body).Decode(&prof)
+	err := json.NewDecoder(r.Body).Decode(&prof)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {
@@ -673,7 +679,11 @@ func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.
 func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	var prof PhotoAdd
-	json.NewDecoder(r.Body).Decode(&prof)
+	err := json.NewDecoder(r.Body).Decode(&prof)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	if err != nil {

@@ -183,7 +183,6 @@ func (p *Profile) SetMyUsername(newUsername string, rt _router) error {
 		return rt.db.UpdateOne(0, filter, update)
 	}
 	return nil
-	// profileCollection := database.AppDatabaseMongo.GetProfilesCollection()
 }
 
 // Set the name of the profile

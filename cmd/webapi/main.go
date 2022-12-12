@@ -100,8 +100,6 @@ func run() error {
 	// 	return fmt.Errorf("creating AppDatabase: %w", err)
 	// }
 
-	// // Start (main) API server
-	// logger.Info("initializing API server")
 	var db database.AppDatabaseMongo
 	if cfg.DevRun {
 		logger.Println("initializing database support")
@@ -125,6 +123,8 @@ func run() error {
 	} else {
 		db = nil
 	}
+	// // Start (main) API server
+
 	// Make a channel to listen for an interrupt or terminate signal from the OS.
 	// Use a buffered channel because the signal package requires it.
 	shutdown := make(chan os.Signal, 1)
