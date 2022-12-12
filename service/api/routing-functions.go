@@ -14,8 +14,11 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-const StatusUnauthorized = "StatusUnauthorized"
-const StatusInternalServerError = "StatusInternalServerError"
+const (
+	StatusUnauthorized        = "StatusUnauthorized"
+	StatusInternalServerError = "StatusInternalServerError"
+	StatusBadRequest          = "Empty Token"
+)
 
 func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
@@ -132,6 +135,8 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			}
@@ -176,8 +181,10 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
-			} else {
+			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 
 			}
 		default:
@@ -255,6 +262,8 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -301,6 +310,8 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -348,8 +359,10 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
-			} else {
+			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 
 			}
 		default:
@@ -389,6 +402,8 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -429,6 +444,8 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -469,6 +486,8 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -509,6 +528,8 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -546,6 +567,8 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -585,6 +608,8 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -623,6 +648,8 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 
@@ -642,24 +669,11 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 }
 
-func (rt *_router) Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("content-type", "text/html")
-	htmlFile := "./views/login.html"
-	http.ServeFile(w, r, htmlFile)
-}
-
-func (rt *_router) AddPhotoProfileGet(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("content-type", "text/html")
-	htmlFile := "./views/addphoto.html"
-	http.ServeFile(w, r, htmlFile)
-}
-
 func (rt *_router) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	var creds Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
-		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -693,8 +707,10 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-			} else {
+			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 			}
 		default:
 			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
@@ -722,9 +738,10 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-			} else {
-				r.Header.Add("Token", "Ciao")
+			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 			}
 		default:
 			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)

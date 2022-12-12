@@ -64,9 +64,12 @@ func (s *Session) updateUsernameSession(newUsername string, rt _router) {
 // }
 
 func returnSessionFromId(id string) (Session, error) {
+	if len(sessions) == 0 {
+		return Session{}, errors.NewErrStatus("StatusInternalServerError")
+	}
 	session, err := sessions[id]
 	if id == "" {
-		return Session{}, errors.NewErrStatus("Token Error: " + id)
+		return Session{}, errors.NewErrStatus("Empty Token")
 	}
 	if !err {
 		return Session{}, errors.NewErrStatus("StatusUnauthorized")
