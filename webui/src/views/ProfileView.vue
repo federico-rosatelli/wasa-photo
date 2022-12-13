@@ -123,9 +123,9 @@ export default {
 			}
 			this.loading = false;
 		},
-		async openModalWR(){
+		async openModalWR(typeFollow){
 			try {
-				await this.profilesData("followers")
+				await this.profilesData(typeFollow)
 				
 				$(".myFollow").show()
 				console.log(this.profiles);
@@ -138,13 +138,15 @@ export default {
 			try {
 				console.log(`/profile${this.userId}/${followCase}`);
 				this.token = localStorage.getItem("Token")
-			    var data = await this.$axios.get(`/profile${this.userId}/${followCase}`)
-                this.profiles = data.data
+			    var datap = await this.$axios.get(`/profile${this.userId}/${followCase}`,{headers:{"Token":this.token}})
+                this.profiles = datap.data
+				console.log("profile",this.profiles);
+				console.log("data",datap);
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
 			
-			console.log(this.profiles);
+			console.log("dataprofile: ",this.profiles);
 		},
 		hideModal() {
         	this.$refs['myFollow'].hide()
@@ -206,7 +208,7 @@ export default {
 				</div> -->
 			</div>
 			<div>
-				<h1 @click="openModalWR">{{this.some_data.Followings}}</h1>
+				<h1 @click="openModalWR('followings')">{{this.some_data.Followings}}</h1>
 				<div v-if="this.modal">
 					<b-modal v-if="this.modal" id="myFollow" hide-footer>
 						<FollowComponent v-if="this.modal" :usersFollow="this.profiles"></FollowComponent>

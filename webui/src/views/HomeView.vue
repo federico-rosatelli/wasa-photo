@@ -17,7 +17,6 @@ export default {
 				this.token = localStorage.getItem("Token")
 				let response = await this.$axios.get("/",{headers:{"Token":this.token}});
 				this.some_data = response.data;
-				console.log(this.some_data);
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
@@ -56,7 +55,6 @@ export default {
 		<div v-if="this.some_data" class="grid-container">
 			<div v-for="item in this.some_data" >
 				<div class="grid-item">
-					<h2>{{item.Username}}</h2>
 					<ImageComponent v-if="item" :imageComp="item" :idUser="item.Id" />
 				</div>
 			</div>

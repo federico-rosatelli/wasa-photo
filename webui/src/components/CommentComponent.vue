@@ -41,6 +41,9 @@ export default {
 .row{
  display: flex;
 }
+td{
+    font-size: 15px;
+}
 #table {
  font-family: Arial, Helvetica, sans-serif;
  border-collapse: collapse;
