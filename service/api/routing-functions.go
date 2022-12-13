@@ -71,8 +71,9 @@ func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 	profile := GetProfile(id)
-	followers := profile.GetBasicUserFollowers()
-	if errJson := json.NewEncoder(w).Encode(followers); errJson != nil {
+	log.Println(profile)
+	followersdata := profile.GetBasicUserFollowers()
+	if errJson := json.NewEncoder(w).Encode(followersdata); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
 		return
 	}

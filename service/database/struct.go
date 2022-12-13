@@ -12,21 +12,21 @@ type Profile struct {
 	Followings     []UserFollow
 	Bans           []UserFollow
 	Images         []Image
-	AlreadySeen    map[string]string
+	AlreadySeen    map[string]int64
 }
 
 type UserFollow struct {
 	IdUser string
-	Time   string
+	Time   int64
 }
 
 type Like struct {
 	UserIdLike string
-	Time       string
+	Time       int64
 }
 type Comment struct {
 	UserIdComment string
-	Time          string
+	Time          int64
 	Content       string
 }
 
@@ -34,14 +34,14 @@ type Image struct {
 	IdImage  string
 	Location string
 	Text     string
-	Time     string
+	Time     int64
 	Likes    []Like
 	Comments []Comment
 }
 
 type ProfilePicture struct {
 	Location string
-	Time     string
+	Time     int64
 }
 
 type Session struct {
@@ -88,12 +88,12 @@ type Path struct {
 }
 
 type UserData struct {
-	LastShoppingTime time.Time
+	LastShoppingTime int64
 	UserInfo         struct {
 		Ip_client       string
 		UserAgentString string
 		UserAgent       JsonUserAgent
-		Time_client     time.Time
+		Time_client     int64
 		Times_visited   int
 		Paths           []Path
 	}

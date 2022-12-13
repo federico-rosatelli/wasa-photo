@@ -13,7 +13,7 @@ func (p Profile) converProfile() database.Profile {
 		Followings:     []database.UserFollow{},
 		Bans:           []database.UserFollow{},
 		Images:         []database.Image{},
-		AlreadySeen:    map[string]string{},
+		AlreadySeen:    map[string]int64{},
 	}
 }
 

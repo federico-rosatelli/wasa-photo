@@ -7,11 +7,11 @@ import (
 
 type Like struct {
 	UserIdLike string
-	Time       string
+	Time       int64
 }
 type Comment struct {
 	UserIdComment string
-	Time          string
+	Time          int64
 	Content       string
 }
 
@@ -19,14 +19,14 @@ type Image struct {
 	IdImage  string
 	Location string
 	Text     string
-	Time     string
+	Time     int64
 	Likes    []Like
 	Comments []Comment
 }
 
 type ProfilePicture struct {
 	Location string
-	Time     string
+	Time     int64
 }
 
 func (i Image) getLocation() string {
@@ -69,7 +69,7 @@ func (i *Image) addLike(id string) {
 	if !isin {
 		like := Like{
 			UserIdLike: id,
-			Time:       time.Now().String(),
+			Time:       time.Now().Unix(),
 		}
 		i.Likes = append(i.Likes, like)
 	}
@@ -109,7 +109,7 @@ func (i *Image) deleteLike(usernameIdLike string) []Like {
 func (i *Image) addComment(id string, content string) {
 	comment := Comment{
 		UserIdComment: id,
-		Time:          time.Now().String(),
+		Time:          time.Now().Unix(),
 		Content:       content,
 	}
 	i.Comments = append(i.Comments, comment)
@@ -117,7 +117,7 @@ func (i *Image) addComment(id string, content string) {
 
 func (pp *ProfilePicture) updatePicture(newLocation string) {
 	pp.Location = newLocation
-	pp.Time = time.Now().String()
+	pp.Time = time.Now().Unix()
 }
 
 func (pp *ProfilePicture) getPictureLocation() string {

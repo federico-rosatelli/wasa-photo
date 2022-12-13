@@ -10,7 +10,7 @@ type StreamContent struct {
 	Id       string
 	IdImage  string
 	Location string
-	Time     string
+	Time     int64
 	Comments int
 	Likes    int
 	Text     string
@@ -46,7 +46,7 @@ func (p *Profile) GetNewStream() []StreamContent {
 }
 
 func (p *Profile) AddAlreadySeen(imageId string) {
-	p.AlreadySeen[imageId] = time.Now().String()
+	p.AlreadySeen[imageId] = time.Now().Unix()
 	// filter := bson.D{{Key: "id", Value: p.Id}}
 	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "alreadyseen", Value: p.AlreadySeen}}}}
 	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)

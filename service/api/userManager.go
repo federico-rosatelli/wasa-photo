@@ -64,12 +64,12 @@ type Path struct {
 }
 
 type userData struct {
-	LastShoppingTime time.Time
+	LastShoppingTime int64
 	UserInfo         struct {
 		Ip_client       string
 		UserAgentString string
 		UserAgent       jsonUserAgent
-		Time_client     time.Time
+		Time_client     int64
 		Times_visited   int
 		Paths           []Path
 	}

@@ -13,7 +13,7 @@ var profiles = map[string]Profile{}
 
 type UserFollow struct {
 	IdUser string
-	Time   string
+	Time   int64
 }
 
 type ProfileUpdate struct {
@@ -32,7 +32,7 @@ type Profile struct {
 	Followings     []UserFollow
 	Bans           []UserFollow
 	Images         []Image
-	AlreadySeen    map[string]string
+	AlreadySeen    map[string]int64
 }
 
 type PhotoAdd struct {
@@ -59,7 +59,7 @@ type BasicProfile struct {
 type BasicImage struct {
 	IdImage  string
 	Location string
-	Time     string
+	Time     int64
 	Likes    int
 	Comments int
 	Text     string
@@ -93,7 +93,7 @@ func newProfileDB(profile Profile, rt _router) error {
 	profile.Followings = []UserFollow{}
 	profile.Bans = []UserFollow{}
 	profile.Images = []Image{}
-	profile.AlreadySeen = map[string]string{}
+	profile.AlreadySeen = map[string]int64{}
 	if rt.db != nil {
 		err := rt.db.InsertOneProfile(profile.converProfile())
 		return err
@@ -211,7 +211,7 @@ func (p *Profile) SetMySurname(surname string, rt _router) error {
 func (p *Profile) AddFollowers(id string, rt _router) error {
 	newFollow := UserFollow{
 		IdUser: id,
-		Time:   time.Now().String(),
+		Time:   time.Now().Unix(),
 	}
 	p.Followers = append(p.Followers, newFollow)
 	profiles[p.Id] = *p
@@ -232,7 +232,7 @@ func (p *Profile) AddFollowings(id string, rt _router) error {
 
 	newFollow := UserFollow{
 		IdUser: id,
-		Time:   time.Now().String(),
+		Time:   time.Now().Unix(),
 	}
 	if p.FindBanUser(id) || p.FindFollowingUser(id) {
 		return errors.NewErrStatus("User Not Found")
@@ -330,7 +330,7 @@ func (p *Profile) AddBans(id string, rt _router) error {
 	}
 	newBan := UserFollow{
 		IdUser: id,
-		Time:   time.Now().String(),
+		Time:   time.Now().Unix(),
 	}
 	if p.FindBanUser(id) {
 		return errors.NewErrStatus("User Not Found")
@@ -471,7 +471,7 @@ func (p *Profile) AddPhoto(text string, rt _router) (string, error) {
 		IdImage:  newID,
 		Location: "/images/" + newID + ".png",
 		Text:     text,
-		Time:     time.Now().String(),
+		Time:     time.Now().Unix(),
 		Comments: []Comment{},
 		Likes:    []Like{},
 	}
