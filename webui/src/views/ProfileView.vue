@@ -86,11 +86,6 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			this.token = localStorage.getItem("Token")
-			console.log(this.token);
-			let postData = {
-					name:"this.myName",
-					surname:"this.mySurname",
-				}
 			try {
 				let response = null
 				if (!this.alreadyFollow){
@@ -122,34 +117,41 @@ export default {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
+			this.refresh()
 		},
 		async openModalWR(typeFollow){
 			try {
-				await this.profilesData(typeFollow)
-				
-				$(".myFollow").show()
-				console.log(this.profiles);
-				this.modal = true
+				let dataFollow = await this.profilesData(typeFollow)
+				this.profiles = dataFollow
 			} catch (error) {
-				this.errormsg = e.toString();
+				this.errormsg = error.toString();
+				console.log("ENTRA PERO");
 			}
+			//this.modal = true
+			//this.$root.$emit("bv::show::modal",`.myFollow-${typeFollow}`)
+			//let myf = document.getElementById(`.myFollow-${typeFollow}`)
+			//myf.show()
+			//$(`myFollow-${typeFollow}`).style.display = "flex";
+			document.getElementById(`myFollow-${typeFollow}`).style.display = "flex";
+			// console.log(`.myFollow-${typeFollow}`)
+			// let datatype = this.$refs[`myFollow-${typeFollow}`]
+			// if (datatype != null){
+			// 	console.log(datatype);
+			// }
         },
 		async profilesData(followCase){
 			try {
-				console.log(`/profile${this.userId}/${followCase}`);
-				this.token = localStorage.getItem("Token")
 			    var datap = await this.$axios.get(`/profile${this.userId}/${followCase}`,{headers:{"Token":this.token}})
-                this.profiles = datap.data
-				console.log("profile",this.profiles);
-				console.log("data",datap);
+                return datap.data
+				
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
-			
-			console.log("dataprofile: ",this.profiles);
+			return null
 		},
-		hideModal() {
-        	this.$refs['myFollow'].hide()
+		hideModal(id) {
+			console.log(id);
+        	document.getElementById(id).style.display = "none";
 		}
 	},
 	mounted() {
@@ -194,25 +196,65 @@ export default {
 			</div>
 		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">		
-			<!-- <div>
-				<h1 @click="openModal">{{this.some_data.Followers}}</h1>
-				
-					<FollowComponent v-if="this.modal" :idUser="this.some_data.Id" :followCase="'followers'"></FollowComponent>
-			</div> -->
 			<div>
-				<!-- <h1 @click="openModal">{{this.some_data.Followers}}</h1>
-				<div v-if="this.modal">
-					<b-modal ref="myFollow" hide-footer>
-						<FollowComponent  :idUser="this.some_data.Id" :followCase="'followers'"></FollowComponent>
-					</b-modal>
-				</div> -->
+				<h1 @click="openModalWR('followers')">{{this.some_data.Followers}}</h1>
+				<div class="modal-mask" style="display: none;" id="myFollow-followers" @click="hideModal('myFollow-followers')">
+					<div class="modal-wrapper">
+						<div class="modal-container">
+
+						<div class="modal-header">
+							<slot name="header">
+							Follow
+							</slot>
+						</div>  
+
+						<div class="modal-body">
+							<slot name="body">
+								<FollowComponent v-if="this.profiles" :usersFollow="this.profiles"></FollowComponent>
+							</slot>
+						</div>
+
+						<div class="modal-footer">
+							<slot name="footer">
+							default footer
+							<button class="modal-default-button" @click="hideModal('myFollow-followers')">
+								OK
+							</button>
+							</slot>
+						</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
 			<div>
 				<h1 @click="openModalWR('followings')">{{this.some_data.Followings}}</h1>
-				<div v-if="this.modal">
-					<b-modal v-if="this.modal" id="myFollow" hide-footer>
-						<FollowComponent v-if="this.modal" :usersFollow="this.profiles"></FollowComponent>
-					</b-modal>
+				<div class="modal-mask" style="display: none;" id="myFollow-followings" @click="hideModal('myFollow-followings')">
+					<div class="modal-wrapper">
+						<div class="modal-container">
+
+						<div class="modal-header">
+							<slot name="header">
+							Follow
+							</slot>
+						</div>  
+
+						<div class="modal-body">
+							<slot name="body">
+								<FollowComponent v-if="this.profiles" :usersFollow="this.profiles"></FollowComponent>
+							</slot>
+						</div>
+
+						<div class="modal-footer">
+							<slot name="footer">
+							default footer
+							<button class="modal-default-button" @click="hideModal('myFollow-followings')">
+								OK
+							</button>
+							</slot>
+						</div>
+						</div>
+					</div>
 				</div>
 			</div>
 				

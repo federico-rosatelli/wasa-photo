@@ -4,16 +4,17 @@ export default {
         return {
             profiles: null,
             errormsg:null,
+            show:false,
             // idUser:null,
             // follow:null,
         }
     },
-	props: ["usersFollow"],
+	props: ["usersFollow","showModal"],
 }
 </script>
 
 <template>
-	<div v-for="profile in usersFollow">
+    <div v-for="profile in usersFollow">
         <div style="display: flex;">
             <h2>{{profile.Username}}</h2>
             <h2>{{profile.Id}}</h2>

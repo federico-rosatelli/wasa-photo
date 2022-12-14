@@ -1,5 +1,5 @@
 import {createApp, reactive} from 'vue'
-import { BModal } from 'bootstrap-vue'
+// import { BModal, BButton } from 'bootstrap-vue-3'
 
 import App from './App.vue'
 import router from './router'
@@ -13,6 +13,7 @@ import CommentComponents from './components/CommentComponent.vue'
 import './assets/dashboard.css'
 import './assets/main.css'
 import './assets/login.css'
+import './assets/modal.css'
 console.log("PROVAAA");
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
@@ -23,6 +24,10 @@ app.component("ImageComponent", ImageComponent);
 app.component("FollowComponent",FollowComponent)
 app.component("CommentComponents",CommentComponents)
 app.use(router)
+//app.use(BModal)
+// app.component("b-modal",BModal)
+// app.component("b-button",BButton)
+//app.use(IconsPlugin)
 
-app.component('b-modal', BModal)
+//app.component('b-modal', BModal)
 app.mount('#app')
