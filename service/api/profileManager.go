@@ -309,7 +309,7 @@ func (p *Profile) UnfollowingUser(id string) {
 
 func (p *Profile) UnFollowerUser(id string) {
 	var followList []UserFollow
-	for _, x := range p.Followings {
+	for _, x := range p.Followers {
 		if x.IdUser != id {
 			follow := UserFollow{
 				IdUser: x.IdUser,
