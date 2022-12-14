@@ -152,6 +152,7 @@ export default {
 		hideModal(id) {
 			console.log(id);
         	document.getElementById(id).style.display = "none";
+			this.refresh();
 		}
 	},
 	mounted() {
@@ -198,30 +199,31 @@ export default {
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">		
 			<div>
 				<h1 @click="openModalWR('followers')">{{this.some_data.Followers}}</h1>
-				<div class="modal-mask" style="display: none;" id="myFollow-followers" @click="hideModal('myFollow-followers')">
+				<div class="modal-mask" style="display: none;" id="myFollow-followers">
 					<div class="modal-wrapper">
 						<div class="modal-container">
 
-						<div class="modal-header">
-							<slot name="header">
-							Follow
-							</slot>
-						</div>  
+							<div class="modal-header">
+								<slot name="header">
+									<h3>
+										Followers
+									</h3>
+								</slot>
+							</div>  
 
-						<div class="modal-body">
-							<slot name="body">
-								<FollowComponent v-if="this.profiles" :usersFollow="this.profiles"></FollowComponent>
-							</slot>
-						</div>
+							<div class="modal-body">
+								<slot name="body">
+									<FollowComponent v-if="this.profiles" :usersFollow="this.profiles"></FollowComponent>
+								</slot>
+							</div>
 
-						<div class="modal-footer">
-							<slot name="footer">
-							default footer
-							<button class="modal-default-button" @click="hideModal('myFollow-followers')">
-								OK
-							</button>
-							</slot>
-						</div>
+							<div class="modal-footer">
+								
+									<button class="modal-default-button" @click="hideModal('myFollow-followers')">
+										OK
+									</button>
+								
+							</div>
 						</div>
 					</div>
 				</div>
@@ -229,30 +231,31 @@ export default {
 			</div>
 			<div>
 				<h1 @click="openModalWR('followings')">{{this.some_data.Followings}}</h1>
-				<div class="modal-mask" style="display: none;" id="myFollow-followings" @click="hideModal('myFollow-followings')">
+				<div class="modal-mask" style="display: none;" id="myFollow-followings">
 					<div class="modal-wrapper">
 						<div class="modal-container">
 
-						<div class="modal-header">
-							<slot name="header">
-							Follow
-							</slot>
-						</div>  
+							<div class="modal-header">
+								<h3>
+									Followings
+								</h3> 
+								<slot name="header">
+								</slot>
+							</div>  
 
-						<div class="modal-body">
-							<slot name="body">
-								<FollowComponent v-if="this.profiles" :usersFollow="this.profiles"></FollowComponent>
-							</slot>
-						</div>
+							<div class="modal-body">
+								<slot name="body">
+									<FollowComponent v-if="this.profiles" :usersFollow="this.profiles"></FollowComponent>
+								</slot>
+							</div>
 
-						<div class="modal-footer">
-							<slot name="footer">
-							default footer
-							<button class="modal-default-button" @click="hideModal('myFollow-followings')">
-								OK
-							</button>
-							</slot>
-						</div>
+							<div class="modal-footer">
+								
+								<button class="modal-default-button" @click="hideModal('myFollow-followings')">
+									OK
+								</button>
+								
+							</div>
 						</div>
 					</div>
 				</div>

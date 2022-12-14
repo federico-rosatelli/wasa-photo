@@ -16,7 +16,10 @@ export default {
 <template>
     <div v-for="profile in usersFollow">
         <div style="display: flex;">
-            <h2>{{profile.Username}}</h2>
+            <RouterLink v-bind:to="'/profile/'+profile.Username" class="nav-link">
+                <svg class="feather"><use href="/feather-sprite-v4.29.0.svg#user"/></svg>
+                {{profile.Username}}
+            </RouterLink>
             <h2>{{profile.Id}}</h2>
         </div>
     </div>
