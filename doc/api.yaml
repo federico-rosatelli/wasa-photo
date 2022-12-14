@@ -30,7 +30,7 @@ paths:
                   maxLength: 16
         required: true
       responses:
-        '200':
+        '201':
           description: User log-in action successful
           content:
             application/json:
@@ -56,6 +56,8 @@ paths:
         content:
           multipart/form-data:
             schema:
+              description: |
+                Post for the Image
               type: object
               properties:
                 text:
@@ -94,6 +96,8 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  Array of streamContent
                 type: array
                 minItems: 0
                 maxItems: 99999999999
@@ -117,6 +121,9 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  Object of basicProfile
+                type: object
                 $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -164,7 +171,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema:
+                description: |
+                  BasicProfile response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -185,7 +196,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema:
+                description: |
+                  BasicProfile response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -202,7 +217,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema:
+                description: |
+                  BasicProfile response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -220,7 +239,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema:
+                description: |
+                  BasicProfile response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -242,7 +265,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema:
+                description: |
+                  BasicProfile response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -260,7 +287,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema: 
+                description: |
+                  BasicProfile response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -284,6 +315,9 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  completeImage response
+                type: object
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -301,7 +335,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/basicProfile"}
+              schema:
+                description: |
+                  completeImage response
+                type: object
+                $ref: "#/components/schemas/basicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -325,6 +363,9 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  completeImage response
+                type: object
                 $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
@@ -343,7 +384,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/completeImage"}
+              schema:
+                description: |
+                  completeImage response
+                type: object
+                $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -368,6 +413,8 @@ paths:
         content:
           application/json:
             schema:
+              description: |
+                Content to post
               type: object
               properties:
                 content:
@@ -382,7 +429,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/completeImage"}
+              schema:
+                description: |
+                  completeImage response
+                type: object
+                $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -402,7 +453,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/completeImage" }
+              schema:
+                description: |
+                  completeImage response
+                type: object
+                $ref: "#/components/schemas/completeImage"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -424,7 +479,11 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: {$ref: "#/components/schemas/ultraBasicProfile"}
+              schema:
+                description: |
+                  ultraBasicProfile response
+                type: object
+                $ref: "#/components/schemas/ultraBasicProfile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -446,7 +505,11 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  ultraBasicProfile array response
                 type: array
+                minItems: 0
+                maxItems: 9999999999999
                 items: {$ref: "#/components/schemas/ultraBasicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -469,7 +532,11 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  ultraBasicProfile array response
                 type: array
+                minItems: 0
+                maxItems: 9999999999999
                 items: {$ref: "#/components/schemas/ultraBasicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -495,7 +562,11 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  ultraBasicProfile array response
                 type: array
+                minItems: 0
+                maxItems: 9999999999999
                 items: {$ref: "#/components/schemas/ultraBasicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "500": { $ref: "#/components/responses/InternalServerError" }
