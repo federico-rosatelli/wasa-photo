@@ -1,163 +1,163 @@
 <script>
 import $ from 'jquery'
+import ProfileImageComponent from '../components/ProfileImageComponent.vue';
 export default {
-	data: function() {
-		return {
-			errormsg: null,
-			loading: false,
-			some_data: null,
-			token: null,
-			myName: null,
-			mySurname:null,
-			myPage:true,
-			alreadyFollow: false,
-			userId: "",
-			profiles: [],
-			modal: false,
-		}
-	},
-	methods: {
-		async refresh() {
-			let userName = this.$route.params.username
-			
-			this.loading = true;
-			this.errormsg = null;
-			this.token = localStorage.getItem("Token")
-			try {
-				if (userName != null){
-					let users = await this.$axios.get("/search?query="+userName+"&precise=1",{headers:{"Token":this.token}});
-					let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
-					this.userId = "/"+users.data[0].Id
-					if (myProfile.data.Id === users.data[0].Id){
-						this.myPage = true
-						this.some_data = myProfile.data;
-						
-					}
-					else{
-						this.myPage = false
-						let response = await this.$axios.get("/profile"+this.userId,{headers:{"Token":this.token}});
-						let myFollowers = await this.$axios.get(`/profile/${myProfile.data.Id}/followings`,{headers:{"Token":this.token}});			
-						myFollowers = myFollowers.data;
-						this.alreadyFollow = false
-						if (myFollowers != null){
-							for (let f = 0; f < myFollowers.length; f++){
-								console.log(myFollowers[f].Id);
-								if (myFollowers[f].Id === users.data[0].Id){
-									this.alreadyFollow = true
-								}
-							}
-						}
-						this.some_data = response.data;
-					}
-				}
-				else{
-					let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
-					this.myPage = true
-					this.some_data = myProfile.data;
-					this.userId = "/"+this.some_data.Id
-				}
-				
-
-				
-				
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
-		},
-		async change(){
-			this.loading = true;
-			this.errormsg = null;
-			try {
-				let postData = {
-					name:this.myName,
-					surname:this.mySurname,
-				}
-
-				let response = await this.$axios.post("/profile",postData,{headers:{"Token":this.token}});
-				this.some_data = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
-		},
-
-		async follow(){
-			this.loading = true;
-			this.errormsg = null;
-			this.token = localStorage.getItem("Token")
-			try {
-				let response = null
-				if (!this.alreadyFollow){
-					console.log(this.userId);
-					//response = await this.$axios.put("/profile"+this.userId,{headers:{"Token":this.token}});
-					response = await this.$axios({
-						method: "put",
-						url: `/profile${this.userId}`,
-						headers: {
-							"Content-Type": "application/json",
-							"Token": this.token,
-						}
-					});
-					this.alreadyFollow = true
-				}
-				else{
-					response = await this.$axios({
-						method: "delete",
-						url: `/profile${this.userId}`,
-						headers: {
-							"Content-Type": "application/json",
-							"Token": this.token,
-						}
-					});
-					this.alreadyFollow = false
-				}
-				this.some_data = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
-			this.refresh()
-		},
-		async openModalWR(typeFollow){
-			try {
-				let dataFollow = await this.profilesData(typeFollow)
-				this.profiles = dataFollow
-			} catch (error) {
-				this.errormsg = error.toString();
-				console.log("ENTRA PERO");
-			}
-			//this.modal = true
-			//this.$root.$emit("bv::show::modal",`.myFollow-${typeFollow}`)
-			//let myf = document.getElementById(`.myFollow-${typeFollow}`)
-			//myf.show()
-			//$(`myFollow-${typeFollow}`).style.display = "flex";
-			document.getElementById(`myFollow-${typeFollow}`).style.display = "flex";
-			// console.log(`.myFollow-${typeFollow}`)
-			// let datatype = this.$refs[`myFollow-${typeFollow}`]
-			// if (datatype != null){
-			// 	console.log(datatype);
-			// }
+    data: function () {
+        return {
+            errormsg: null,
+            loading: false,
+            some_data: null,
+            token: null,
+            myName: null,
+            mySurname: null,
+            myPage: true,
+            alreadyFollow: false,
+            userId: "",
+            profiles: [],
+            modal: false,
+        };
+    },
+    methods: {
+        async refresh() {
+            let userName = this.$route.params.username;
+            this.loading = true;
+            this.errormsg = null;
+            this.token = localStorage.getItem("Token");
+            try {
+                if (userName != null) {
+                    let users = await this.$axios.get("/search?query=" + userName + "&precise=1", { headers: { "Token": this.token } });
+                    let myProfile = await this.$axios.get(`/profile`, { headers: { "Token": this.token } });
+                    this.userId = "/" + users.data[0].Id;
+                    if (myProfile.data.Id === users.data[0].Id) {
+                        this.myPage = true;
+                        this.some_data = myProfile.data;
+                    }
+                    else {
+                        this.myPage = false;
+                        let response = await this.$axios.get("/profile" + this.userId, { headers: { "Token": this.token } });
+                        let myFollowers = await this.$axios.get(`/profile/${myProfile.data.Id}/followings`, { headers: { "Token": this.token } });
+                        myFollowers = myFollowers.data;
+                        this.alreadyFollow = false;
+                        if (myFollowers != null) {
+                            for (let f = 0; f < myFollowers.length; f++) {
+                                console.log(myFollowers[f].Id);
+                                if (myFollowers[f].Id === users.data[0].Id) {
+                                    this.alreadyFollow = true;
+                                }
+                            }
+                        }
+                        this.some_data = response.data;
+                    }
+                }
+                else {
+                    let myProfile = await this.$axios.get(`/profile`, { headers: { "Token": this.token } });
+                    this.myPage = true;
+                    this.some_data = myProfile.data;
+                    this.userId = "/" + this.some_data.Id;
+                }
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+			console.log(this.some_data);
         },
-		async profilesData(followCase){
-			try {
-			    var datap = await this.$axios.get(`/profile${this.userId}/${followCase}`,{headers:{"Token":this.token}})
-                return datap.data
-				
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			return null
-		},
-		hideModal(id) {
-			console.log(id);
-        	document.getElementById(id).style.display = "none";
-			this.refresh();
-		}
-	},
-	mounted() {
-		this.refresh()
-	}
+        async change() {
+            this.loading = true;
+            this.errormsg = null;
+            try {
+                let postData = {
+                    name: this.myName,
+                    surname: this.mySurname,
+                };
+                let response = await this.$axios.post("/profile", postData, { headers: { "Token": this.token } });
+                this.some_data = response.data;
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        async follow() {
+            this.loading = true;
+            this.errormsg = null;
+            this.token = localStorage.getItem("Token");
+            try {
+                let response = null;
+                if (!this.alreadyFollow) {
+                    console.log(this.userId);
+                    //response = await this.$axios.put("/profile"+this.userId,{headers:{"Token":this.token}});
+                    response = await this.$axios({
+                        method: "put",
+                        url: `/profile${this.userId}`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Token": this.token,
+                        }
+                    });
+                    this.alreadyFollow = true;
+                }
+                else {
+                    response = await this.$axios({
+                        method: "delete",
+                        url: `/profile${this.userId}`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Token": this.token,
+                        }
+                    });
+                    this.alreadyFollow = false;
+                }
+                this.some_data = response.data;
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+            this.refresh();
+        },
+        async openModalWR(typeFollow) {
+            try {
+                let dataFollow = await this.profilesData(typeFollow);
+                this.profiles = dataFollow;
+				console.log(dataFollow);
+            }
+            catch (error) {
+                this.errormsg = error.toString();
+                console.log("ENTRA PERO");
+            }
+            //this.modal = true
+            //this.$root.$emit("bv::show::modal",`.myFollow-${typeFollow}`)
+            //let myf = document.getElementById(`.myFollow-${typeFollow}`)
+            //myf.show()
+            //$(`myFollow-${typeFollow}`).style.display = "flex";
+            document.getElementById(`myFollow-${typeFollow}`).style.display = "flex";
+            // console.log(`.myFollow-${typeFollow}`)
+            // let datatype = this.$refs[`myFollow-${typeFollow}`]
+            // if (datatype != null){
+            // 	console.log(datatype);
+            // }
+        },
+        async profilesData(followCase) {
+            try {
+                var datap = await this.$axios.get(`/profile${this.userId}/${followCase}`, { headers: { "Token": this.token } });
+                return datap.data;
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            return null;
+        },
+        hideModal(id) {
+            console.log(id);
+            document.getElementById(id).style.display = "none";
+            this.refresh();
+        }
+    },
+    mounted() {
+        this.refresh();
+    },
+    components: { ProfileImageComponent }
 }
 </script>
 
@@ -186,7 +186,8 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex; gap: 40px;">
-			<h2>{{this.some_data.Username}}</h2>
+			<ProfileImageComponent :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
+ 			<h2>{{this.some_data.Username}}</h2>
 			<div v-if="!myPage">
 				<div v-if="!alreadyFollow">
 					<input type="submit" value="Follow" @click="follow">

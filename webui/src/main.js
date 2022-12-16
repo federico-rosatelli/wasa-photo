@@ -10,6 +10,7 @@ import Token from './components/Token.vue'
 import ImageComponent from './components/ImageComponent.vue'
 import FollowComponent from './components/FollowComponent.vue'
 import CommentComponents from './components/CommentComponent.vue'
+import ProfileImageComponent from './components/ProfileImageComponent.vue'
 import './assets/dashboard.css'
 import './assets/main.css'
 import './assets/login.css'
@@ -23,6 +24,7 @@ app.component("Token", Token);
 app.component("ImageComponent", ImageComponent);
 app.component("FollowComponent",FollowComponent)
 app.component("CommentComponents",CommentComponents)
+app.component("ProfileImageComponent",ProfileImageComponent)
 app.use(router)
 //app.use(BModal)
 // app.component("b-modal",BModal)

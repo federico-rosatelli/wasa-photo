@@ -9,18 +9,22 @@ export default {
             comments:[],
             commentContent: null,
             username:null,
+            id:null,
             profilePicture:null,
         }
     },
 	props: ["imageComp","idUser"],
     methods:{
         async basicProfile(){
-            let profile = await this.$axios.get(`/profile/${this.idUser}/ultra`)
+            this.token = localStorage.getItem("Token")
+            let profile = await this.$axios.get(`/profile/${this.idUser}/ultra`,{headers:{"Token":this.token}})
             profile = profile.data;
             this.username = profile.Username;
+            this.id = profile.Id;
             this.profilePicture = profile.ProfilePicture;
         },
         async info(){
+            this.token = localStorage.getItem("Token")
             this.comments = []
             document.getElementById(`popup-${this.imageComp.IdImage}`).style.display = "flex";
             // let allDrop = document.getElementsByClassName("dropdown");
@@ -29,7 +33,7 @@ export default {
             // }
             this.loading = true
             try {
-                let comp = await this.$axios.get(`/profile/${this.idUser}/image/${this.imageComp.IdImage}`);
+                let comp = await this.$axios.get(`/profile/${this.idUser}/image/${this.imageComp.IdImage}`,{headers:{"Token":this.token}});
                 comp = comp.data;
                 this.imageContent = comp;
                 
@@ -49,7 +53,7 @@ export default {
                 $(".postId").name = this.imageComp.IdImage
                 for (let comment in comp.Comments){
                     comment = comp.Comments[comment]
-                    let comm = await this.$axios.get(`/profile/${comment.UserIdComment}/ultra`)
+                    let comm = await this.$axios.get(`/profile/${comment.UserIdComment}/ultra`,{headers:{"Token":this.token}})
                     comm = comm.data;
                     let date = startTime(comment.Time)
                     //console.log(date);
@@ -69,6 +73,7 @@ export default {
             t.innerHTML = "";
             d.innerHTML = "";
             this.comments = []
+            this.info();
 
         },
         async commentPost(idUser,imageComp){
@@ -82,6 +87,12 @@ export default {
             this.info();
             this.loading = false;
         },
+        async profilePictureUpdate(imageLocation){
+            var formData = new FormData();
+			formData.append('profilePicture',imageLocation)
+            await this.$axios.post(`/addphoto`,formData,{headers:{"Token":this.token}});
+            this.info();
+        }
     },
 	mounted() {
 		this.basicProfile()
@@ -129,7 +140,10 @@ function startTime(date) {
                     <div class="title" v-bind:id="'title-'+imageComp.IdImage">
                     </div>
                 </div>
-                <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
+                <div style="display: flex; margin-left: 35%;">
+                    <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
+                    </div>
+                    <h5 style="margin-left: 1%;" @click="profilePictureUpdate(imageComp.Location)">⋮</h5>
                 </div>
                 <div>
                     <CommentComponents :commentData="this.comments"></CommentComponents>
@@ -146,7 +160,7 @@ function startTime(date) {
 </template>
 
 <style>
-img{
+.box img{
 	object-fit: cover;
 	width: 280px;
   	height: 280px;

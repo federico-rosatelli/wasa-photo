@@ -16,14 +16,10 @@
 }
 
 .modal-container {
-  /* width: 300px; */
-  /* margin: 0px auto; */
-  /* padding: 20px 30px; */
-  /* border-left: 50%; */
-  position: relative;
-  left: 100%;
-  right: 100%;
-  width: auto;
+  width: 60%;
+  left: 20%;
+  right: 20%;
+  position: absolute;
   background-color: #fff;
   border-radius: 5%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
@@ -39,7 +35,7 @@
 }
 
 .modal-body {
-  margin: 5% 0;
+  margin: 5% 2%;
 }
 
 /* .modal-footer{

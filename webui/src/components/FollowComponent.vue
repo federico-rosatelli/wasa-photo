@@ -17,10 +17,9 @@ export default {
     <div v-for="profile in usersFollow">
         <div style="display: flex;">
             <RouterLink v-bind:to="'/profile/'+profile.Username" class="nav-link">
-                <svg class="feather"><use href="/feather-sprite-v4.29.0.svg#user"/></svg>
+			    <ProfileImageComponent :imageUrl="profile.ProfilePictureLocation == ''? '/images/icon_standard.png': profile.ProfilePictureLocation" ></ProfileImageComponent>
                 {{profile.Username}}
             </RouterLink>
-            <h2>{{profile.Id}}</h2>
         </div>
     </div>
 </template>
