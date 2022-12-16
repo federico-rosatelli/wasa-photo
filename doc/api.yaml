@@ -20,6 +20,8 @@ paths:
         content:
           application/json:
             schema:
+              description: |
+                Name of the user
               type: object
               properties:
                 name:
@@ -35,11 +37,16 @@ paths:
           content:
             application/json:
               schema:
+                description: |
+                  Id token of the user
                 type: object
                 properties:
                   identifier:
                     type: string
-                    example: "a35f6dfa-69dc-11ed-a1eb-0242ac120002"
+                    example: a35f6dfa-69dc-11ed-a1eb-0242ac120002
+                    pattern: '^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$'
+                    minLength: 36
+                    maxLength: 36
 
   /addphoto:
     post:
@@ -120,11 +127,7 @@ paths:
           description: Profile Sended successful
           content:
             application/json:
-              schema:
-                description: |
-                  Object of basicProfile
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -171,11 +174,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  BasicProfile response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -196,11 +195,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  BasicProfile response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -217,11 +212,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  BasicProfile response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -239,11 +230,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  BasicProfile response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -265,11 +252,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  BasicProfile response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -287,11 +270,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema: 
-                description: |
-                  BasicProfile response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -314,11 +293,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  completeImage response
-                type: object
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -335,11 +310,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  completeImage response
-                type: object
-                $ref: "#/components/schemas/basicProfile"
+              schema: {$ref: "#/components/schemas/basicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -362,11 +333,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  completeImage response
-                type: object
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -384,11 +351,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  completeImage response
-                type: object
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -429,11 +392,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  completeImage response
-                type: object
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -453,11 +412,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  completeImage response
-                type: object
-                $ref: "#/components/schemas/completeImage"
+              schema: {$ref: "#/components/schemas/completeImage"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -479,11 +434,7 @@ paths:
           description: Status Ok
           content:
             application/json:
-              schema:
-                description: |
-                  ultraBasicProfile response
-                type: object
-                $ref: "#/components/schemas/ultraBasicProfile"
+              schema: {$ref: "#/components/schemas/ultraBasicProfile"}
         "400": { $ref: "#/components/responses/BadRequest" }
         "404": { $ref: "#/components/responses/NotFound" }
         "500": { $ref: "#/components/responses/InternalServerError" }
@@ -668,12 +619,10 @@ components:
           maxLength: 48
         Time:
           description: |
-            Time of creation of the image
-          type: string
-          example: 2006-01-02 15:04:05.999999999 -0700 MST
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
-          minLength: 0
-          maxLength: 100
+            Unix time of creation of the image
+          type: integer
+          minimum: 0
+          maximum: 99999999999
         Likes:
           description: |
             Number of likes of the image
@@ -721,12 +670,10 @@ components:
           maxLength: 48
         Time:
           description: |
-            Time of creation of the image
-          type: string
-          example: 2006-01-02 15:04:05.999999999 -0700 MST
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
-          minLength: 0
-          maxLength: 100
+            Unix time of creation of the image
+          type: integer
+          minimum: 0
+          maximum: 99999999999
         Likes:
           description: |
             Likes of the image
@@ -767,12 +714,10 @@ components:
           maxLength: 36
         Time:
           description: |
-            Time of the like
-          type: string
-          example: 2006-01-02 15:04:05.999999999 -0700 MST
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
-          minLength: 0
-          maxLength: 100
+            Unix time of the like
+          type: integer
+          minimum: 0
+          maximum: 99999999999
     comments:
       title: Get Comments
       type: object
@@ -791,12 +736,10 @@ components:
           maxLength: 36
         Time:
           description: |
-            Time of the comment
-          type: string
-          example: 2006-01-02 15:04:05.999999999 -0700 MST
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
-          minLength: 0
-          maxLength: 100
+            Unix time of the comment
+          type: integer
+          minimum: 0
+          maximum: 99999999999
         Content:
           description: |
             Content of the comment
@@ -886,12 +829,10 @@ components:
           maxLength: 48
         Time:
           description: |
-            Time of the Image Content creation displayed in homepage
-          type: string
-          example: 2006-01-02 15:04:05.999999999 -0700 MST
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s(((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?(:((?=\.\d|\d)(?:\d+)?(?:\.?\d*))((\d+))?)+)\s[+-][0-9]+\s[a-zA-Z][a-zA-Z][a-zA-Z]'
-          minLength: 0
-          maxLength: 100
+            Unix time of creation of the content
+          type: integer
+          minimum: 0
+          maximum: 99999999999
         Comments:
           description: |
             Number of comments of the Image displayed in homepage
