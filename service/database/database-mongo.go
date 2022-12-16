@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"wasa-photo/service/api/errors"
+	customError "wasa-photo/service/api/customErrors"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -42,15 +42,15 @@ var Ctx = context.TODO()
 func MakeInit(client *mongo.Client) (AppDatabaseMongo, error) {
 	collectionUsers := client.Database("wasa").Collection("users")
 	if collectionUsers == nil {
-		return nil, errors.NewErrStatus("Error Creating users Collection")
+		return nil, customError.NewErrStatus("Error Creating users Collection")
 	}
 	collectionProfiles := client.Database("wasa").Collection("profiles")
 	if collectionProfiles == nil {
-		return nil, errors.NewErrStatus("Error Creating profiles Collection")
+		return nil, customError.NewErrStatus("Error Creating profiles Collection")
 	}
 	collectionSessions := client.Database("wasa").Collection("sessions")
 	if collectionSessions == nil {
-		return nil, errors.NewErrStatus("Error Creating sessions Collection")
+		return nil, customError.NewErrStatus("Error Creating sessions Collection")
 	}
 	return &appdbmongo{
 		c:        client,

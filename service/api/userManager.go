@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	"time"
-	"wasa-photo/service/api/errors"
+	customError "wasa-photo/service/api/customErrors"
 
 	"github.com/google/uuid"
 )
@@ -190,20 +190,20 @@ func user_agent_extractor(user_agent string) (jsonUserAgent, error) {
 	url := `https://api.ipgeolocation.io/user-agent?apiKey=` + key
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return jsonUserAgent{}, errors.NewErrStatus("Not able to request on -api.ipgeolocation.io-")
+		return jsonUserAgent{}, customError.NewErrStatus("Not able to request on -api.ipgeolocation.io-")
 	}
 
 	request.Header.Set("User-Agent", user_agent)
 
 	res, err := client.Do(request)
 	if err != nil {
-		return jsonUserAgent{}, errors.NewErrStatus("User-Agent Header Set went wrong")
+		return jsonUserAgent{}, customError.NewErrStatus("User-Agent Header Set went wrong")
 	}
 	returnJson := json.NewDecoder(res.Body)
 	var dataStruct jsonUserAgent
 	errDecoding := returnJson.Decode(&dataStruct)
 	if errDecoding != nil {
-		return jsonUserAgent{}, errors.NewErrStatus("InternalServerError on json.Decode")
+		return jsonUserAgent{}, customError.NewErrStatus("InternalServerError on json.Decode")
 	}
 	return dataStruct, nil
 }

@@ -2,14 +2,14 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
-	customError "wasa-photo/service/api/errors"
-	"wasa-photo/service/api/reqcontext"
+	customError "wasa-photo/service/api/customErrors"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -24,6 +24,26 @@ func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps http
 	w.Header().Set("content-type", "application/json")
 	query := r.URL.Query().Get("query")
 	precise := r.URL.Query().Get("precise")
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
+		switch err.(type) {
+		case *customError.ErrStatus:
+			if err.Error() == StatusUnauthorized {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			} else if err.Error() == StatusInternalServerError {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			}
+		default:
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		}
+		return
+	}
 	var userQuery []UltraBasicProfile
 	if precise == "1" {
 		dataId, v := findIdByUsername(query)
@@ -49,6 +69,27 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 	id := ps.ByName("id")
 	imageId := ps.ByName("imageid")
 	if !userExists(id) {
+		http.Error(w, "Invalid Params", http.StatusNotFound)
+		return
+	}
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
+		switch err.(type) {
+		case *customError.ErrStatus:
+			if err.Error() == StatusUnauthorized {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			} else if err.Error() == StatusInternalServerError {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			}
+		default:
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		}
 		return
 	}
 	profile := GetProfile(id)
@@ -66,8 +107,28 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 	id := ps.ByName("id")
-	log.Println(id)
 	if !userExists(id) {
+		http.Error(w, "Invalid Params", http.StatusNotFound)
+		return
+	}
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
+		switch err.(type) {
+		case *customError.ErrStatus:
+			if err.Error() == StatusUnauthorized {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			} else if err.Error() == StatusInternalServerError {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			}
+		default:
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		}
 		return
 	}
 	profile := GetProfile(id)
@@ -83,6 +144,27 @@ func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, 
 	w.Header().Set("content-type", "application/json")
 	id := ps.ByName("id")
 	if !userExists(id) {
+		http.Error(w, "Invalid Params", http.StatusNotFound)
+		return
+	}
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
+		switch err.(type) {
+		case *customError.ErrStatus:
+			if err.Error() == StatusUnauthorized {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			} else if err.Error() == StatusInternalServerError {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			}
+		default:
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		}
 		return
 	}
 	profile := GetProfile(id)
@@ -97,6 +179,27 @@ func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps ht
 	w.Header().Set("content-type", "application/json")
 	id := ps.ByName("id")
 	if !userExists(id) {
+		http.Error(w, "Invalid Params", http.StatusNotFound)
+		return
+	}
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
+		switch err.(type) {
+		case *customError.ErrStatus:
+			if err.Error() == StatusUnauthorized {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			} else if err.Error() == StatusInternalServerError {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			}
+		default:
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		}
 		return
 	}
 	data := GetProfileBasicInfo(id)
@@ -110,6 +213,27 @@ func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, 
 	w.Header().Set("content-type", "application/json")
 	id := ps.ByName("id")
 	if !userExists(id) {
+		http.Error(w, "Invalid Params", http.StatusNotFound)
+		return
+	}
+	ua := r.Header.Get("Token")
+	_, err := returnSessionFromId(ua)
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
+		switch err.(type) {
+		case *customError.ErrStatus:
+			if err.Error() == StatusUnauthorized {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			} else if err.Error() == StatusInternalServerError {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			} else if err.Error() == StatusBadRequest {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			} else {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+			}
+		default:
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		}
 		return
 	}
 	data := GetUltraBasicProfile(id)
@@ -129,7 +253,8 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
@@ -142,7 +267,7 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -173,24 +298,21 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -254,24 +376,21 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 	prof := r.URL.Query().Get("imageid")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -302,24 +421,21 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -351,28 +467,24 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
-
 	sessionId := session.Id
 	profile := GetProfile(id)
 	err = profile.DeletePhotoComment(sessionId, imageId, index, *rt)
@@ -394,24 +506,21 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 	imageId := ps.ByName("imageid")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -436,24 +545,21 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 	imageId := ps.ByName("imageid")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -471,31 +577,28 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 }
 
-func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("content-type", "application/json")
 
 	id := ps.ByName("id")
 	ua := r.Header.Get("Token")
 	log.Println(ua)
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -503,6 +606,7 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	profile := GetProfile(idSession)
 	err = profile.AddFollowings(id, *rt)
 	if err != nil {
+		log.Println("QUA CON TUTTO", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -520,30 +624,27 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 	id := ps.ByName("id")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
-	profile.UnFollowers(id)
+	profile.UnFollowers(id, *rt)
 
 	basic := GetProfileBasicInfo(id)
 
@@ -559,24 +660,21 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 	id := ps.ByName("id")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -600,24 +698,21 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 	id := ps.ByName("id")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -640,24 +735,21 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			} else if err.Error() == StatusInternalServerError {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
 			} else if err.Error() == StatusBadRequest {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			} else {
 				http.Error(w, err.Error(), http.StatusUnauthorized)
-
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
-
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -701,7 +793,8 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
@@ -714,8 +807,9 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
 	}
 	id := session.Id
 	profile := GetProfile(id)
@@ -732,7 +826,8 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 	ua := r.Header.Get("Token")
 	log.Println(ua)
 	session, err := returnSessionFromId(ua)
-	if err != nil {
+	var errProva *customError.ErrStatus
+	if ok := errors.As(err, &errProva); ok {
 		switch err.(type) {
 		case *customError.ErrStatus:
 			if err.Error() == StatusUnauthorized {
@@ -745,12 +840,9 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 			}
 		default:
-			http.Error(w, "Enable to get Error Type", http.DefaultMaxHeaderBytes)
+			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
-		if errJson := json.NewEncoder(w).Encode("/login"); errJson != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
+		return
 	}
 	id := session.Id
 	if rt.db != nil {

@@ -10,15 +10,15 @@ Content-Type: application/json
 ### GetProfile fede
 
 GET http://127.0.0.1:3000/profile
-Token: a770c5e8-6eba-4fab-bcf2-1751a650fe19
+Token: 25c147eb-ab81-4e09-8024-0eb15f73836e
 
 ### POST COMMENT
-POST http://127.0.0.1:3000/profile/c56ce1de-995d-45de-93c7-e72c88116981/comment/57262675-bfdd-4875-aff3-0b0754c0b5c1
-Token: a770c5e8-6eba-4fab-bcf2-1751a650fe19
+POST http://127.0.0.1:3000/profile/c63c9752-af22-4fe8-84f2-84d3ce37d64c/comment/d451a804-bc59-4c84-aa96-4e476cc6d03d
+Token: 25c147eb-ab81-4e09-8024-0eb15f73836e
 Content-Type: application/json
 
 {
-    "comment": "Prova Commento1"
+    "comment": "Prova Commento 4"
 }
 
 ### doLogin fede2

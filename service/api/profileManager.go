@@ -3,7 +3,7 @@ package api
 import (
 	"log"
 	"time"
-	"wasa-photo/service/api/errors"
+	customError "wasa-photo/service/api/customErrors"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -227,7 +227,7 @@ func (p *Profile) AddFollowers(id string, rt _router) error {
 func (p *Profile) AddFollowings(id string, rt _router) error {
 	user, ok := profiles[id]
 	if !ok {
-		return errors.NewErrStatus("User Not Found")
+		return customError.NewErrStatus("User Not Found")
 	}
 
 	newFollow := UserFollow{
@@ -235,7 +235,7 @@ func (p *Profile) AddFollowings(id string, rt _router) error {
 		Time:   time.Now().Unix(),
 	}
 	if p.FindBanUser(id) || p.FindFollowingUser(id) {
-		return errors.NewErrStatus("User Not Found")
+		return customError.NewErrStatus("User Not Found")
 	}
 	p.Followings = append(p.Followings, newFollow)
 	err := user.AddFollowers(p.Id, rt)
@@ -285,14 +285,21 @@ func (p Profile) FindFollowingUser(id string) bool {
 }
 
 // Unfollow a user by his id
-func (p *Profile) UnFollowers(id string) {
-	p.UnfollowingUser(id)
+func (p *Profile) UnFollowers(id string, rt _router) error {
+	err := p.UnfollowingUser(id, rt)
+	if err != nil {
+		return err
+	}
 	user := profiles[id]
-	user.UnFollowerUser(p.Id)
+	err = user.UnFollowerUser(p.Id, rt)
+	if err != nil {
+		return err
+	}
 	profiles[p.Id] = *p
+	return nil
 }
 
-func (p *Profile) UnfollowingUser(id string) {
+func (p *Profile) UnfollowingUser(id string, rt _router) error {
 	var followListN []UserFollow
 	for _, x := range p.Followings {
 		if x.IdUser != id {
@@ -303,11 +310,20 @@ func (p *Profile) UnfollowingUser(id string) {
 			followListN = append(followListN, follow)
 		}
 	}
+	if len(followListN) == 0 {
+		followListN = []UserFollow{}
+	}
 	p.Followings = followListN
 	profiles[p.Id] = *p
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followings", Value: followListN}}}}
+		return rt.db.UpdateOne(0, filter, update1)
+	}
+	return nil
 }
 
-func (p *Profile) UnFollowerUser(id string) {
+func (p *Profile) UnFollowerUser(id string, rt _router) error {
 	var followList []UserFollow
 	for _, x := range p.Followers {
 		if x.IdUser != id {
@@ -318,22 +334,31 @@ func (p *Profile) UnFollowerUser(id string) {
 			followList = append(followList, follow)
 		}
 	}
+	if len(followList) == 0 {
+		followList = []UserFollow{}
+	}
 	p.Followers = followList
 	profiles[p.Id] = *p
+	if rt.db != nil {
+		filter := bson.D{{Key: "id", Value: p.Id}}
+		update1 := bson.D{{Key: "$set", Value: bson.D{{Key: "followers", Value: followList}}}}
+		return rt.db.UpdateOne(0, filter, update1)
+	}
+	return nil
 }
 
 // Add a banned user in Profile.Bans
 func (p *Profile) AddBans(id string, rt _router) error {
 	user, ok := profiles[id]
 	if !ok {
-		return errors.NewErrStatus("User Not Found")
+		return customError.NewErrStatus("User Not Found")
 	}
 	newBan := UserFollow{
 		IdUser: id,
 		Time:   time.Now().Unix(),
 	}
 	if p.FindBanUser(id) {
-		return errors.NewErrStatus("User Not Found")
+		return customError.NewErrStatus("User Not Found")
 	}
 	err := p.DeleteFollower(id, rt)
 	if err != nil {
@@ -377,6 +402,12 @@ func (p *Profile) DeleteFollower(id string, rt _router) error {
 			followListN = append(followListN, follow)
 		}
 	}
+	if len(followList) == 0 {
+		followList = []UserFollow{}
+	}
+	if len(followListN) == 0 {
+		followListN = []UserFollow{}
+	}
 	p.Followings = followListN
 	profiles[p.Id] = *p
 	if rt.db != nil {
@@ -403,6 +434,9 @@ func (p *Profile) UnBans(id string, rt _router) error {
 			}
 			bans = append(bans, ban)
 		}
+	}
+	if len(bans) == 0 {
+		bans = []UserFollow{}
 	}
 	p.Bans = bans
 	profiles[p.Id] = *p
@@ -496,6 +530,9 @@ func (p *Profile) DeletePhoto(imageId string, rt _router) error {
 			images = append(images, image)
 		}
 	}
+	if len(images) == 0 {
+		images = []Image{}
+	}
 	p.Images = images
 	profiles[p.Id] = *p
 	if rt.db != nil {
@@ -535,6 +572,9 @@ func (p *Profile) DeletePhotoComment(usernameIdComment string, imageId string, i
 		if images[i].IdImage == imageId {
 			image := images[i]
 			comments := image.deleteComment(usernameIdComment, index)
+			if len(comments) == 0 {
+				comments = []Comment{}
+			}
 			images[i].Comments = comments
 			if rt.db != nil {
 				filter := bson.M{"id": p.Id, "images.idimage": imageId}
@@ -559,6 +599,9 @@ func (p *Profile) DeletePhotoLike(usernameIdLike string, imageId string, rt _rou
 		if images[i].IdImage == imageId {
 			image := images[i]
 			likes := image.deleteLike(usernameIdLike)
+			if len(likes) == 0 {
+				likes = []Like{}
+			}
 			images[i].Likes = likes
 			if rt.db != nil {
 				filter := bson.M{"id": p.Id, "images.idimage": imageId}
@@ -603,7 +646,7 @@ func (p *Profile) AddPhotoLike(usernameIdLike string, imageId string, rt _router
 func (p Profile) GetImageInfo(imageId string) (Image, error) {
 	image := p.getImageById(imageId)
 	if image.getLocation() == "" {
-		return Image{}, errors.NewErrStatus("Image Not Found")
+		return Image{}, customError.NewErrStatus("Image Not Found")
 	}
 	return image, nil
 }
