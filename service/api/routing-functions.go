@@ -323,6 +323,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 	}
 	profile := GetProfile(id)
 	if prof.ProfilePictureLocation != "" {
+
 		profile.UpdateProfilePicture(prof.ProfilePictureLocation)
 		if errJson := json.NewEncoder(w).Encode(profile); errJson != nil {
 			http.Error(w, errJson.Error(), http.StatusBadRequest)
