@@ -11,7 +11,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/", rt.AddSeen)
 	rt.router.GET("/images/:id", rt.ServeImage)
 	rt.router.POST("/signin", rt.SignIn)
-	rt.router.POST("/addphoto", rt.AddPhotoProfile)
+	rt.router.POST("/addphoto", rt.wrap(rt.AddPhotoProfile))
 	rt.router.GET("/profile", rt.ProfileInfo)
 	rt.router.POST("/profile", rt.UpdateProfileInfo)
 	rt.router.GET("/profile/:id", rt.GetBasicProfile)

@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	customError "wasa-photo/service/api/customErrors"
+	"wasa-photo/service/api/reqcontext"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -42,6 +43,9 @@ func (rt *_router) SearchProfile(w http.ResponseWriter, r *http.Request, ps http
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	var userQuery []UltraBasicProfile
@@ -91,6 +95,9 @@ func (rt *_router) GetProfileImageInfo(w http.ResponseWriter, r *http.Request, p
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	profile := GetProfile(id)
 	image, err := profile.GetImageInfo(imageId)
@@ -130,9 +137,11 @@ func (rt *_router) GetProfileFollowers(w http.ResponseWriter, r *http.Request, p
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	profile := GetProfile(id)
-	log.Println(profile)
 	followersdata := profile.GetBasicUserFollowers()
 	if errJson := json.NewEncoder(w).Encode(followersdata); errJson != nil {
 		http.Error(w, errJson.Error(), http.StatusBadRequest)
@@ -165,6 +174,9 @@ func (rt *_router) GetProfileFollowings(w http.ResponseWriter, r *http.Request, 
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	profile := GetProfile(id)
@@ -201,6 +213,9 @@ func (rt *_router) GetBasicProfile(w http.ResponseWriter, r *http.Request, ps ht
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	data := GetProfileBasicInfo(id)
 	if errJson := json.NewEncoder(w).Encode(data); errJson != nil {
@@ -234,6 +249,9 @@ func (rt *_router) GetUltraBasicProfile(w http.ResponseWriter, r *http.Request, 
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	data := GetUltraBasicProfile(id)
@@ -270,6 +288,9 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
@@ -293,7 +314,7 @@ func (rt *_router) UpdateProfileInfo(w http.ResponseWriter, r *http.Request, ps 
 	}
 }
 
-func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	w.Header().Set("content-type", "application/json")
 
 	ua := r.Header.Get("Token")
@@ -314,6 +335,9 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	id := session.Id
@@ -394,6 +418,9 @@ func (rt *_router) DeletePhotoProfile(w http.ResponseWriter, r *http.Request, ps
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	id := session.Id
 	profile := GetProfile(id)
@@ -438,6 +465,9 @@ func (rt *_router) AddCommentProfile(w http.ResponseWriter, r *http.Request, ps 
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	idSession := session.Id
@@ -485,6 +515,9 @@ func (rt *_router) DeleteCommentProfile(w http.ResponseWriter, r *http.Request, 
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	sessionId := session.Id
 	profile := GetProfile(id)
@@ -504,7 +537,7 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 	w.Header().Set("content-type", "application/json")
 
 	id := ps.ByName("id")
-	imageId := ps.ByName("imageid")
+	imageId := ps.ByName("imageId")
 	ua := r.Header.Get("Token")
 	session, err := returnSessionFromId(ua)
 	var errProva *customError.ErrStatus
@@ -523,6 +556,9 @@ func (rt *_router) DeleteLikeProfile(w http.ResponseWriter, r *http.Request, ps 
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	sessionId := session.Id
@@ -563,6 +599,9 @@ func (rt *_router) AddLikeProfile(w http.ResponseWriter, r *http.Request, ps htt
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	idSession := session.Id
 	profile := GetProfile(id)
@@ -601,6 +640,9 @@ func (rt *_router) AddFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	idSession := session.Id
@@ -642,10 +684,17 @@ func (rt *_router) UnFollowerProfile(w http.ResponseWriter, r *http.Request, ps 
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
-	profile.UnFollowers(id, *rt)
+	err = profile.UnFollowers(id, *rt)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	basic := GetProfileBasicInfo(id)
 
@@ -677,6 +726,9 @@ func (rt *_router) BanFollowerProfile(w http.ResponseWriter, r *http.Request, ps
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	idSession := session.Id
@@ -716,6 +768,9 @@ func (rt *_router) UnBanFollowerProfile(w http.ResponseWriter, r *http.Request, 
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	idSession := session.Id
 	profile := GetProfile(idSession)
@@ -752,6 +807,9 @@ func (rt *_router) ProfileInfo(w http.ResponseWriter, r *http.Request, ps httpro
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	id := session.Id
@@ -811,6 +869,9 @@ func (rt *_router) AddSeen(w http.ResponseWriter, r *http.Request, ps httprouter
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
 		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
+		return
 	}
 	id := session.Id
 	profile := GetProfile(id)
@@ -843,6 +904,9 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 		default:
 			http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		}
+		return
+	} else if err != nil {
+		http.Error(w, "Enable to get Error Type", http.StatusInternalServerError)
 		return
 	}
 	id := session.Id

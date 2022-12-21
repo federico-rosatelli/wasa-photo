@@ -3,12 +3,9 @@
 package api
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 	"regexp"
 	"time"
-	customError "wasa-photo/service/api/customErrors"
 
 	"github.com/google/uuid"
 )
@@ -184,29 +181,29 @@ func (u *User) updateUsername(newUsername string, rt _router) error {
 // Extract the user-agent string information
 // from https://api.ipgeolocation.io
 // It'll return a jsonAgent struct or an error
-func user_agent_extractor(user_agent string) (jsonUserAgent, error) {
-	log.Printf("USER AGENT: %s", user_agent)
-	client := http.Client{}
-	url := `https://api.ipgeolocation.io/user-agent?apiKey=` + key
-	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return jsonUserAgent{}, customError.NewErrStatus("Not able to request on -api.ipgeolocation.io-")
-	}
+// func user_agent_extractor(user_agent string) (jsonUserAgent, error) {
+// 	log.Printf("USER AGENT: %s", user_agent)
+// 	client := http.Client{}
+// 	url := `https://api.ipgeolocation.io/user-agent?apiKey=` + key
+// 	request, err := http.NewRequest("GET", url, nil)
+// 	if err != nil {
+// 		return jsonUserAgent{}, customError.NewErrStatus("Not able to request on -api.ipgeolocation.io-")
+// 	}
 
-	request.Header.Set("User-Agent", user_agent)
+// 	request.Header.Set("User-Agent", user_agent)
 
-	res, err := client.Do(request)
-	if err != nil {
-		return jsonUserAgent{}, customError.NewErrStatus("User-Agent Header Set went wrong")
-	}
-	returnJson := json.NewDecoder(res.Body)
-	var dataStruct jsonUserAgent
-	errDecoding := returnJson.Decode(&dataStruct)
-	if errDecoding != nil {
-		return jsonUserAgent{}, customError.NewErrStatus("InternalServerError on json.Decode")
-	}
-	return dataStruct, nil
-}
+// 	res, err := client.Do(request)
+// 	if err != nil {
+// 		return jsonUserAgent{}, customError.NewErrStatus("User-Agent Header Set went wrong")
+// 	}
+// 	returnJson := json.NewDecoder(res.Body)
+// 	var dataStruct jsonUserAgent
+// 	errDecoding := returnJson.Decode(&dataStruct)
+// 	if errDecoding != nil {
+// 		return jsonUserAgent{}, customError.NewErrStatus("InternalServerError on json.Decode")
+// 	}
+// 	return dataStruct, nil
+// }
 
 // Update the info of the client such as:
 // ip-address, user-agent, user-agent-information
@@ -216,13 +213,13 @@ func (user *userData) updateInfo(r *http.Request, url string) {
 	user_agent := r.UserAgent()
 	if user.UserInfo.UserAgentString != user_agent {
 		user.UserInfo.UserAgentString = user_agent
-		log.Printf("NUOVO USER-AGENT")
-		json_user_extract, ok := user_agent_extractor(user_agent)
-		if ok != nil {
-			log.Printf(" ERROR %s\n", ok)
-		} else {
-			user.UserInfo.UserAgent = json_user_extract
-		}
+		// log.Printf("NUOVO USER-AGENT")
+		// json_user_extract, ok := user_agent_extractor(user_agent)
+		// if ok != nil {
+		// 	log.Printf(" ERROR %s\n", ok)
+		// } else {
+		// 	user.UserInfo.UserAgent = json_user_extract
+		// }
 	}
 	user.UserInfo.Times_visited += 1
 	path := Path{
