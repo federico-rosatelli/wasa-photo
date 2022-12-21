@@ -185,9 +185,8 @@ export default {
 		</div>
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
-		<div v-if="this.some_data" style="display: flex; gap: 40px;">
-			<ProfileImageComponent :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
- 			<h2>{{this.some_data.Username}}</h2>
+		<div v-if="this.some_data" style="display: flex;">
+			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
 			<div v-if="!myPage">
 				<div v-if="!alreadyFollow">
 					<input type="submit" value="Follow" @click="follow">

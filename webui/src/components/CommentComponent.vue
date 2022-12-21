@@ -22,8 +22,7 @@ export default {
         <tr v-for="comment in commentData">
             <td>
                 <RouterLink v-bind:to="'/profile/'+comment.Username" class="nav-link">
-                    <svg class="feather"><use href="/feather-sprite-v4.29.0.svg#user"/></svg>
-                    {{comment.Username}}
+                    <ProfileImageComponent :userNameF="comment.Username" :imageUrl="comment.ProfilePictureLocation == ''? '/images/icon_standard.png': comment.ProfilePictureLocation" ></ProfileImageComponent>
                 </RouterLink>
             </td>
             <td>

@@ -11,6 +11,7 @@ export default {
             username:null,
             id:null,
             profilePicture:null,
+            like: false,
         }
     },
 	props: ["imageComp","idUser"],
@@ -19,9 +20,11 @@ export default {
             this.token = localStorage.getItem("Token")
             let profile = await this.$axios.get(`/profile/${this.idUser}/ultra`,{headers:{"Token":this.token}})
             profile = profile.data;
+            console.log(profile);
             this.username = profile.Username;
             this.id = profile.Id;
-            this.profilePicture = profile.ProfilePicture;
+            this.profilePicture = profile.ProfilePictureLocation;
+            console.log(this.username,this.ProfilePictureLocation);
         },
         async info(){
             this.token = localStorage.getItem("Token")
@@ -48,6 +51,7 @@ export default {
                 d.innerHTML = "";
                 let img = document.createElement('img');
                 img.src = 'http://localhost:3000'+comp.Location;
+                img.classList.add("box")
                 d.appendChild(img);
                 this.comments = [];
                 $(".postId").name = this.imageComp.IdImage
@@ -55,11 +59,25 @@ export default {
                     comment = comp.Comments[comment]
                     let comm = await this.$axios.get(`/profile/${comment.UserIdComment}/ultra`,{headers:{"Token":this.token}})
                     comm = comm.data;
+                    console.log(comm);
                     let date = startTime(comment.Time)
                     //console.log(date);
-                    comment.Time = date
-                    comment.Username = comm.Username
+                    comment.Time = date;
+                    comment.Username = comm.Username;
+                    comment.ProfilePictureLocation = comm.ProfilePictureLocation;
                     this.comments.push(comment)
+                }
+                let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}});
+                myProfile = myProfile.data
+                console.log(myProfile);
+                for (let like in this.imageContent.Likes){
+                    like = this.imageContent.Likes[like]
+                    console.log(like);
+                    if (like.UserIdLike == myProfile.Id){
+                        // document.getElementById("color-like").style.color = "red"
+                        document.getElementById(`color-like-inner-${this.imageComp.IdImage}`).style.color = "red"
+                        this.like = true
+                    }
                 }
             } catch (error) {
                 this.errormsg = error;
@@ -87,6 +105,35 @@ export default {
             this.info();
             this.loading = false;
         },
+        async likePut(idUser,imageComp){
+            this.loading = true;
+            if (this.like){
+                await this.$axios({
+                    method: "delete",
+                    url: `/profile/${idUser}/like/${imageComp.IdImage}`,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": this.token,
+                    }
+                });
+                document.getElementById(`color-like-inner-${this.imageComp.IdImage}`).style.color = "black"
+                this.like = false;
+                this.imageComp.Likes -= 1;
+            }
+            else{
+                await this.$axios({
+                    method: "put",
+                    url: `/profile/${idUser}/like/${imageComp.IdImage}`,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": this.token,
+                    }
+                });
+                this.imageComp.Likes += 1;
+            }
+            this.info();
+            this.loading = false;
+        },
         async profilePictureUpdate(imageLocation){
             var formData = new FormData();
 			formData.append('profilePicture',imageLocation)
@@ -94,8 +141,8 @@ export default {
             this.info();
         }
     },
-	mounted() {
-		this.basicProfile()
+	async mounted() {
+		await this.basicProfile()
 	}
 }
 function checkTime(i) {
@@ -122,29 +169,43 @@ function startTime(date) {
 </script>
 
 <template>
-	<div v-if="imageComp" class="box">
-        <h2>
-            {{this.username}}
-        </h2>
-		<img v-bind:src="'http://localhost:3000'+imageComp.Location" @click="info">
+	<div v-if="imageComp">
+        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
+
+		<img class="box" v-bind:src="'http://localhost:3000'+imageComp.Location" @click="info">
 		<div style="display: flex;gap: 20%;">
-			<h5>{{imageComp.Text}}</h5>
-			<h4>{{imageComp.Comments}}</h4>
-			<h4>{{imageComp.Likes}}</h4>
+			<h5>{{imageComp.Text}}
+            </h5>
+			<h4>
+                <svg class="feather" id="color-like" style="width: 30; height: 30;"><use href="/feather-sprite-v4.29.0.svg#heart"/></svg>
+                {{imageComp.Likes}}
+            </h4>
+			<h4>
+                <svg class="feather" style="width: 30; height: 30;"><use href="/feather-sprite-v4.29.0.svg#message-square"/></svg>
+                {{imageComp.Comments}}
+            </h4>
 		</div>
         <div v-if="imageComp" class="popup" v-bind:id="'popup-'+imageComp.IdImage">
             <div class="popup-content">
                 <LoadingSpinner :loading="this.loading"></LoadingSpinner>
-                <div style="display: flex;">
-                    <h2>{{this.username}} </h2>
-                    <div class="title" v-bind:id="'title-'+imageComp.IdImage">
-                    </div>
-                </div>
+                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
                 <div style="display: flex; margin-left: 35%;">
                     <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
                     </div>
                     <h5 style="margin-left: 1%;" @click="profilePictureUpdate(imageComp.Location)">⋮</h5>
                 </div>
+                
+                <div style="display: flex; position: relative; left: 35%; gap: 10%;">
+                    <h4>
+                        <svg class="feather" v-bind:id="'color-like-inner-'+imageComp.IdImage" style="width: 30; height: 30;" @click="likePut(idUser,imageComp)"><use href="/feather-sprite-v4.29.0.svg#heart"/></svg>
+                        {{imageComp.Likes}}
+                    </h4>
+                    <h4>
+                        <svg class="feather" style="width: 30; height: 30;"><use href="/feather-sprite-v4.29.0.svg#message-square"/></svg>
+                        {{imageComp.Comments}}
+                    </h4>
+                </div>
+                <div class="title" v-bind:id="'title-'+imageComp.IdImage"></div>
                 <div>
                     <CommentComponents :commentData="this.comments"></CommentComponents>
                 </div>
@@ -160,7 +221,7 @@ function startTime(date) {
 </template>
 
 <style>
-.box img{
+.box{
 	object-fit: cover;
 	width: 280px;
   	height: 280px;
@@ -180,6 +241,7 @@ function startTime(date) {
     display: none;
     justify-content: center;
     align-items: center;
+    border: 2px solid black;
 }
 
 .popup-content{

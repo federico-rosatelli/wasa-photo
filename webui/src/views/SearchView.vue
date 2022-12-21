@@ -54,22 +54,13 @@ export default {
     
         <table id="table">
             <tr>
-                <td>Id</td>
                 <td>Username</td>
-                <td>Profile Picture</td>
             </tr>
             <tr v-for="item in this.some_data">
                 <td>
-                    {{item.Id}}
-                </td>
-                <td>
                     <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
-                        <svg class="feather"><use href="/feather-sprite-v4.29.0.svg#user"/></svg>
-                        {{item.Username}}
+                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="item.ProfilePictureLocation == ''? '/images/icon_standard.png': item.ProfilePictureLocation" ></ProfileImageComponent>
                     </RouterLink>
-                </td>
-                <td>
-                    <!-- <img v-bid:src="'http://localhost:3000'+item.ProfilePictureLocation" alt=""> -->
                 </td>
             </tr>
         </table>

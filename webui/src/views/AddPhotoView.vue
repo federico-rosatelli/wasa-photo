@@ -57,7 +57,7 @@ export default {
 		</div>
 
 		<div>
-			<input type="file" id="myFile" @change="onFileChange">
+			<input type="file" id="myFile" accept=".png, .jpg, .jpeg" @change="onFileChange">
 			<input type="text" placeholder="Description" id="text">
 			<button type="button" class="btn btn-sm btn-outline-primary" @click="sendPhoto">Send</button>
 		</div>
