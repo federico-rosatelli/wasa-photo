@@ -12,17 +12,26 @@ export default {
 
 <template>
     <div class="profile" v-if="imageUrl">
-        <img v-bind:src="'http://localhost:3000'+imageUrl" alt="Profile Picture">
-        <h4>{{userNameF}}</h4>
+        <a :href="$router.resolve({path:`/profile/${userNameF}`}).href">
+            <img v-bind:src="'http://localhost:3000'+imageUrl" alt="Profile Picture">
+            <h4>{{userNameF}}</h4>
+        </a>
     </div>
 </template>
 
 <style>
-.profile {
-    display: flex;
-}
 .profile img{
     width: 5%;
+    height: auto;
     border-radius: 100%;
+}
+.profile a{
+    /* position: fixed; */
+    margin-right: 0;
+    padding: 0px;
+    display:flex;
+    color: black;
+    text-decoration: none;
+    width: auto;
 }
 </style>

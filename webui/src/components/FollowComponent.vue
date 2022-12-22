@@ -15,11 +15,7 @@ export default {
 
 <template>
     <div v-for="profile in usersFollow">
-        <div style="display: flex;">
-            <RouterLink v-bind:to="'/profile/'+profile.Username" class="nav-link">
-			    <ProfileImageComponent :userNameF="profile.Username" :imageUrl="profile.ProfilePictureLocation == ''? '/images/icon_standard.png': profile.ProfilePictureLocation" ></ProfileImageComponent>
-            </RouterLink>
-        </div>
+		<ProfileImageComponent :userNameF="profile.Username" :imageUrl="profile.ProfilePictureLocation == ''? '/images/icon_standard.png': profile.ProfilePictureLocation" ></ProfileImageComponent>
     </div>
 </template>
 
