@@ -347,6 +347,16 @@ func (p *Profile) UnFollowerUser(id string, rt _router) error {
 	return nil
 }
 
+// Check if user is banned
+func (p Profile) IsBan(id string) bool {
+	for i := 0; i < len(p.Bans); i++ {
+		if p.Bans[i].IdUser == id {
+			return true
+		}
+	}
+	return false
+}
+
 // Add a banned user in Profile.Bans
 func (p *Profile) AddBans(id string, rt _router) error {
 	user, ok := profiles[id]

@@ -10,7 +10,7 @@ Content-Type: application/json
 ### GetProfile fede
 
 GET http://127.0.0.1:3000/profile
-Token: 25c147eb-ab81-4e09-8024-0eb15f73836e
+Token: 0af3384c-a4f8-4ea3-9e41-451f8ddbcb13
 
 ### POST COMMENT
 POST http://127.0.0.1:3000/profile/c63c9752-af22-4fe8-84f2-84d3ce37d64c/comment/d451a804-bc59-4c84-aa96-4e476cc6d03d
