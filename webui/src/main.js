@@ -15,6 +15,7 @@ import './assets/dashboard.css'
 import './assets/main.css'
 import './assets/login.css'
 import './assets/modal.css'
+import './assets/dropdown.css'
 console.log("PROVAAA");
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;

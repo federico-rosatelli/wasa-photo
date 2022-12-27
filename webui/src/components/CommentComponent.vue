@@ -9,6 +9,23 @@ export default {
         }
     },
 	props: ["commentData"],
+    methods:{
+        async deleteComment(idUser,IdImage,indexComment){
+            console.log(idUser,IdImage,indexComment);
+            try {
+                await this.$axios({
+                    method: "delete",
+                    url: `/profile/${idUser}/comment/${IdImage}?index=${indexComment}`,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": localStorage.getItem("Token"),
+                    }
+                });
+            } catch (error) {
+                this.errormsg = error
+            }
+        }
+    },
 }
 </script>
 
@@ -18,6 +35,7 @@ export default {
             <td>Username</td>
             <td>Comment</td>
             <td>Time</td>
+            <td></td>
         </tr>
         <tr v-for="comment in commentData">
             <td>
@@ -28,6 +46,9 @@ export default {
             </td>
             <td>
                 {{comment.Time}}
+            </td>
+            <td v-if="comment.IsMine" @click="deleteComment(comment.idUser,comment.IdImage,comment.indexComment)">
+                <svg class="feather" id="color-like" style="width: 30; height: 30; color: red;"><use href="/feather-sprite-v4.29.0.svg#trash" /></svg>
             </td>
         </tr>
     </table>

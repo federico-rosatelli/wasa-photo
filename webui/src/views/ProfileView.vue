@@ -15,6 +15,7 @@ export default {
             userId: "",
             profiles: [],
             modal: false,
+            isBan: false,
         };
     },
     methods: {
@@ -36,6 +37,10 @@ export default {
                         this.myPage = false;
                         let response = await this.$axios.get("/profile" + this.userId, { headers: { "Token": this.token } });
                         let myFollowers = await this.$axios.get(`/profile/${myProfile.data.Id}/followings`, { headers: { "Token": this.token } });
+                        let isBan = await this.$axios.get("/ban" + this.userId, { headers: { "Token": this.token } });
+                        if (isBan.data == true){
+                            this.isBan = true
+                        }
                         myFollowers = myFollowers.data;
                         this.alreadyFollow = false;
                         if (myFollowers != null) {
@@ -53,6 +58,7 @@ export default {
                     let myProfile = await this.$axios.get(`/profile`, { headers: { "Token": this.token } });
                     this.myPage = true;
                     this.some_data = myProfile.data;
+
                     this.userId = "/" + this.some_data.Id;
                 }
             }
@@ -60,7 +66,6 @@ export default {
                 this.errormsg = e.toString();
             }
             this.loading = false;
-			console.log(this.some_data);
         },
         async change() {
             this.loading = true;
@@ -115,6 +120,36 @@ export default {
             }
             this.loading = false;
             this.refresh();
+        },
+        async banUser(){
+            try {
+                if (!this.isBan){
+                    await this.$axios({
+                        method: "put",
+                        url: `/ban${this.userId}`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Token": this.token,
+                        }
+                    });
+                }
+                else{
+                    await this.$axios({
+                        method: "delete",
+                        url: `/ban${this.userId}`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Token": this.token,
+                        }
+                    });
+                    this.isBan = false
+                }
+            } catch (error) {
+                this.errormsg = error
+            }
+            console.log(this.isBan);
+            this.refresh()
+            
         },
         async openModalWR(typeFollow) {
             try {
@@ -187,18 +222,27 @@ export default {
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex;">
 			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
-			<div v-if="!myPage">
-				<div v-if="!alreadyFollow">
-					<input type="submit" value="Follow" @click="follow">
-				</div>
-				<div v-else>
-					<input type="submit" value="Unfollow" @click="follow">
-				</div>
-			</div>
 		</div>
-		<div v-if="this.some_data" style="display: flex; gap: 40px;">		
+        <div v-if="!myPage">
+            <ul class="wrapper">
+                <div v-if="!alreadyFollow && !isBan">
+                    <li class="icon followProfile" @click="follow">Follow</li>
+                </div>
+                <div v-if="alreadyFollow && !isBan">
+                    <li class="icon followProfile" @click="follow">Unfollow</li>
+                </div>
+                <div v-if="!isBan">
+                    <li class="icon banProfile" @click="banUser">Ban</li>
+                </div>
+                <div v-else>
+                    <li class="icon banProfile" @click="banUser">Unban</li>
+                </div>
+            </ul>
+        </div>
+		<div v-if="this.some_data" class="follow-info">		
 			<div>
-				<h1 @click="openModalWR('followers')">{{this.some_data.Followers}}</h1>
+				<h2 @click="openModalWR('followers')">{{this.some_data.Followers}}</h2>
+                <span>Followers</span>
 				<div class="modal-mask" style="display: none;" id="myFollow-followers">
 					<div class="modal-wrapper">
 						<div class="modal-container">
@@ -230,7 +274,8 @@ export default {
 
 			</div>
 			<div>
-				<h1 @click="openModalWR('followings')">{{this.some_data.Followings}}</h1>
+				<h2 @click="openModalWR('followings')">{{this.some_data.Followings}}</h2>
+                <span>Followings</span>
 				<div class="modal-mask" style="display: none;" id="myFollow-followings">
 					<div class="modal-wrapper">
 						<div class="modal-container">
@@ -275,7 +320,7 @@ export default {
 			<input type="text" placeholder="Surname" v-model="mySurname" >
 			<input type="submit" value="Change" @click="change">
 		</div>
-		<div v-if="this.some_data" class="grid-container">
+		<div v-if="this.some_data && !this.isBan" class="grid-container">
 			<div v-for="item in this.some_data.Images" >
 				<div class="grid-item">
 					<ImageComponent v-if="item" :imageComp="item" :idUser="this.some_data.Id" />
@@ -288,7 +333,7 @@ export default {
 <style>
 .grid-container {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 33% 33% 33%;
   padding: 10px;
 }
 .grid-item {

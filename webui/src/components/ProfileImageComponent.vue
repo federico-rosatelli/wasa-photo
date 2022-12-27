@@ -21,7 +21,7 @@ export default {
 
 <style>
 .profile img{
-    width: 5%;
+    width: 30%;
     height: auto;
     border-radius: 100%;
 }
@@ -32,6 +32,6 @@ export default {
     display:flex;
     color: black;
     text-decoration: none;
-    width: auto;
+    width: 200px;
 }
 </style>

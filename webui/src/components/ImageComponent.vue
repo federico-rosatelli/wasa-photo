@@ -58,21 +58,33 @@ export default {
                 d.appendChild(img);
                 this.comments = [];
                 $(".postId").name = this.imageComp.IdImage
+                let i = 0
                 for (let comment in comp.Comments){
                     comment = comp.Comments[comment]
-                    let comm = await this.$axios.get(`/profile/${comment.UserIdComment}/ultra`,{headers:{"Token":this.token}})
-                    comm = comm.data;
-                    console.log(comm);
-                    let date = startTime(comment.Time)
-                    //console.log(date);
-                    comment.Time = date;
-                    comment.Username = comm.Username;
-                    comment.ProfilePictureLocation = comm.ProfilePictureLocation;
-                    this.comments.push(comment)
+                    
+                    let isBan = await this.$axios.get(`/ban/${comment.UserIdComment}`,{headers:{"Token":this.token}})
+                    if (!isBan.data){
+                        let comm = await this.$axios.get(`/profile/${comment.UserIdComment}/ultra`,{headers:{"Token":this.token}})
+                        comm = comm.data;
+                        let date = startTime(comment.Time)
+                        //console.log(date);
+                        comment.Time = date;
+                        comment.Username = comm.Username;
+                        comment.ProfilePictureLocation = comm.ProfilePictureLocation;
+                        let ismine = false
+                        if (comment.UserIdComment === this.myProfileId){
+                            ismine = true
+                        }
+                        comment.IsMine = ismine
+                        comment.idUser = this.idUser
+                        comment.IdImage = this.imageComp.IdImage
+                        comment.indexComment = i
+                        this.comments.push(comment)
+                    }
+                    i++;
                 }
                 for (let like in this.imageContent.Likes){
                     like = this.imageContent.Likes[like]
-                    console.log(like);
                     if (like.UserIdLike == this.myProfileId){
                         // document.getElementById("color-like").style.color = "red"
                         document.getElementById(`color-like-inner-${this.imageComp.IdImage}`).style.color = "red"
@@ -135,6 +147,24 @@ export default {
             this.info();
             this.loading = false;
         },
+        async deleteImage(){
+            try {
+                await this.$axios({
+                    method: "delete",
+                    url: `/profile/${this.idUser}/image/${this.imageComp.IdImage}`,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": this.token,
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+            location.reload();
+        },
+        openDropDown(imageId){
+            document.getElementById("myDropdown-"+imageId).classList.toggle("show");
+        },
         async profilePictureUpdate(imageLocation){
             var formData = new FormData();
 			formData.append('profilePicture',imageLocation)
@@ -167,6 +197,18 @@ function startTime(date) {
     return `${h}:${m}:${s}-${d}/${mo}/${y}`;
     
 }
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -193,7 +235,13 @@ function startTime(date) {
                 <div style="display: flex; margin-left: 35%;">
                     <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
                     </div>
-                    <h5 style="margin-left: 1%;" @click="profilePictureUpdate(imageComp.Location)">⋮</h5>
+                    <div class="dropdown">
+                        <div style="margin-left: 1%;" class="dropbtn" @click="openDropDown(imageComp.IdImage)">⋮</div>
+                        <div v-bind:id="'myDropdown-'+imageComp.IdImage" class="dropdown-content">
+                            <a href="#" v-if="this.id === this.myProfileId" @click="deleteImage()">Delete</a>
+                            <a href="#" @click="profilePictureUpdate(imageComp.Location)">Update Profile Picture</a>
+                        </div>
+                    </div>
                 </div>
                 
                 <div style="display: flex; position: relative; left: 35%; gap: 10%;">
