@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-docker run -it --rm -v 
+sudo docker run -i -v "$(pwd):/src" --network host --workdir "$(pwd)" wasa-photo-backend

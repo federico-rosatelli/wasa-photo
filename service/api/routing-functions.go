@@ -781,15 +781,18 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 
 func (s *_router) ServeImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id := ps.ByName("id")
-	buf, err := os.ReadFile("./public/images/" + id)
+	path, _ := os.Getwd()
+	buf, err := os.ReadFile(path + "/public/images/" + id)
 	if err != nil {
-		http.Error(w, "File Not Found", http.StatusBadRequest)
+
+		http.Error(w, "File Not Found "+path+": "+err.Error(), http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "image/png")
 	_, err = w.Write(buf)
 	if err != nil {
-		http.Error(w, "File Not Found", http.StatusInternalServerError)
+		path, _ := os.Getwd()
+		http.Error(w, "File Not Found "+path, http.StatusInternalServerError)
 		return
 	}
 }

@@ -13,7 +13,7 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 			}
 		},
 		devServer: {
-			proxy: 'http://localhost/',
+			proxy: 'http://localhost:3000/',
 			port:3000,
 		},
 	};
@@ -23,7 +23,7 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 		};
 	} else {
 		ret.define = {
-			"__API_URL__": JSON.stringify("/"),
+			"__API_URL__": JSON.stringify("http://localhost:3000"),
 		};
 	}
 	return ret;
