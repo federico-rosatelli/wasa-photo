@@ -13,7 +13,7 @@ export default {
 <template>
     <div class="profile" v-if="imageUrl">
         <a :href="'/profile/'+userNameF">
-            <img v-bind:src="'http://localhost:3000'+imageUrl" alt="Profile Picture">
+            <img v-bind:src="''+imageUrl" alt="Profile Picture">
             <h4>{{userNameF}}</h4>
         </a>
     </div>

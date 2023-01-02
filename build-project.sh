@@ -1,0 +1,1 @@
+docker build -t wasa-photo-backend:latest -f Dockerfile.backend .

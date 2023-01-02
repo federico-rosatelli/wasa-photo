@@ -53,7 +53,7 @@ export default {
                 let d = document.getElementById(`img-${this.imageComp.IdImage}`);
                 d.innerHTML = "";
                 let img = document.createElement('img');
-                img.src = 'http://localhost:3000'+comp.Location;
+                img.src = comp.Location;
                 img.classList.add("box")
                 d.appendChild(img);
                 this.comments = [];
@@ -215,7 +215,7 @@ window.onclick = function(event) {
 	<div v-if="imageComp">
         <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
 
-		<img class="box" v-bind:src="'http://localhost:3000'+imageComp.Location" @click="info">
+		<img class="box" v-bind:src="imageComp.Location" @click="info">
 		<div style="display: flex;gap: 20%;">
 			<h5>{{imageComp.Text}}
             </h5>
