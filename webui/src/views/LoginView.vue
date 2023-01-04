@@ -20,7 +20,7 @@ export default {
                 let response = await this.$axios.post("/signin", dataPost);
                 this.token_data = response.data;
                 localStorage.setItem("Token",this.token_data)
-                this.$router.push("profile")
+                location.replace("/profile")
             }
             catch(e){
                 this.errormsg = "prova "+e.toString();
@@ -41,7 +41,6 @@ export default {
 			<div style="padding:15px">
 		</div>
     </div>
-	<Token v-if="token_data" :token_value="token_data" />
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	</div>

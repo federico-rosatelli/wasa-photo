@@ -15,7 +15,6 @@ export default {
 			formData.append('text',document.getElementById("text").value)
 			formData.append('myFile',document.getElementById("myFile").files[0])
 			try {
-				this.token = localStorage.getItem("Token")
 				let response = await this.$axios.post("/addphoto",formData,{headers:{"Token":this.token}});
 				this.some_data = response.data;
 			} catch (e) {
