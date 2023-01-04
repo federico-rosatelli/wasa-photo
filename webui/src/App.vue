@@ -1,13 +1,12 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
 <script>
+import { RouterLink, RouterView } from 'vue-router'
 export default{
     data:()=>{
         return {
             token: null,
             some_data: null,
             errormsg: null,
+			dataBool: false,
         }
     },
     methods:{
@@ -15,13 +14,16 @@ export default{
 			this.token = localStorage.getItem("Token")
 			if (!this.token && window.location.pathname != "/login"){
 				location.replace("/login")
-				return
+				this.dataBool = false
 			}
-			try {
-				let response = await this.$axios.get("/profile",{headers:{"Token":this.token}});
-				this.some_data = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
+			else{
+				try {
+					let response = await this.$axios.get("/profile",{headers:{"Token":this.token}});
+					this.some_data = response.data;
+					this.dataBool = true
+				} catch (e) {
+					this.errormsg = e.toString();
+				}
 			}
         },
 		async rem(){
@@ -53,26 +55,26 @@ export default{
 					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
 						<span>General</span>
 					</h6>
-					<ul class="nav flex-column" v-if="this.some_data">
+					<ul class="nav flex-column" v-if="this.dataBool">
 						<li class="nav-item">
 							<RouterLink to="/" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#home"/></svg>
 								Home
 							</RouterLink>
 						</li>
-						<li class="nav-item" v-if="this.some_data">
+						<li class="nav-item" v-if="this.dataBool">
 							<RouterLink to="/profile" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#layout"/></svg>
 								Profile
 							</RouterLink>
 						</li>
-						<li class="nav-item" v-if="this.some_data">
+						<li class="nav-item" v-if="this.dataBool">
 							<RouterLink to="/add" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#key"/></svg>
 								Add Photo
 							</RouterLink>
 						</li>
-						<li class="nav-item" v-if="this.some_data">
+						<li class="nav-item" v-if="this.dataBool">
 							<RouterLink to="/search" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#search"/></svg>
 								Search
@@ -83,7 +85,7 @@ export default{
 					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
 						<span>Secondary menu</span>
 					</h6>
-					<ul class="nav flex-column" v-if="!this.some_data">
+					<ul class="nav flex-column" v-if="!this.dataBool">
 						<li class="nav-item">
 							<RouterLink to="/login" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#file-text"/></svg>
@@ -91,7 +93,7 @@ export default{
 							</RouterLink>
 						</li>
 					</ul>
-					<ul class="nav flex-column" v-if="this.some_data">
+					<ul class="nav flex-column" v-if="this.dataBool">
 						<li class="nav-item">
 							<div @click="rem()" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#file-text"/></svg>

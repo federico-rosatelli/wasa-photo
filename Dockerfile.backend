@@ -5,4 +5,5 @@ RUN go build -o /tmp/webapi ./cmd/webapi/
 
 FROM debian:stable
 COPY --from=builder /tmp/webapi /bin/webapi
+WORKDIR /src/
 CMD ["/bin/webapi"]
