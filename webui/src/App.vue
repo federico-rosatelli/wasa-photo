@@ -70,7 +70,7 @@ export default{
 						</li>
 						<li class="nav-item" v-if="this.dataBool">
 							<RouterLink to="/add" class="nav-link">
-								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#key"/></svg>
+								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#camera"/></svg>
 								Add Photo
 							</RouterLink>
 						</li>
@@ -88,7 +88,7 @@ export default{
 					<ul class="nav flex-column" v-if="!this.dataBool">
 						<li class="nav-item">
 							<RouterLink to="/login" class="nav-link">
-								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#file-text"/></svg>
+								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#log-in"/></svg>
 								Log In or Sign In
 							</RouterLink>
 						</li>
@@ -96,7 +96,7 @@ export default{
 					<ul class="nav flex-column" v-if="this.dataBool">
 						<li class="nav-item">
 							<div @click="rem()" class="nav-link">
-								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#file-text"/></svg>
+								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#log-out"/></svg>
 								Log Out
 							</div>
 						</li>

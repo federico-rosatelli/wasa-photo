@@ -10,6 +10,7 @@ export default {
             token: null,
             myName: null,
             mySurname: null,
+            usernameChange:"",
             myPage: true,
             alreadyFollow: false,
             userId: "",
@@ -74,6 +75,7 @@ export default {
                 let postData = {
                     name: this.myName,
                     surname: this.mySurname,
+                    username: this.usernameChange,
                 };
                 let response = await this.$axios.post("/profile", postData, { headers: { "Token": this.token } });
                 this.some_data = response.data;
@@ -82,6 +84,8 @@ export default {
                 this.errormsg = e.toString();
             }
             this.loading = false;
+            this.usernameChange = "";
+            location.replace("/profile")
         },
         async follow() {
             this.loading = true;
@@ -161,17 +165,10 @@ export default {
                 this.errormsg = error.toString();
                 console.log("ENTRA PERO");
             }
-            //this.modal = true
-            //this.$root.$emit("bv::show::modal",`.myFollow-${typeFollow}`)
-            //let myf = document.getElementById(`.myFollow-${typeFollow}`)
-            //myf.show()
-            //$(`myFollow-${typeFollow}`).style.display = "flex";
             document.getElementById(`myFollow-${typeFollow}`).style.display = "flex";
-            // console.log(`.myFollow-${typeFollow}`)
-            // let datatype = this.$refs[`myFollow-${typeFollow}`]
-            // if (datatype != null){
-            // 	console.log(datatype);
-            // }
+        },
+        openModalS(){
+            document.getElementById(`settings`).style.display = "flex";
         },
         async profilesData(followCase) {
             try {
@@ -222,7 +219,46 @@ export default {
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex;">
 			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
-		</div>
+            <div v-if="myPage">
+                <svg class="feather" @click="openModalS()"><use href="/feather-sprite-v4.29.0.svg#settings"/></svg>
+                <div class="modal-mask" style="display: none;" id="settings">
+					<div class="modal-wrapper">
+						<div class="modal-container">
+
+							<div class="modal-header">
+								<slot name="header">
+									<h3>
+										Settings
+									</h3>
+								</slot>
+							</div>  
+
+							<div class="modal-body">
+								<slot name="body">
+									<div style="display: flex; gap: 10%;">
+                                        <input type="text" placeholder="Name" v-model="myName" >
+                                        <input type="text" placeholder="Surname" v-model="mySurname" >
+                                        <input type="submit" value="Change" @click="change">
+                                    </div>
+                                    <div style="display: flex; gap: 30%;">
+                                        <input type="text" placeholder="Username" v-model="usernameChange">
+                                        <input type="submit" value="Change Username" @click="change">
+                                    </div>
+								</slot>
+							</div>
+
+							<div class="modal-footer">
+								
+									<button class="modal-default-button" @click="hideModal('settings')">
+										OK
+									</button>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
         <div v-if="!myPage">
             <ul class="wrapper">
                 <div v-if="!alreadyFollow && !isBan">
@@ -307,19 +343,11 @@ export default {
 			</div>
 				
 		</div>
-		<div v-if="this.some_data" style="display: flex; gap: 40px;">
-			<h2>Name</h2>
-			<h2>Surname</h2>
-		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 20%;">
 			<h2>{{this.some_data.Name}}</h2>
 			<h2>{{this.some_data.Surname}}</h2>
 		</div>
-		<div v-if="(this.some_data && this.myPage)" style="display: flex; gap: 20%;">
-			<input type="text" placeholder="Name" v-model="myName" >
-			<input type="text" placeholder="Surname" v-model="mySurname" >
-			<input type="submit" value="Change" @click="change">
-		</div>
+		
 		<div v-if="this.some_data && !this.isBan" class="grid-container">
 			<div v-for="item in this.some_data.Images" >
 				<div class="grid-item">
