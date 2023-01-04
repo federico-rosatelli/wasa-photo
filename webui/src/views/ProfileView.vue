@@ -221,7 +221,7 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex;">
-			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
+			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
 		</div>
         <div v-if="!myPage">
             <ul class="wrapper">

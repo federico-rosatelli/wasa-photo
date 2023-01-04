@@ -213,7 +213,7 @@ window.onclick = function(event) {
 
 <template>
 	<div v-if="imageComp">
-        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
+        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
 
 		<img class="box" v-bind:src="imageComp.Location" @click="info">
 		<div style="display: flex;gap: 20%;">
@@ -231,7 +231,7 @@ window.onclick = function(event) {
         <div v-if="imageComp" class="popup" v-bind:id="'popup-'+imageComp.IdImage">
             <div class="popup-content">
                 <LoadingSpinner :loading="this.loading"></LoadingSpinner>
-                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
+                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
                 <div style="display: flex; margin-left: 35%;">
                     <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
                     </div>
