@@ -1,0 +1,1 @@
+docker run -ti --rm --network host --volumes-from BackEndContainer --name=FrontEndContainer wasa-photo-frontend
