@@ -6,7 +6,7 @@ export default {
 			loading: false,
 			some_data: null,
 			token: null,
-            username: null,
+            username: "",
 		}
 	},
 	methods: {
