@@ -28,6 +28,8 @@ export default {
             this.profilePicture = profile.ProfilePictureLocation;
             let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}})
             this.myProfileId = myProfile.data.Id
+            this.NComments = this.imageComp.Comments
+            this.NLikes = this.imageComp.Likes
         },
         async info(){
             this.token = localStorage.getItem("Token")
@@ -247,11 +249,11 @@ window.onclick = function(event) {
                 <div style="display: flex; position: relative; left: 35%; gap: 10%;">
                     <h4>
                         <svg class="feather" v-bind:id="'color-like-inner-'+imageComp.IdImage" style="width: 30; height: 30;" @click="likePut(idUser,imageComp)"><use href="/feather-sprite-v4.29.0.svg#heart"/></svg>
-                        {{imageComp.Likes}}
+                        {{this.NLikes}}
                     </h4>
                     <h4>
                         <svg class="feather" style="width: 30; height: 30;"><use href="/feather-sprite-v4.29.0.svg#message-square"/></svg>
-                        {{imageComp.Comments}}
+                        {{this.NComments}}
                     </h4>
                 </div>
                 <div class="title" v-bind:id="'title-'+imageComp.IdImage"></div>
