@@ -56,10 +56,10 @@ export default {
             <tr>
                 <td>Username</td>
             </tr>
-            <tr v-for="item in this.some_data">
+            <tr v-for="item in this.some_data" :key="item">
                 <td>
                     <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
-                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="item.ProfilePictureLocation == ''? 'icon_standard.png': item.ProfilePictureLocation" ></ProfileImageComponent>
+                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="item.ProfilePictureLocation == ''? '/images/icon_standard.png': item.ProfilePictureLocation" ></ProfileImageComponent>
                     </RouterLink>
                 </td>
             </tr>

@@ -302,9 +302,9 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 	}
 	defer file.Close()
 
-	f, err := os.OpenFile("./webui/public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile("./public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		log.Println("ERROREEE!", err.Error())
+		log.Println("Error: ", err.Error())
 		f.Close()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -780,22 +780,21 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 
 }
 
-// Not served anymore
+// Serve image for frontend
+func (s *_router) ServeImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id := ps.ByName("id")
+	path, _ := os.Getwd()
+	buf, err := os.ReadFile(path + "/public/images/" + id)
+	if err != nil {
 
-// func (s *_router) ServeImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-// 	id := ps.ByName("id")
-// 	path, _ := os.Getwd()
-// 	buf, err := os.ReadFile(path + "/public/images/" + id)
-// 	if err != nil {
-
-// 		http.Error(w, "File Not Found "+path+": "+err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "image/png")
-// 	_, err = w.Write(buf)
-// 	if err != nil {
-// 		path, _ := os.Getwd()
-// 		http.Error(w, "File Not Found "+path, http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+		http.Error(w, "File Not Found "+path+": "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "image/png")
+	_, err = w.Write(buf)
+	if err != nil {
+		path, _ := os.Getwd()
+		http.Error(w, "File Not Found "+path, http.StatusInternalServerError)
+		return
+	}
+}

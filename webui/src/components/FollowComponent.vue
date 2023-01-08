@@ -14,8 +14,8 @@ export default {
 </script>
 
 <template>
-    <div v-for="profile in usersFollow">
-		<ProfileImageComponent :userNameF="profile.Username" :imageUrl="profile.ProfilePictureLocation == ''? '/icon_standard.png': profile.ProfilePictureLocation" ></ProfileImageComponent>
+    <div v-for="profile in usersFollow" :key="profile">
+		<ProfileImageComponent :userNameF="profile.Username" :imageUrl="profile.ProfilePictureLocation == ''? '/images/icon_standard.png': profile.ProfilePictureLocation" ></ProfileImageComponent>
     </div>
 </template>
 

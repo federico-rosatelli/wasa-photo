@@ -53,7 +53,7 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" class="grid-container">
-			<div v-for="item in this.some_data" >
+			<div v-for="item in this.some_data" :key="item">
 				<div class="grid-item">
 					<ImageComponent v-if="item" :imageComp="item" :idUser="item.Id" />
 				</div>

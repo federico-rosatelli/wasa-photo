@@ -218,7 +218,7 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex;">
-			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
+			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
             <div v-if="myPage">
                 <svg class="feather" @click="openModalS()"><use href="/feather-sprite-v4.29.0.svg#settings"/></svg>
                 <div class="modal-mask" style="display: none;" id="settings">
@@ -349,7 +349,7 @@ export default {
 		</div>
 		
 		<div v-if="this.some_data && !this.isBan" class="grid-container">
-			<div v-for="item in this.some_data.Images" >
+			<div v-for="item in this.some_data.Images" :key="item">
 				<div class="grid-item">
 					<ImageComponent v-if="item" :imageComp="item" :idUser="this.some_data.Id" />
 				</div>

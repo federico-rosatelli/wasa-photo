@@ -21,11 +21,9 @@ export default {
             this.token = localStorage.getItem("Token")
             let profile = await this.$axios.get(`/profile/${this.idUser}/ultra`,{headers:{"Token":this.token}})
             profile = profile.data;
-            console.log(profile);
             this.username = profile.Username;
             this.id = profile.Id;
             this.profilePicture = profile.ProfilePictureLocation;
-            console.log(this.username,this.ProfilePictureLocation);
             let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}})
             this.myProfileId = myProfile.data.Id
         },
@@ -53,7 +51,7 @@ export default {
                 let d = document.getElementById(`img-${this.imageComp.IdImage}`);
                 d.innerHTML = "";
                 let img = document.createElement('img');
-                img.src = comp.Location;
+                img.src = this.urlBase+comp.Location;
                 img.classList.add("box")
                 d.appendChild(img);
                 this.comments = [];
@@ -213,9 +211,9 @@ window.onclick = function(event) {
 
 <template>
 	<div v-if="imageComp">
-        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
+        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
 
-		<img class="box" v-bind:src="imageComp.Location" @click="info">
+		<img class="box" v-bind:src="this.urlBase+imageComp.Location" @click="info">
 		<div style="display: flex;gap: 20%;">
 			<h5>{{imageComp.Text}}
             </h5>
@@ -231,7 +229,7 @@ window.onclick = function(event) {
         <div v-if="imageComp" class="popup" v-bind:id="'popup-'+imageComp.IdImage">
             <div class="popup-content">
                 <LoadingSpinner :loading="this.loading"></LoadingSpinner>
-                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
+                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
                 <div style="display: flex; margin-left: 35%;">
                     <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
                     </div>
