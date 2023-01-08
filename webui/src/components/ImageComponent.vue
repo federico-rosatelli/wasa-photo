@@ -13,6 +13,8 @@ export default {
             profilePicture:null,
             like: false,
             myProfileId: null,
+            NComments: 0,
+            NLikes: 0,
         }
     },
 	props: ["imageComp","idUser"],
@@ -114,7 +116,7 @@ export default {
             this.commentContent = null
             this.info();
             this.loading = false;
-            this.imageComp.Comments += 1
+            this.NComments += 1
         },
         async likePut(idUser,imageComp){
             this.loading = true;
@@ -129,7 +131,7 @@ export default {
                 });
                 document.getElementById(`color-like-inner-${this.imageComp.IdImage}`).style.color = "black"
                 this.like = false;
-                this.imageComp.Likes -= 1;
+                this.NLikes -= 1;
             }
             else{
                 await this.$axios({
@@ -140,7 +142,7 @@ export default {
                         "Token": this.token,
                     }
                 });
-                this.imageComp.Likes += 1;
+                this.NLikes += 1;
             }
             this.info();
             this.loading = false;
@@ -219,11 +221,11 @@ window.onclick = function(event) {
             </h5>
 			<h4>
                 <svg class="feather" id="color-like" style="width: 30; height: 30;"><use href="/feather-sprite-v4.29.0.svg#heart"/></svg>
-                {{imageComp.Likes}}
+                {{this.NLikes}}
             </h4>
 			<h4>
                 <svg class="feather" style="width: 30; height: 30;"><use href="/feather-sprite-v4.29.0.svg#message-square"/></svg>
-                {{imageComp.Comments}}
+                {{this.NComments}}
             </h4>
 		</div>
         <div v-if="imageComp" class="popup" v-bind:id="'popup-'+imageComp.IdImage">
