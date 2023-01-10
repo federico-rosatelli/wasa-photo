@@ -16,6 +16,7 @@ export default defineConfig(({command, mode, ssrBuild}) => {
 			proxy: 'http://localhost:3000/',
 			port:3000,
 		},
+		publicPath: JSON.stringify("http://localhost:3000")
 	};
 	if (command === 'serve') {
 		ret.define = {

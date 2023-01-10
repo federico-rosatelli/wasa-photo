@@ -13,16 +13,22 @@ export default {
 		async sendPhoto(){
 			var formData = new FormData();
 			formData.append('text',document.getElementById("text").value)
+			if (document.getElementById("myFile").files.length === 0){
+				this.errormsg = "You have to select a file before to submit";
+				return
+			}
+			this.errormsg = null
 			formData.append('myFile',document.getElementById("myFile").files[0])
 			try {
 				this.token = localStorage.getItem("Token")
 				let response = await this.$axios.post("/addphoto",formData,{headers:{"Token":this.token}});
 				this.some_data = response.data;
+				this.$router.push("profile")
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
-			this.$router.push("profile")
+			
 		},
 		onFileChange(e){
 			// let imgPrev = document.getElementById("previewImg")

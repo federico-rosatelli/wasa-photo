@@ -19,7 +19,6 @@ import './assets/dropdown.css'
 console.log("PROVAAA");
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
-app.config.globalProperties.urlBase = "http://localhost:3000"
 app.component("ErrorMsg", ErrorMsg);
 app.component("LoadingSpinner", LoadingSpinner);
 app.component("Token", Token);
@@ -35,3 +34,7 @@ app.use(router)
 
 //app.component('b-modal', BModal)
 app.mount('#app')
+
+if (localStorage.getItem("Token") === null && window.location.pathname !== "/login"){
+    location.replace("/login")
+}

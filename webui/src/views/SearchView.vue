@@ -7,6 +7,7 @@ export default {
 			some_data: null,
 			token: null,
             username: "",
+			base_URL: null,
 		}
 	},
 	methods: {
@@ -21,6 +22,7 @@ export default {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
+			this.base_URL = __API_URL__
         },
 	},
 }
@@ -44,7 +46,7 @@ export default {
             <tr v-for="item in this.some_data" :key="item">
                 <td>
                     <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
-                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="item.ProfilePictureLocation == ''? '/images/icon_standard.png': item.ProfilePictureLocation" ></ProfileImageComponent>
+                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="this.base_URL+item.ProfilePictureLocation == this.base_URL+''? this.base_URL+'/images/icon_standard.png': item.ProfilePictureLocation" ></ProfileImageComponent>
                     </RouterLink>
                 </td>
             </tr>

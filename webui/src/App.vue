@@ -12,7 +12,7 @@ export default{
     methods:{
         async info(){
 			this.token = localStorage.getItem("Token")
-			if (!this.token && window.location.pathname != "/login"){
+			if (this.token === null && window.location.pathname != "/login"){
 				location.replace("/login")
 				this.dataBool = false
 			}
@@ -22,6 +22,7 @@ export default{
 					this.some_data = response.data;
 					this.dataBool = true
 				} catch (e) {
+					console.log(e);
 					this.errormsg = e.toString();
 				}
 			}

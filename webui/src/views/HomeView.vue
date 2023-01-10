@@ -15,6 +15,9 @@ export default {
 			this.errormsg = null;
 			try {
 				this.token = localStorage.getItem("Token")
+				if (this.token === null){
+					location.replace("/login")
+				}
 				let response = await this.$axios.get("/",{headers:{"Token":this.token}});
 				this.some_data = response.data;
 			} catch (e) {

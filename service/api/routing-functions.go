@@ -281,7 +281,16 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		}
 		return
 	}
-
+	file, _, err := r.FormFile("myFile")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if file == nil {
+		http.Error(w, "Can't get the file", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
 	idImage, err := profile.AddPhoto(prof.Text, *rt)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -294,13 +303,6 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	file, _, err := r.FormFile("myFile")
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
 
 	f, err := os.OpenFile("./public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {

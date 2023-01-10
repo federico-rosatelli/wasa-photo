@@ -15,21 +15,26 @@ export default {
             myProfileId: null,
             NComments: 0,
             NLikes: 0,
+            base_URL: null,
+            ImageLocation: null,
         }
     },
 	props: ["imageComp","idUser"],
     methods:{
         async basicProfile(){
+            this.loading = true
             this.token = localStorage.getItem("Token")
             let profile = await this.$axios.get(`/profile/${this.idUser}/ultra`,{headers:{"Token":this.token}})
             profile = profile.data;
             this.username = profile.Username;
             this.id = profile.Id;
-            this.profilePicture = profile.ProfilePictureLocation;
+            this.profilePicture = profile.ProfilePictureLocation === "" ? __API_URL__+'/images/icon_standard.png' : __API_URL__+profile.ProfilePictureLocation;
             let myProfile = await this.$axios.get(`/profile`,{headers:{"Token":this.token}})
             this.myProfileId = myProfile.data.Id
             this.NComments = this.imageComp.Comments
             this.NLikes = this.imageComp.Likes
+            this.ImageLocation = __API_URL__ + this.imageComp.Location
+            this.loading = false
         },
         async info(){
             this.token = localStorage.getItem("Token")
@@ -55,7 +60,7 @@ export default {
                 let d = document.getElementById(`img-${this.imageComp.IdImage}`);
                 d.innerHTML = "";
                 let img = document.createElement('img');
-                img.src = this.urlBase+comp.Location;
+                img.src = __API_URL__+comp.Location;
                 img.classList.add("box")
                 d.appendChild(img);
                 this.comments = [];
@@ -72,7 +77,7 @@ export default {
                         //console.log(date);
                         comment.Time = date;
                         comment.Username = comm.Username;
-                        comment.ProfilePictureLocation = comm.ProfilePictureLocation;
+                        comment.ProfilePictureLocation = comm.ProfilePictureLocation === "" ? __API_URL__+'/images/icon_standard.png' : __API_URL__+comm.ProfilePictureLocation;
                         let ismine = false
                         if (comment.UserIdComment === this.myProfileId){
                             ismine = true
@@ -215,9 +220,9 @@ window.onclick = function(event) {
 
 <template>
 	<div v-if="imageComp">
-        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
-
-		<img class="box" v-bind:src="this.urlBase+imageComp.Location" @click="info">
+        <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture" ></ProfileImageComponent>
+        <LoadingSpinner v-if="this.loading"></LoadingSpinner>
+		<img class="box" v-bind:src="this.ImageLocation" @click="info">
 		<div style="display: flex;gap: 20%;">
 			<h5>{{imageComp.Text}}
             </h5>
@@ -233,7 +238,7 @@ window.onclick = function(event) {
         <div v-if="imageComp" class="popup" v-bind:id="'popup-'+imageComp.IdImage">
             <div class="popup-content">
                 <LoadingSpinner :loading="this.loading"></LoadingSpinner>
-                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture == ''? '/images/icon_standard.png': this.profilePicture" ></ProfileImageComponent>
+                <ProfileImageComponent :userNameF="this.username" :imageUrl="this.profilePicture" ></ProfileImageComponent>
                 <div style="display: flex; margin-left: 35%;">
                     <div class="desc" v-bind:id="'img-'+imageComp.IdImage">
                     </div>

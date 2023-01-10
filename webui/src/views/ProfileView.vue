@@ -15,6 +15,7 @@ export default {
             profiles: [],
             modal: false,
             isBan: false,
+            base_URL: null,
         };
     },
     methods: {
@@ -23,10 +24,17 @@ export default {
             this.loading = true;
             this.errormsg = null;
             this.token = localStorage.getItem("Token");
+            if (this.token === null){
+                console.log("ASAAS");
+                location.replace("/login")
+            }
             try {
                 if (userName != null) {
                     let users = await this.$axios.get("/search?query=" + userName + "&precise=1", { headers: { "Token": this.token } });
                     let myProfile = await this.$axios.get(`/profile`, { headers: { "Token": this.token } });
+                    if (users.data[0].Id === undefined){
+                        location.replace("/")
+                    }
                     this.userId = "/" + users.data[0].Id;
                     if (myProfile.data.Id === users.data[0].Id) {
                         this.myPage = true;
@@ -65,6 +73,7 @@ export default {
                 this.errormsg = e.toString();
             }
             this.loading = false;
+            this.some_data.ProfilePictureLocation = this.some_data.ProfilePictureLocation === "" ? __API_URL__+'/images/icon_standard.png' : __API_URL__+this.some_data.ProfilePictureLocation
         },
         async change() {
             this.loading = true;
@@ -157,11 +166,9 @@ export default {
             try {
                 let dataFollow = await this.profilesData(typeFollow);
                 this.profiles = dataFollow;
-				console.log(dataFollow);
             }
             catch (error) {
                 this.errormsg = error.toString();
-                console.log("ENTRA PERO");
             }
             document.getElementById(`myFollow-${typeFollow}`).style.display = "flex";
         },
@@ -171,7 +178,12 @@ export default {
         async profilesData(followCase) {
             try {
                 var datap = await this.$axios.get(`/profile${this.userId}/${followCase}`, { headers: { "Token": this.token } });
-                return datap.data;
+                let data = datap.data
+                for (let i = 0; i < data.length; i++) {
+                    data[i].ProfilePictureLocation = data[i].ProfilePictureLocation === "" ? __API_URL__+"/images/icon_standard.png" : __API_URL__+data[i].ProfilePictureLocation
+                    
+                }
+                return data;
             }
             catch (e) {
                 this.errormsg = e.toString();
@@ -199,7 +211,7 @@ export default {
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		<div v-if="this.some_data" style="display: flex;">
-			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation == ''? '/images/icon_standard.png': this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
+			<ProfileImageComponent :userNameF="this.some_data.Username" :imageUrl="this.some_data.ProfilePictureLocation" ></ProfileImageComponent>
             <div v-if="myPage">
                 <svg class="feather" @click="openModalS()"><use href="/feather-sprite-v4.29.0.svg#settings"/></svg>
                 <div class="modal-mask" style="display: none;" id="settings">

@@ -39,7 +39,7 @@ export default {
         </tr>
         <tr v-for="comment in commentData" :key="comment">
             <td>
-                <ProfileImageComponent :userNameF="comment.Username" :imageUrl="comment.ProfilePictureLocation == ''? '/images/icon_standard.png': comment.ProfilePictureLocation" ></ProfileImageComponent>
+                <ProfileImageComponent :userNameF="comment.Username" :imageUrl="comment.ProfilePictureLocation" ></ProfileImageComponent>
             </td>
             <td>
                 {{comment.Content}}
