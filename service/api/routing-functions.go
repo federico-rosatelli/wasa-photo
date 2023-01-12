@@ -304,6 +304,12 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 	path, _ := os.Getwd()
+	_, err = os.Stat(path + "/public/images/")
+	if err != nil && os.IsNotExist(err) {
+		log.Println("Error directory: ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	f, err := os.Create(path + "/public/images/" + lastImageId + ".png")
 	if err != nil {
 		log.Println("Error: ", err.Error())
