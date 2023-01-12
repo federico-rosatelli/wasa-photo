@@ -303,8 +303,8 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	f, err := os.OpenFile("./public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
+	path, _ := os.Getwd()
+	f, err := os.OpenFile(path+"/public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		log.Println("Error: ", err.Error())
 		f.Close()
