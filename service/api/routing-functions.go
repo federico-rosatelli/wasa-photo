@@ -304,7 +304,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 	path, _ := os.Getwd()
-	f, err := os.OpenFile(path+"/public/images/"+lastImageId+".png", os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.Create(path + "/public/images/" + lastImageId + ".png")
 	if err != nil {
 		log.Println("Error: ", err.Error())
 		f.Close()
@@ -314,6 +314,7 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 	defer f.Close()
 	_, err = io.Copy(f, file)
 	if err != nil {
+		log.Println("Error: ", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
