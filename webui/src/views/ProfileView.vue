@@ -179,6 +179,9 @@ export default {
             try {
                 var datap = await this.$axios.get(`/profile${this.userId}/${followCase}`, { headers: { "Token": this.token } });
                 let data = datap.data
+                if (!data){
+                    return []
+                }
                 for (let i = 0; i < data.length; i++) {
                     data[i].ProfilePictureLocation = data[i].ProfilePictureLocation === "" ? __API_URL__+"/images/icon_standard.png" : __API_URL__+data[i].ProfilePictureLocation
                     
@@ -191,7 +194,6 @@ export default {
             return null;
         },
         hideModal(id) {
-            console.log(id);
             document.getElementById(id).style.display = "none";
             this.refresh();
         }
@@ -334,6 +336,14 @@ export default {
 					</div>
 				</div>
 			</div>
+            <div v-if="this.some_data && this.some_data.Images">
+				<h2 title="Images">{{this.some_data.Images.length}}</h2>
+                <span>Images</span>
+			</div>
+            <div v-else>
+                <h2 title="Images">0</h2>
+                <span>Images</span>
+            </div>
 				
 		</div>
 		<div v-if="this.some_data" style="display: flex; gap: 20%;">

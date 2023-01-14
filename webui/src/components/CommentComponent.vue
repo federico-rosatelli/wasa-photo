@@ -11,7 +11,6 @@ export default {
 	props: ["commentData"],
     methods:{
         async deleteComment(idUser,IdImage,indexComment){
-            console.log(idUser,IdImage,indexComment);
             try {
                 await this.$axios({
                     method: "delete",
@@ -21,6 +20,7 @@ export default {
                         "Token": localStorage.getItem("Token"),
                     }
                 });
+                this.$router.go(0);
             } catch (error) {
                 this.errormsg = error
             }
