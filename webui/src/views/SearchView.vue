@@ -23,6 +23,11 @@ export default {
 			}
 			this.loading = false;
 			this.base_URL = __API_URL__
+			for (let i = 0; i < this.some_data.length; i++) {
+				this.some_data[i].ProfilePictureLocation = this.some_data[i].ProfilePictureLocation === "" ? __API_URL__+'/images/icon_standard.png' : __API_URL__+this.some_data[i].ProfilePictureLocation
+				
+			}
+			console.log(this.some_data);
         },
 	},
 }
@@ -46,7 +51,7 @@ export default {
             <tr v-for="item in this.some_data" :key="item">
                 <td>
                     <RouterLink v-bind:to="'/profile/'+item.Username" class="nav-link">
-                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="this.base_URL+item.ProfilePictureLocation == this.base_URL+''? this.base_URL+'/images/icon_standard.png': item.ProfilePictureLocation" ></ProfileImageComponent>
+                    	<ProfileImageComponent :userNameF="item.Username" :imageUrl="item.ProfilePictureLocation" ></ProfileImageComponent>
                     </RouterLink>
                 </td>
             </tr>
