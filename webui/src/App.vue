@@ -16,14 +16,17 @@ export default{
 				location.replace("/login")
 				this.dataBool = false
 			}
+			else if (this.token === null){
+				this.dataBool = false
+			}
 			else{
 				try {
 					let response = await this.$axios.get("/profile",{headers:{"Token":this.token}});
 					this.some_data = response.data;
 					this.dataBool = true
 				} catch (e) {
-					console.log(e);
-					this.errormsg = e.toString();
+					localStorage.removeItem("Token")
+					location.replace("/login")
 				}
 			}
         },
