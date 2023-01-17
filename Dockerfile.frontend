@@ -2,6 +2,7 @@ FROM node:lts as builder
 WORKDIR /src/
 COPY webui webui
 WORKDIR /src/webui
+RUN npm install
 RUN npm run build-prod
 
 FROM nginx:stable as stage
