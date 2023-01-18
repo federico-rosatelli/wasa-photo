@@ -41,6 +41,7 @@ var sessions = map[string]Session{}
 // of the client in the map sessions, identified by id
 func (s *Session) updateUsernameSession(newUsername string, rt _router) {
 	s.Username = newUsername
+	sessions[s.IdSession] = *s
 }
 
 // validateUserByUsernameID is used as a verification for a logged

@@ -88,12 +88,13 @@ func (cred Credentials) returnID(rt _router) (string, error) {
 	}
 
 	users[newUser.Id] = newUser
-
-	newSession := Session{
-		Username: cred.Username,
-		Id:       newUser.Id,
-	}
 	newSessionToken := uuid.NewString()
+	newSession := Session{
+		Username:  cred.Username,
+		Id:        newUser.Id,
+		IdSession: newSessionToken,
+	}
+
 	sessions[newSessionToken] = newSession
 
 	err := NewProfile(cred.Username, newUser.Id, rt)
@@ -169,8 +170,15 @@ func userExists(id string) bool {
 
 // Update the username of the user
 func (u *User) updateUsername(newUsername string, rt _router) error {
+
+	var sessionToken string
+	for key, value := range sessions {
+		if value.Username == u.Username {
+			sessionToken = key
+		}
+	}
 	u.Username = newUsername
-	session := sessions[u.Id]
+	session := sessions[sessionToken]
 	session.updateUsernameSession(newUsername, rt)
 	profile := GetProfile(u.Id)
 	users[u.Id] = *u
