@@ -24,7 +24,7 @@ paths:
                 Name of the user
               type: object
               properties:
-                name:
+                username:
                   description: |
                     The name
                   type: string
@@ -168,7 +168,7 @@ paths:
                   example: Maria
                   minLength: 3
                   maxLength: 16
-                name:
+                newName:
                   description: |
                     New Name
                   type: string
@@ -176,7 +176,7 @@ paths:
                   pattern: '^[a-zA-Z]*'
                   minLength: 1
                   maxLength: 30
-                surname:
+                newSurname:
                   description: |
                     New Surname
                   type: string
@@ -396,7 +396,9 @@ paths:
                 Content to post
               type: object
               properties:
-                content:
+                textComment:
+                  description: |
+                    Text of the comment
                   type: string
                   pattern: '^.*'
                   example: Comment
