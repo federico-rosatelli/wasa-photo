@@ -958,3 +958,16 @@ components:
       allowEmptyValue: false
       in: query
       description: The index of the comment to delete
+
+tags:
+  - name: "signin"
+  - name: "addPhoto"
+  - name: "getstream"
+  - name: "myProfile"
+  - name: "UserProfile"
+  - name: "BanProfile"
+  - name: "profileImage"
+  - name: "profileImageLike"
+  - name: "profileImageComment"
+  - name: "searchProfile"
+  
