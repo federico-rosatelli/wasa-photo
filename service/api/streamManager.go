@@ -45,8 +45,12 @@ func (p *Profile) GetNewStream() []StreamContent {
 	return newStream
 }
 
-func (p *Profile) AddAlreadySeen(imageId string) {
+func (p Profile) AddAlreadySeen(imageId string) {
+	if p.AlreadySeen == nil {
+		p.AlreadySeen = make(map[string]int64)
+	}
 	p.AlreadySeen[imageId] = time.Now().Unix()
+	profiles[p.Id] = p
 	// filter := bson.D{{Key: "id", Value: p.Id}}
 	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "alreadyseen", Value: p.AlreadySeen}}}}
 	// go mongodb.CollectionProfiles.UpdateOne(mongodb.Ctx, filter, update)
