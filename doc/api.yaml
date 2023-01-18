@@ -961,13 +961,23 @@ components:
 
 tags:
   - name: "signin"
+    description: Login
   - name: "addPhoto"
+    description: Upload Image
   - name: "getstream"
+    description: Homepage
   - name: "myProfile"
+    description: My profile
   - name: "UserProfile"
+    description: User profile
   - name: "BanProfile"
+    description: Ban user
   - name: "profileImage"
+    description: Image info
   - name: "profileImageLike"
+    description: Like
   - name: "profileImageComment"
+    description: Comment
   - name: "searchProfile"
+    description: Search user
   
