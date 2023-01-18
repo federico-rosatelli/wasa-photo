@@ -303,14 +303,14 @@ func (rt *_router) AddPhotoProfile(w http.ResponseWriter, r *http.Request, ps ht
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// path, _ := os.Getwd()
-	_, err = os.Stat("/tmp/public/images/")
+	path, _ := os.Getwd()
+	_, err = os.Stat(path + "/public/images/")
 	if err != nil && os.IsNotExist(err) {
 		log.Println("Error directory: ", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	f, err := os.Create("/tmp/public/images/" + lastImageId + ".png")
+	f, err := os.Create(path + "/public/images/" + lastImageId + ".png")
 	if err != nil {
 		log.Println("Error create file "+lastImageId+".png: ", err.Error())
 		f.Close()
@@ -793,7 +793,7 @@ func (rt *_router) Welcome(w http.ResponseWriter, r *http.Request, ps httprouter
 func (s *_router) ServeImage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id := ps.ByName("id")
 	path, _ := os.Getwd()
-	buf, err := os.ReadFile("/tmp/public/images/" + id)
+	buf, err := os.ReadFile(path + "/public/images/" + id)
 	if err != nil {
 
 		http.Error(w, "File Not Found "+path+": "+err.Error(), http.StatusBadRequest)
