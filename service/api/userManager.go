@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"regexp"
 	"time"
+	"wasa-photo/service/api/customErrors"
 
 	"github.com/google/uuid"
 )
@@ -170,11 +171,15 @@ func userExists(id string) bool {
 
 // Update the username of the user
 func (u *User) updateUsername(newUsername string, rt _router) error {
-
 	var sessionToken string
 	for key, value := range sessions {
 		if value.Username == u.Username {
 			sessionToken = key
+		}
+	}
+	for _, value := range users {
+		if value.Username == newUsername {
+			return customErrors.NewErrStatus("User already exists")
 		}
 	}
 	u.Username = newUsername
