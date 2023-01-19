@@ -23,17 +23,19 @@ export default {
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
-			for (let i = 0; i < this.some_data.length; i++){
-				console.log(this.some_data[i]);
-				let dataPost = {
-                	idimage: this.some_data[i].IdImage
-            	};
-				try {
-					await this.$axios.post("/",dataPost,{headers:{"Token":this.token}})
-				} catch (error) {
-					this.errormsg = error.toString();
-				}
-			};
+			if (this.some_data != null){
+				for (let i = 0; i < this.some_data.length; i++){
+					console.log(this.some_data[i]);
+					let dataPost = {
+						idimage: this.some_data[i].IdImage
+					};
+					try {
+						await this.$axios.post("/",dataPost,{headers:{"Token":this.token}})
+					} catch (error) {
+						this.errormsg = error.toString();
+					}
+				};
+			}
 			this.loading = false;
 		},
 	},
