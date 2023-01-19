@@ -641,13 +641,13 @@ components:
           type: integer
           minimum: 0
           maximum: 99999999999
-        Likes:
+        LikesInt:
           description: |
             Number of likes of the image
           type: integer
           minimum: 0
           maximum: 99999999999
-        Comments:
+        CommentsInt:
           description: |
             Number of comments of the image
           type: integer
@@ -699,7 +699,7 @@ components:
           minItems: 0
           maxItems: 99999999999
           items:
-            $ref: "#/components/schemas/likes"
+            $ref: "#/components/schemas/likesSchema"
         Comments:
           description: |
             Comments of the image
@@ -707,7 +707,7 @@ components:
           minItems: 0
           maxItems: 99999999999
           items:
-            $ref: "#/components/schemas/comments"
+            $ref: "#/components/schemas/commentsSchema"
         Text:
           description: |
             Text of the image
@@ -715,7 +715,7 @@ components:
           pattern: '^.*'
           minLength: 1
           maxLength: 256
-    likes:
+    likesSchema:
       title: Get Likes
       type: object
       description: | 
@@ -736,7 +736,7 @@ components:
           type: integer
           minimum: 0
           maximum: 99999999999
-    comments:
+    commentsSchema:
       title: Get Comments
       type: object
       description: |
@@ -851,13 +851,13 @@ components:
           type: integer
           minimum: 0
           maximum: 99999999999
-        Comments:
+        CommentsInt:
           description: |
             Number of comments of the Image displayed in homepage
           type: integer
           minimum: 0
           maximum: 99999999999
-        Likes:
+        LikesInt:
           description: |
             Number of likes of the Image displayed in homepage
           type: integer
